@@ -22,9 +22,16 @@
     }
     const data: WorkerData = {
       id: ++id,
-      imageUrl: URL.createObjectURL(file),
-      width: 50,
-      height: 50,
+      gif: {
+        width: 500,
+        height: 500,
+        delayMs: 20,
+        imageUrl: URL.createObjectURL(file),
+      },
+      animation: {
+        name: 'extreme-speed',
+        totalFrames: 10,
+      },
     };
 
     worker?.postMessage(data);

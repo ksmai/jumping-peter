@@ -66,7 +66,7 @@ function createProgram(
   return program;
 }
 
-interface Program {
+export interface Program {
   program: WebGLProgram;
   attributeLocations: Record<string, number>;
   uniformLocations: Record<string, WebGLUniformLocation>;
