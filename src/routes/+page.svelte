@@ -26,11 +26,13 @@
         width: 128,
         height: 128,
         delayMs: 20,
+        totalFrames: 10,
         imageUrl: URL.createObjectURL(file),
       },
       animation: {
         name: 'extreme-speed',
-        totalFrames: 10,
+        velocityX: 1,
+        velocityY: 0,
       },
     };
 
@@ -47,9 +49,3 @@
 {:else}
   <p>Waiting for input...</p>
 {/if}
-
-<style>
-  canvas {
-    display: block;
-  }
-</style>

@@ -6,13 +6,16 @@ const vertexShaderSource = `\
 
 in vec2 a_clipCoord;
 uniform float u_percentage;
+uniform vec2 u_velocity;
 
 in vec2 a_texCoord;
 out vec2 v_texCoord;
 
 void main() {
   gl_Position = vec4(a_clipCoord, 0, 1);
-  v_texCoord = vec2(a_texCoord.x + u_percentage, 1.0 - a_texCoord.y);
+  vec2 offset = u_velocity * u_percentage;
+  // invert y-axis as it's direction is different in webgl/gif
+  v_texCoord = vec2(a_texCoord.x - offset.x, 1.0 - a_texCoord.y + offset.y);
 }
 `;
 
@@ -32,7 +35,7 @@ void main() {
 `;
 
 type Attribute = "a_texCoord" | "a_clipCoord";
-type Uniform = "u_percentage" | "u_image";
+type Uniform = "u_percentage" | "u_velocity" | "u_image";
 
 type State =
   | { initialized: false }
@@ -51,7 +54,7 @@ export function init(gl: WebGL2RenderingContext, image: TexImageSource) {
     vertexShaderSource,
     fragmentShaderSource,
     ["a_texCoord", "a_clipCoord"],
-    ["u_percentage", "u_image"],
+    ["u_percentage", "u_velocity", "u_image"],
   );
   if (!program) {
     throw new Error("Failed to compile the program");
@@ -129,22 +132,20 @@ function updateTexture(gl: WebGL2RenderingContext, image: TexImageSource) {
 
 export interface ExtremeSpeedOptions {
   name: 'extreme-speed';
-  totalFrames: number;
+  velocityX: number;
+  velocityY: number;
 }
 
-export function render(gl: WebGL2RenderingContext, frame: number, options: ExtremeSpeedOptions): boolean {
+export function render(gl: WebGL2RenderingContext, percentage: number, options: ExtremeSpeedOptions) {
   if (!state.initialized) {
     throw new Error('Animation has not been initialized: extreme-speed');
   }
-  if (frame > options.totalFrames) {
-    return false;
-  }
 
-  const percentage = frame / options.totalFrames;
   gl.useProgram(state.program.program);
   gl.bindVertexArray(state.vao);
   gl.uniform1i(state.program.uniformLocations.u_image, 0);
   gl.uniform1f(state.program.uniformLocations.u_percentage, percentage);
+  gl.uniform2f(state.program.uniformLocations.u_velocity, options.velocityX, options.velocityY);
   gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
   return true;

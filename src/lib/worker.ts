@@ -6,6 +6,7 @@ export interface GifOptions {
   width: number;
   height: number;
   delayMs: number;
+  totalFrames: number;
   imageUrl: string;
 }
 
@@ -71,18 +72,15 @@ self.onmessage = async (e) => {
   encoder.setSize(data.gif.width, data.gif.height);
   encoder.start();
 
-  let frame = 0;
-  for (;;) {
+  for (let frame = 0; frame <= data.gif.totalFrames; ++frame) {
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
     gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT);
 
-    let rendered: boolean;
-
     try {
       switch (data.animation.name) {
 	case 'extreme-speed':
-	  rendered = ExtremeSpeed.render(gl, frame, data.animation);
+	  ExtremeSpeed.render(gl, frame / data.gif.totalFrames, data.animation);
 	  break;
 	default:
 	  ((_: never) => {throw new Error('Unknown animation');})(data.animation.name);
@@ -95,10 +93,6 @@ self.onmessage = async (e) => {
       };
       postMessage(result);
       return;
-    }
-
-    if (!rendered) {
-      break;
     }
 
     const pixels = new Uint8ClampedArray(
@@ -115,8 +109,6 @@ self.onmessage = async (e) => {
       pixels,
     );
     encoder.addFrame(pixels, true);
-
-    ++frame;
   }
 
   encoder.finish();
