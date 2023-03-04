@@ -23,8 +23,8 @@
     const data: WorkerData = {
       id: ++id,
       gif: {
-        width: 500,
-        height: 500,
+        width: 128,
+        height: 128,
         delayMs: 20,
         imageUrl: URL.createObjectURL(file),
       },

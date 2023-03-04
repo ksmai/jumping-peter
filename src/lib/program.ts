@@ -66,29 +66,29 @@ function createProgram(
   return program;
 }
 
-export interface Program {
+export interface Program<A extends string, U extends string> {
   program: WebGLProgram;
-  attributeLocations: Record<string, number>;
-  uniformLocations: Record<string, WebGLUniformLocation>;
+  attributeLocations: Record<A, number>;
+  uniformLocations: Record<U, WebGLUniformLocation>;
 }
 
-export function compileProgram(
+export function compileProgram<A extends string, U extends string>(
   gl: WebGL2RenderingContext,
   vertexShaderSource: string,
   fragmentShaderSource: string,
-  attributes: string[],
-  uniforms: string[],
-): Program | null {
+  attributes: A[],
+  uniforms: U[],
+): Program<A, U> | null {
   const program = createProgram(gl, vertexShaderSource, fragmentShaderSource);
   if (!program) {
     return null;
   }
 
-  const result: Program = {
+  const result = {
     program,
     attributeLocations: {},
     uniformLocations: {},
-  };
+  } as Program<A, U>;
 
   for (const attribute of attributes) {
     const loc = gl.getAttribLocation(program, attribute);

@@ -31,9 +31,12 @@ void main() {
 }
 `;
 
+type Attribute = "a_texCoord" | "a_clipCoord";
+type Uniform = "u_percentage" | "u_image";
+
 type State =
   | { initialized: false }
-  | { initialized: true, program: Program, vao: WebGLVertexArrayObject, texture?: WebGLTexture };
+  | { initialized: true, program: Program<Attribute, Uniform>, vao: WebGLVertexArrayObject, texture?: WebGLTexture };
 
 let state: State = { initialized: false };
 
