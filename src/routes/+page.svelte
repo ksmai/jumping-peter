@@ -1,6 +1,10 @@
 <script lang="ts">
+	import { GIFEncoder } from "../gif-encoder";
+
 	let canvas: HTMLCanvasElement;
 	$: gl = canvas?.getContext('webgl2');
+
+	let src: string | undefined;
 
 	const vertexShaderSource = `#version 300 es
 
@@ -12,7 +16,7 @@
 
 	void main() {
 		gl_Position = vec4(a_clipCoord, 0, 1);
-		v_texCoord = vec2(a_texCoord.x + t, a_texCoord.y);
+		v_texCoord = vec2(a_texCoord.x + t, 1.0 - a_texCoord.y);
 	}
 	`;
 
@@ -116,7 +120,7 @@
 			function draw() {
 				if (!gl) return;
 				gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-				gl.clearColor(0, 0, 0, 0);
+				gl.clearColor(0.5, 0.5, 0.5, 0.5);
 				gl.clear(gl.COLOR_BUFFER_BIT);
 				gl.useProgram(program);
 				gl.bindVertexArray(vao);
@@ -124,9 +128,30 @@
 				gl.uniform1f(tLocation, t);
 				gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 				t += 0.1;
-				requestAnimationFrame(draw);
 			}
-			requestAnimationFrame(draw);
+
+			const encoder = new (GIFEncoder as any)();
+			encoder.setRepeat(0);
+			encoder.setDelay(20);
+			encoder.setSize(200, 200);
+			encoder.start();
+			for (let i = 0; i < 10; ++i) {
+			draw();
+				var pixels = new Uint8ClampedArray(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
+				gl.readPixels(
+				  0,
+				  0,
+				  gl.drawingBufferWidth,
+				  gl.drawingBufferHeight,
+				  gl.RGBA,
+				  gl.UNSIGNED_BYTE,
+				  pixels);
+				encoder.addFrame(pixels, true);
+			}
+			encoder.finish();
+			// encoder.download('download.gif');
+			const gif = encoder.stream().getData();
+			src = 'data:image/gif;base64,' + btoa(gif);
 		};
 
 		img.src = URL.createObjectURL(file);
@@ -136,6 +161,10 @@
 <input type="file" on:change={onImageChange}>
 
 <canvas width={200} height={200} bind:this={canvas}></canvas>
+
+{#if src}
+	<img {src} alt="gif">
+{/if}
 
 <style>
 	canvas {
