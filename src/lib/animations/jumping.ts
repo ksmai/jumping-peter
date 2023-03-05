@@ -144,27 +144,52 @@ export function init(gl: WebGL2RenderingContext) {
   };
 }
 
-const VelocityXOptions: EditOptionsSlider<"velocityX"> = {
+const jumpHeightOptions: EditOptionsSlider<"jumpHeight"> = {
   type: "slider",
-  label: "Horizontal velocity",
-  name: "velocityX",
-  default: -1,
-  min: -1,
+  label: "Maximum jumping height",
+  name: "jumpHeight",
+  default: 0.5,
+  min: 0,
   max: 1,
-  step: 1,
+  step: 0.05,
 } as const;
 
-const VelocityYOptions: EditOptionsSlider<"velocityY"> = {
+const groundTimeOptions: EditOptionsSlider<"groundTime"> = {
   type: "slider",
-  label: "Vertical velocity",
-  name: "velocityY",
-  default: 0,
-  min: -1,
+  label: "Time spent on the ground",
+  name: "groundTime",
+  default: 0.4,
+  min: 0,
   max: 1,
-  step: 1,
+  step: 0.05,
 } as const;
 
-export const JumpingEditOptions = [VelocityXOptions, VelocityYOptions];
+const maxDeformXOptions: EditOptionsSlider<"maxDeformX"> = {
+  type: "slider",
+  label: "Maximum horizontal deformation",
+  name: "maxDeformX",
+  default: 0.25,
+  min: 0,
+  max: 1,
+  step: 0.05,
+} as const;
+
+const maxDeformYOptions: EditOptionsSlider<"maxDeformY"> = {
+  type: "slider",
+  label: "Maximum vertical deformation",
+  name: "maxDeformY",
+  default: 0.5,
+  min: 0,
+  max: 1,
+  step: 0.05,
+} as const;
+
+export const JumpingEditOptions = [
+  jumpHeightOptions,
+  groundTimeOptions,
+  maxDeformXOptions,
+  maxDeformYOptions,
+];
 
 export type JumpingOptions = MappedOptions<
   typeof JumpingEditOptions,
@@ -183,15 +208,12 @@ export function render(
   gl.bindVertexArray(state.vao);
   gl.uniform1i(state.program.uniformLocations.u_image, 0);
   gl.uniform1f(state.program.uniformLocations.u_percentage, percentage);
-  // TODO
-  gl.uniform1f(state.program.uniformLocations.u_jumpHeight, 0.5);
-  // TODO
-  gl.uniform1f(state.program.uniformLocations.u_groundTime, 0.5);
-  // TODO
+  gl.uniform1f(state.program.uniformLocations.u_jumpHeight, options.jumpHeight);
+  gl.uniform1f(state.program.uniformLocations.u_groundTime, options.groundTime);
   gl.uniform2f(
     state.program.uniformLocations.u_maxDeform,
-    0.2,
-    0.5,
+    options.maxDeformX,
+    options.maxDeformY,
   );
   gl.drawArrays(gl.TRIANGLE_FAN, 0, 10);
 

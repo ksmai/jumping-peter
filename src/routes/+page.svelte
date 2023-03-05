@@ -47,7 +47,7 @@
       width: 128,
       height: 128,
       delayMs: 20,
-      totalFrames: 10,
+      totalFrames: 60,
       imageUrl: defaultImageUrl,
     },
     animation: {
