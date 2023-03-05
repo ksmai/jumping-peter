@@ -115,7 +115,7 @@ self.onmessage = async (e) => {
 
   for (let frame = 0; frame <= data.gif.totalFrames; ++frame) {
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-    gl.clearColor(0, 0, 0, 0);
+    gl.clearColor(1, 1, 1, 1);
     gl.clear(gl.COLOR_BUFFER_BIT);
 
     try {
@@ -164,6 +164,7 @@ self.onmessage = async (e) => {
       pixels,
     );
     encoder.addFrame(pixels, true);
+    encoder.setTransparent(0xffffff);
   }
 
   encoder.finish();
