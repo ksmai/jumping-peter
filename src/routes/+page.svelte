@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import { base } from "$app/paths";
   import "carbon-components-svelte/css/g10.css";
   import {
     Grid,
@@ -20,7 +21,7 @@
   let worker: Worker | undefined;
   let generating = false;
 
-  const defaultImageUrl = "/default.png";
+  const defaultImageUrl = `${base}/favicon.png`;
 
   const animations = [
     {
