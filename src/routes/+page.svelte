@@ -1,13 +1,14 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import "carbon-components-svelte/css/g10.css";
-  import { Grid, Row, Column, Slider, Select, SelectItem } from "carbon-components-svelte";
+  import { Grid, Row, Column, Slider, Select, SelectItem, Button, Link, Loading } from "carbon-components-svelte";
   import type { WorkerData, WorkerResult } from "../lib/worker";
   import { getDefaultOptions } from "../lib/options";
   import { ExtremeSpeedEditOptions } from "../lib/animations/extreme-speed";
 
   let result: WorkerResult | undefined;
   let worker: Worker | undefined;
+  let generating = false;
 
   const defaultImageUrl = '/default.png';
 
@@ -59,7 +60,10 @@
     const { default: Worker } = await import("../lib/worker?worker");
     worker = new Worker();
     worker.onmessage = (e) => {
-      result = e.data;
+      if (e.data.id === data.id) {
+        result = e.data;
+        generating = false;
+      }
     };
   });
 
@@ -74,9 +78,14 @@
       URL.revokeObjectURL(data.gif.imageUrl);
     }
     data.gif.imageUrl = URL.createObjectURL(file);
-    data.id += 1;
+  }
 
-    worker?.postMessage(data);
+  function onGenerate() {
+    if (!generating) {
+      data.id += 1;
+      generating = true;
+      worker?.postMessage(data);
+    }
   }
 </script>
 
@@ -181,18 +190,23 @@
         {/if}
       {/each}
 
+      <Button class="generate-button" on:click={onGenerate} disabled={generating}>Generate</Button>
+
       <div class="separator"></div>
 
     </Column>
 
     <Column sm={4} md={8} lg={8}>
-      {#if result?.type === "success"}
-        <img src={result.dataUri} alt="gif" />
-      {:else if result?.type === "error"}
-        <p>Error: {result.error}</p>
-      {:else}
-        <p>Waiting for input...</p>
-      {/if}
+      <div class="result-container">
+        {#if generating}
+          <Loading withOverlay={false} />
+        {:else if result?.type === "success"}
+          <img class="gif-preview" src={result.dataUri} alt="gif" />
+          <Link href={result.dataUri} download="jumping-peter.gif">Download</Link>
+        {:else if result?.type === "error"}
+          <p class="error">Failed: {result.error}</p>
+        {/if}
+      </div>
     </Column>
   </Row>
 </Grid>
@@ -227,4 +241,27 @@
 .input-container {
   margin-bottom: 24px;
 }
+
+.result-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 90%;
+  max-height: 90vh;
+}
+
+.gif-preview {
+  max-width: 100%;
+  margin-bottom: 24px;
+}
+
+:global(.generate-button) {
+  display: block;
+  text-align: center;
+  width: 100%;
+  display: block;
+  max-width: none;
+}
+
 </style>
