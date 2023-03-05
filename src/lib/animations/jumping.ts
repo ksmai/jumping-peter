@@ -59,7 +59,12 @@ void main() {
 `;
 
 type Attribute = "a_texCoord" | "a_clipCoord";
-type Uniform = "u_percentage" | "u_jumpHeight" | "u_groundTime" | "u_maxDeform" | "u_image";
+type Uniform =
+  | "u_percentage"
+  | "u_jumpHeight"
+  | "u_groundTime"
+  | "u_maxDeform"
+  | "u_image";
 
 type State =
   | { initialized: false }
