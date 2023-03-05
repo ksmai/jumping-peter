@@ -1,7 +1,17 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import "carbon-components-svelte/css/g10.css";
-  import { Grid, Row, Column, Slider, Select, SelectItem, Button, Link, Loading } from "carbon-components-svelte";
+  import {
+    Grid,
+    Row,
+    Column,
+    Slider,
+    Select,
+    SelectItem,
+    Button,
+    Link,
+    Loading,
+  } from "carbon-components-svelte";
   import type { WorkerData, WorkerResult } from "../lib/worker";
   import { getDefaultOptions } from "../lib/options";
   import { ExtremeSpeedEditOptions } from "../lib/animations/extreme-speed";
@@ -10,18 +20,24 @@
   let worker: Worker | undefined;
   let generating = false;
 
-  const defaultImageUrl = '/default.png';
+  const defaultImageUrl = "/default.png";
 
-  const animations = [{
-    name: 'extreme-speed',
-    text: 'Extreme speed',
-    options: ExtremeSpeedEditOptions,
-    defaults: getDefaultOptions(ExtremeSpeedEditOptions),
-  },
-    { name: 'extreme-speed-fake', text: 'Extreme speed fake', options: [], defaults: { a: 1, b: 2} },
+  const animations = [
+    {
+      name: "extreme-speed",
+      text: "Extreme speed",
+      options: ExtremeSpeedEditOptions,
+      defaults: getDefaultOptions(ExtremeSpeedEditOptions),
+    },
+    {
+      name: "extreme-speed-fake",
+      text: "Extreme speed fake",
+      options: [],
+      defaults: { a: 1, b: 2 },
+    },
   ] as const;
 
-  let selectedAnimation: typeof animations[number] = animations[0];
+  let selectedAnimation: (typeof animations)[number] = animations[0];
 
   const data: WorkerData = {
     id: 0,
@@ -45,7 +61,7 @@
       return;
     }
 
-    const selected = animations.find(x => x.name === target.value);
+    const selected = animations.find((x) => x.name === target.value);
     if (!selected) {
       return;
     }
@@ -118,7 +134,7 @@
           step={16}
           bind:value={data.gif.width}
           fullWidth
-          />
+        />
       </div>
 
       <div class="input-container">
@@ -145,37 +161,37 @@
           bind:value={data.gif.delayMs}
           fullWidth
         />
-            </div>
+      </div>
 
       <div class="input-container">
-      <Slider
-        light
-        labelText="Number of frames"
-        min={1}
-        max={500}
-        bind:value={data.gif.totalFrames}
-        step={1}
-        fullWidth
-      />
-          </div>
+        <Slider
+          light
+          labelText="Number of frames"
+          min={1}
+          max={500}
+          bind:value={data.gif.totalFrames}
+          step={1}
+          fullWidth
+        />
+      </div>
 
-      <div class="separator"></div>
+      <div class="separator" />
 
       <div class="input-container">
-      <Select
-        light
-        labelText="Animation"
-        selected={data.animation.name}
-        on:change={onAnimationChange}
-      >
-        {#each animations as animation (animation.name)}
-          <SelectItem value={animation.name} text={animation.text} />
-        {/each}
-      </Select>
-          </div>
+        <Select
+          light
+          labelText="Animation"
+          selected={data.animation.name}
+          on:change={onAnimationChange}
+        >
+          {#each animations as animation (animation.name)}
+            <SelectItem value={animation.name} text={animation.text} />
+          {/each}
+        </Select>
+      </div>
 
       {#each selectedAnimation.options as options}
-        {#if options.type === 'slider'}
+        {#if options.type === "slider"}
           <div class="input-container">
             <Slider
               light
@@ -190,10 +206,13 @@
         {/if}
       {/each}
 
-      <Button class="generate-button" on:click={onGenerate} disabled={generating}>Generate</Button>
+      <Button
+        class="generate-button"
+        on:click={onGenerate}
+        disabled={generating}>Generate</Button
+      >
 
-      <div class="separator"></div>
-
+      <div class="separator" />
     </Column>
 
     <Column sm={4} md={8} lg={8}>
@@ -202,7 +221,9 @@
           <Loading withOverlay={false} />
         {:else if result?.type === "success"}
           <img class="gif-preview" src={result.dataUri} alt="gif" />
-          <Link href={result.dataUri} download="jumping-peter.gif">Download</Link>
+          <Link href={result.dataUri} download="jumping-peter.gif"
+            >Download</Link
+          >
         {:else if result?.type === "error"}
           <p class="error">Failed: {result.error}</p>
         {/if}
@@ -212,56 +233,55 @@
 </Grid>
 
 <style>
-.image__label {
-  border: 1px solid #222;
-  padding: 16px;
-  display: flex;
-  cursor: pointer;
-  align-items: center;
-  margin-bottom: 24px;
-}
+  .image__label {
+    border: 1px solid #222;
+    padding: 16px;
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    margin-bottom: 24px;
+  }
 
-.image__preview {
-  display: block;
-  width: 2rem;
-  max-width: 100%;
-  margin-right: 1rem;
-}
+  .image__preview {
+    display: block;
+    width: 2rem;
+    max-width: 100%;
+    margin-right: 1rem;
+  }
 
-.image__input {
-  display: none;
-}
+  .image__input {
+    display: none;
+  }
 
-.separator {
-  margin-top: 64px;
-  margin-bottom: 64px;
-  border-bottom: 1px solid #222;
-}
+  .separator {
+    margin-top: 64px;
+    margin-bottom: 64px;
+    border-bottom: 1px solid #222;
+  }
 
-.input-container {
-  margin-bottom: 24px;
-}
+  .input-container {
+    margin-bottom: 24px;
+  }
 
-.result-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  height: 90%;
-  max-height: 90vh;
-}
+  .result-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 90%;
+    max-height: 90vh;
+  }
 
-.gif-preview {
-  max-width: 100%;
-  margin-bottom: 24px;
-}
+  .gif-preview {
+    max-width: 100%;
+    margin-bottom: 24px;
+  }
 
-:global(.generate-button) {
-  display: block;
-  text-align: center;
-  width: 100%;
-  display: block;
-  max-width: none;
-}
-
+  :global(.generate-button) {
+    display: block;
+    text-align: center;
+    width: 100%;
+    display: block;
+    max-width: none;
+  }
 </style>

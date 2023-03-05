@@ -1,6 +1,6 @@
 import { GIFEncoder } from "./antimatter15-jsgif";
-import * as ExtremeSpeed from './animations/extreme-speed';
-import type { ExtremeSpeedOptions } from './animations/extreme-speed';
+import * as ExtremeSpeed from "./animations/extreme-speed";
+import type { ExtremeSpeedOptions } from "./animations/extreme-speed";
 
 export interface GifOptions {
   width: number;
@@ -64,11 +64,13 @@ self.onmessage = async (e) => {
 
   try {
     switch (data.animation.name) {
-      case 'extreme-speed':
-	ExtremeSpeed.init(gl);
-	break;
+      case "extreme-speed":
+        ExtremeSpeed.init(gl);
+        break;
       default:
-	((_: never) => {throw new Error('Unknown animation');})(data.animation.name);
+        ((_: never) => {
+          throw new Error("Unknown animation");
+        })(data.animation.name);
     }
   } catch (e) {
     const result: WorkerResultError = {
@@ -93,17 +95,19 @@ self.onmessage = async (e) => {
 
     try {
       switch (data.animation.name) {
-	case 'extreme-speed':
-	  ExtremeSpeed.render(gl, frame / data.gif.totalFrames, data.animation);
-	  break;
-	default:
-	  ((_: never) => {throw new Error('Unknown animation');})(data.animation.name);
+        case "extreme-speed":
+          ExtremeSpeed.render(gl, frame / data.gif.totalFrames, data.animation);
+          break;
+        default:
+          ((_: never) => {
+            throw new Error("Unknown animation");
+          })(data.animation.name);
       }
     } catch (e) {
       const result: WorkerResultError = {
-	id: data.id,
-	type: "error",
-	error: String(e),
+        id: data.id,
+        type: "error",
+        error: String(e),
       };
       postMessage(result);
       return;

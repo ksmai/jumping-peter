@@ -1,6 +1,6 @@
 import { compileProgram } from "../program";
 import type { Program } from "../program";
-import type { EditOptionsSlider, MappedOptions } from '../options';
+import type { EditOptionsSlider, MappedOptions } from "../options";
 
 const vertexShaderSource = `\
 #version 300 es
@@ -40,7 +40,11 @@ type Uniform = "u_percentage" | "u_velocity" | "u_image";
 
 type State =
   | { initialized: false }
-  | { initialized: true, program: Program<Attribute, Uniform>, vao: WebGLVertexArrayObject };
+  | {
+      initialized: true;
+      program: Program<Attribute, Uniform>;
+      vao: WebGLVertexArrayObject;
+    };
 
 let state: State = { initialized: false };
 
@@ -111,43 +115,51 @@ export function init(gl: WebGL2RenderingContext) {
   };
 }
 
-const VelocityXOptions: EditOptionsSlider<'velocityX'> = {
-  type: 'slider',
-  label: 'Horizontal velocity',
-  name: 'velocityX',
+const VelocityXOptions: EditOptionsSlider<"velocityX"> = {
+  type: "slider",
+  label: "Horizontal velocity",
+  name: "velocityX",
   default: -1,
   min: -1,
   max: 1,
   step: 1,
 } as const;
 
-const VelocityYOptions: EditOptionsSlider<'velocityY'> = {
-  type: 'slider',
-  label: 'Vertical velocity',
-  name: 'velocityY',
+const VelocityYOptions: EditOptionsSlider<"velocityY"> = {
+  type: "slider",
+  label: "Vertical velocity",
+  name: "velocityY",
   default: 0,
   min: -1,
   max: 1,
   step: 1,
 } as const;
 
-export const ExtremeSpeedEditOptions = [
-  VelocityXOptions,
-  VelocityYOptions,
-];
+export const ExtremeSpeedEditOptions = [VelocityXOptions, VelocityYOptions];
 
-export type ExtremeSpeedOptions = MappedOptions<typeof ExtremeSpeedEditOptions, 'extreme-speed'>;
+export type ExtremeSpeedOptions = MappedOptions<
+  typeof ExtremeSpeedEditOptions,
+  "extreme-speed"
+>;
 
-export function render(gl: WebGL2RenderingContext, percentage: number, options: ExtremeSpeedOptions) {
+export function render(
+  gl: WebGL2RenderingContext,
+  percentage: number,
+  options: ExtremeSpeedOptions,
+) {
   if (!state.initialized) {
-    throw new Error('Animation has not been initialized: extreme-speed');
+    throw new Error("Animation has not been initialized: extreme-speed");
   }
 
   gl.useProgram(state.program.program);
   gl.bindVertexArray(state.vao);
   gl.uniform1i(state.program.uniformLocations.u_image, 0);
   gl.uniform1f(state.program.uniformLocations.u_percentage, percentage);
-  gl.uniform2f(state.program.uniformLocations.u_velocity, options.velocityX, options.velocityY);
+  gl.uniform2f(
+    state.program.uniformLocations.u_velocity,
+    options.velocityX,
+    options.velocityY,
+  );
   gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
   return true;
