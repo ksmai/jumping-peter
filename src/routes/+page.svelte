@@ -130,7 +130,21 @@
 
 <Grid fullWidth padding>
   <Row>
-    <Column>jumping-peter v0.0.1</Column>
+    <Column>
+      <h1 class="title">
+        <img
+          class="demo"
+          src={`${base}/demo-${selectedAnimation.name}.gif`}
+          alt=""
+        />
+        jumping-peter v0.0.1
+        <img
+          class="demo"
+          src={`${base}/demo-${selectedAnimation.name}.gif`}
+          alt=""
+        />
+      </h1>
+    </Column>
   </Row>
 
   <Row>
@@ -310,5 +324,14 @@
 
   .error {
     color: red;
+  }
+
+  .title {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+
+  .demo {
+    width: 48px;
   }
 </style>
