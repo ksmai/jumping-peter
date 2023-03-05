@@ -7,6 +7,8 @@ import * as Spinning from "./animations/spinning";
 import type { SpinningOptions } from "./animations/spinning";
 import * as Excited from "./animations/excited";
 import type { ExcitedOptions } from "./animations/excited";
+import * as Expanding from "./animations/expanding";
+import type { ExpandingOptions } from "./animations/expanding";
 
 export interface GifOptions {
   width: number;
@@ -19,7 +21,7 @@ export interface GifOptions {
 export interface WorkerData {
   id: number;
   gif: GifOptions;
-  animation: ExtremeSpeedOptions | JumpingOptions | SpinningOptions | ExcitedOptions;
+  animation: ExtremeSpeedOptions | JumpingOptions | SpinningOptions | ExcitedOptions | ExpandingOptions;
 }
 
 export interface WorkerResultSuccess {
@@ -82,6 +84,9 @@ self.onmessage = async (e) => {
       case "excited":
         Excited.init(gl);
         break;
+      case "expanding":
+        Expanding.init(gl);
+        break;
       default:
         ((_: never) => {
           throw new Error("Unknown animation");
@@ -121,6 +126,9 @@ self.onmessage = async (e) => {
           break;
         case "excited":
           Excited.render(gl, frame / data.gif.totalFrames, data.animation);
+          break;
+        case "expanding":
+          Expanding.render(gl, frame / data.gif.totalFrames, data.animation);
           break;
         default:
           ((_: never) => {
