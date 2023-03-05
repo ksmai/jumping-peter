@@ -1,38 +1,48 @@
-# create-svelte
+# jumping-peter
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+jumping-peter is an application that generates dynamic GIF images from static images, e.g. user avatars. These GIF images are ideal for use in slack and similar applications as custom emojis.
 
-## Creating a project
+## Architecture
 
-If you're seeing this, you've probably already done this step. Congrats!
+The UI is built with Svelte, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte). Once the user provides the image file and the corresponding options, the main thread will send these data to a web worker. The web worker runs an `OffscreenCanvas` and renders the animation, frame by frame, with WebGL. Each frame is added to a GIF encoder, which is eventually used to create the resulting GIF file. The GIF file is sent back to the main thread for display and download.
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+## Supported animations
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+### jumping
 
-## Developing
+![jumping](/static/demo-jumping.gif)
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+### extreme-speed
+
+![extreme-speed](/static/demo-extreme-speed.gif)
+
+### spinning
+
+![spinning](/static/demo-spinning.gif)
+
+### excited
+
+![excited](/static/demo-excited.gif)
+
+### expanding
+
+![expanding](/static/demo-expanding.gif)
+
+## Development
 
 ```bash
 npm run dev
 
 # or start the server and open the app in a new browser tab
 npm run dev -- --open
-```
 
-## Building
-
-To create a production version of your app:
-
-```bash
+# create a production version of the app
 npm run build
+
+# preview the production build
+npm run preview
 ```
 
-You can preview the production build with `npm run preview`.
+## License
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+MIT
