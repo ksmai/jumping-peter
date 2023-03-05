@@ -15,8 +15,7 @@ out vec2 v_texCoord;
 void main() {
   gl_Position = vec4(a_clipCoord, 0, 1);
   vec2 offset = u_velocity * u_percentage;
-  // invert y-axis as it's direction is different in webgl/gif
-  v_texCoord = vec2(a_texCoord.x - offset.x, 1.0 - a_texCoord.y + offset.y);
+  v_texCoord = vec2(a_texCoord.x - offset.x, a_texCoord.y - offset.y);
 }
 `;
 
@@ -82,10 +81,10 @@ export function init(gl: WebGL2RenderingContext) {
     // prettier-ignore
     new Float32Array([
       // a_clipCoord.x, a_clipCoord.y, a_texCoord.x, a_texCoord
-      -1, -1, 0, 1,
-      -1, 1, 0, 0,
-      1, -1, 1, 1,
-      1, 1, 1, 0,
+      -1, -1, 0, 0,
+      -1, 1, 0, 1,
+      1, -1, 1, 0,
+      1, 1, 1, 1,
     ]),
     gl.STATIC_DRAW,
   );
