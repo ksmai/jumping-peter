@@ -98,6 +98,7 @@ export function compileProgram<A extends string, U extends string>(
   for (const uniform of uniforms) {
     const loc = gl.getUniformLocation(program, uniform);
     if (!loc) {
+      console.error(`Cannot get location of uniform: ${uniform}`);
       gl.deleteProgram(program);
       return null;
     }

@@ -13,9 +13,10 @@
     Link,
     Loading,
   } from "carbon-components-svelte";
-  import type { WorkerData, WorkerResult } from "../lib/worker";
-  import { getDefaultOptions } from "../lib/options";
-  import { ExtremeSpeedEditOptions } from "../lib/animations/extreme-speed";
+  import type { WorkerData, WorkerResult } from "$lib/worker";
+  import { getDefaultOptions } from "$lib/options";
+  import { ExtremeSpeedEditOptions } from "$lib/animations/extreme-speed";
+  import { JumpingEditOptions } from "$lib/animations/jumping";
 
   let result: WorkerResult | undefined;
   let worker: Worker | undefined;
@@ -25,16 +26,16 @@
 
   const animations = [
     {
+      name: "jumping",
+      text: "Jumping",
+      options: JumpingEditOptions,
+      defaults: getDefaultOptions(JumpingEditOptions),
+    },
+    {
       name: "extreme-speed",
       text: "Extreme speed",
       options: ExtremeSpeedEditOptions,
       defaults: getDefaultOptions(ExtremeSpeedEditOptions),
-    },
-    {
-      name: "extreme-speed-fake",
-      text: "Extreme speed fake",
-      options: [],
-      defaults: { a: 1, b: 2 },
     },
   ] as const;
 
@@ -284,5 +285,9 @@
     width: 100%;
     display: block;
     max-width: none;
+  }
+
+  .error {
+    color: red;
   }
 </style>
