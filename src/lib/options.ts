@@ -21,10 +21,18 @@ export interface EditOptionsSlider<Name extends string> {
   step: number;
 }
 
+// FIXME type is wrong for MappedOptions. use slider for everything now
+export interface EditOptionsToggle<Name extends string> {
+  type: "toggle";
+  name: Name;
+  label: string;
+  default: boolean;
+}
+
 type MappedType<T> = T extends { type: "slider" }
   ? number
-  : T extends { type: "text" }
-  ? string
+  : T extends { type: "toggle" }
+  ? boolean
   : never;
 
 type MappedName<T> = T extends { name: infer N }

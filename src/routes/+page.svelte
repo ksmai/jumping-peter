@@ -15,8 +15,9 @@
   } from "carbon-components-svelte";
   import type { WorkerData, WorkerResult } from "$lib/worker";
   import { getDefaultOptions } from "$lib/options";
-  import { ExtremeSpeedEditOptions } from "$lib/animations/extreme-speed";
   import { JumpingEditOptions } from "$lib/animations/jumping";
+  import { ExtremeSpeedEditOptions } from "$lib/animations/extreme-speed";
+  import { SpinningEditOptions } from "$lib/animations/spinning";
 
   let result: WorkerResult | undefined;
   let worker: Worker | undefined;
@@ -36,6 +37,12 @@
       text: "Extreme speed",
       options: ExtremeSpeedEditOptions,
       defaults: getDefaultOptions(ExtremeSpeedEditOptions),
+    },
+    {
+      name: "spinning",
+      text: "Spinning",
+      options: SpinningEditOptions,
+      defaults: getDefaultOptions(SpinningEditOptions),
     },
   ] as const;
 
