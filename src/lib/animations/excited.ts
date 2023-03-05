@@ -58,7 +58,6 @@ void main() {
 }
 `;
 
-
 const fragmentShaderSource = `\
 #version 300 es
 
@@ -108,7 +107,14 @@ export function init(gl: WebGL2RenderingContext) {
     vertexShaderSource,
     fragmentShaderSource,
     ["a_texCoord", "a_clipCoord"],
-    ["u_percentage", "u_image", "u_minRotateAngle", "u_maxRotateAngle", "u_minTranslate", "u_maxTranslate"],
+    [
+      "u_percentage",
+      "u_image",
+      "u_minRotateAngle",
+      "u_maxRotateAngle",
+      "u_minTranslate",
+      "u_maxTranslate",
+    ],
   );
   if (!program) {
     throw new Error("Failed to compile the program");
@@ -252,10 +258,24 @@ export function render(
   gl.bindVertexArray(state.vao);
   gl.uniform1f(state.program.uniformLocations.u_percentage, percentage);
   gl.uniform1i(state.program.uniformLocations.u_image, 0);
-  gl.uniform1f(state.program.uniformLocations.u_minRotateAngle, options.minRotateAngle);
-  gl.uniform1f(state.program.uniformLocations.u_maxRotateAngle, options.maxRotateAngle);
-  gl.uniform2f(state.program.uniformLocations.u_minTranslate, options.minTranslateX, options.minTranslateY);
-  gl.uniform2f(state.program.uniformLocations.u_maxTranslate, options.maxTranslateX, options.maxTranslateY);
+  gl.uniform1f(
+    state.program.uniformLocations.u_minRotateAngle,
+    options.minRotateAngle,
+  );
+  gl.uniform1f(
+    state.program.uniformLocations.u_maxRotateAngle,
+    options.maxRotateAngle,
+  );
+  gl.uniform2f(
+    state.program.uniformLocations.u_minTranslate,
+    options.minTranslateX,
+    options.minTranslateY,
+  );
+  gl.uniform2f(
+    state.program.uniformLocations.u_maxTranslate,
+    options.maxTranslateX,
+    options.maxTranslateY,
+  );
   gl.drawArrays(gl.TRIANGLE_FAN, 0, 10);
 
   return true;

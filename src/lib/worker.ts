@@ -21,7 +21,12 @@ export interface GifOptions {
 export interface WorkerData {
   id: number;
   gif: GifOptions;
-  animation: ExtremeSpeedOptions | JumpingOptions | SpinningOptions | ExcitedOptions | ExpandingOptions;
+  animation:
+    | ExtremeSpeedOptions
+    | JumpingOptions
+    | SpinningOptions
+    | ExcitedOptions
+    | ExpandingOptions;
 }
 
 export interface WorkerResultSuccess {

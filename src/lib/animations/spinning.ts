@@ -85,7 +85,14 @@ export function init(gl: WebGL2RenderingContext) {
     vertexShaderSource,
     fragmentShaderSource,
     ["a_texCoord", "a_clipCoord"],
-    ["u_percentage", "u_image", "u_startAngle", "u_endAngle", "u_alternate", "u_origin"],
+    [
+      "u_percentage",
+      "u_image",
+      "u_startAngle",
+      "u_endAngle",
+      "u_alternate",
+      "u_origin",
+    ],
   );
   if (!program) {
     throw new Error("Failed to compile the program");
@@ -221,7 +228,11 @@ export function render(
   gl.uniform1f(state.program.uniformLocations.u_startAngle, options.startAngle);
   gl.uniform1f(state.program.uniformLocations.u_endAngle, options.endAngle);
   gl.uniform1i(state.program.uniformLocations.u_alternate, options.alternate);
-  gl.uniform2f(state.program.uniformLocations.u_origin, options.originX, options.originY);
+  gl.uniform2f(
+    state.program.uniformLocations.u_origin,
+    options.originX,
+    options.originY,
+  );
   gl.drawArrays(gl.TRIANGLE_FAN, 0, 10);
 
   return true;
