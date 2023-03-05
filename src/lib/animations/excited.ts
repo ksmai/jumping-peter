@@ -10,31 +10,54 @@ in vec2 a_texCoord;
 
 uniform float u_percentage;
 
-uniform float u_startAngle;
-uniform float u_endAngle;
-
-uniform int u_alternate;
-uniform vec2 u_origin;
+uniform float u_minRotateAngle;
+uniform float u_maxRotateAngle;
+uniform vec2 u_minTranslate;
+uniform vec2 u_maxTranslate;
 
 out vec2 v_texCoord;
 
+// https://stackoverflow.com/questions/5149544/can-i-generate-a-random-number-inside-a-pixel-shader
+float random(vec2 p) {
+  return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
+}
+
 void main() {
-  float angle;
-  if (u_alternate == 0) {
-    angle = radians(mix(u_startAngle, u_endAngle, u_percentage));
-  } else if (u_percentage < 0.5) {
-    angle = radians(mix(u_startAngle, u_endAngle, u_percentage * 2.0));
-  } else {
-    angle = radians(mix(u_endAngle, u_startAngle, u_percentage * 2.0 - 1.0));
+  float r = random(vec2(u_percentage, u_percentage));
+  float angle = radians(mix(u_minRotateAngle, u_maxRotateAngle, r));
+
+  r = random(vec2(r, r));
+  if (r < 0.5) {
+    angle = -angle;
   }
+
 
   float cos_angle = cos(angle);
   float sin_angle = sin(angle);
   mat2 rotationMatrix = mat2(cos_angle, sin_angle, -sin_angle, cos_angle);
-  gl_Position = vec4(rotationMatrix * (a_clipCoord - u_origin) + u_origin, 0.0, 1.0);
-  v_texCoord = vec2(a_texCoord.x, a_texCoord.y);
+
+  r = random(vec2(r, r));
+  vec2 displacement = mix(u_minTranslate, u_maxTranslate, r);
+
+  r = random(vec2(r, r));
+  if (r < 0.5) {
+    displacement = -displacement;
+  }
+
+  mat3 translationMatrix = mat3(
+    1.0, 0.0, 0.0,
+    0.0, 1.0, 0.0,
+    displacement.x, displacement.y, 0.0
+  );
+
+  gl_Position = vec4(translationMatrix * vec3(rotationMatrix * a_clipCoord, 1.0), 1.0);
+
+  r = random(vec2(r, r));
+  bool flip = r < 0.5;
+  v_texCoord = vec2(flip ? (1.0 - a_texCoord.x) : a_texCoord.x, a_texCoord.y);
 }
 `;
+
 
 const fragmentShaderSource = `\
 #version 300 es
@@ -55,10 +78,10 @@ type Attribute = "a_texCoord" | "a_clipCoord";
 type Uniform =
   | "u_percentage"
   | "u_image"
-  | "u_startAngle"
-  | "u_endAngle"
-  | "u_alternate"
-  | "u_origin";
+  | "u_minRotateAngle"
+  | "u_maxRotateAngle"
+  | "u_minTranslate"
+  | "u_maxTranslate";
 
 type State =
   | { initialized: false }
@@ -85,7 +108,7 @@ export function init(gl: WebGL2RenderingContext) {
     vertexShaderSource,
     fragmentShaderSource,
     ["a_texCoord", "a_clipCoord"],
-    ["u_percentage", "u_image", "u_startAngle", "u_endAngle", "u_alternate", "u_origin"],
+    ["u_percentage", "u_image", "u_minRotateAngle", "u_maxRotateAngle", "u_minTranslate", "u_maxTranslate"],
   );
   if (!program) {
     throw new Error("Failed to compile the program");
@@ -143,85 +166,96 @@ export function init(gl: WebGL2RenderingContext) {
   };
 }
 
-const startAngleOptions: EditOptionsSlider<"startAngle"> = {
+const minRotateAngleOptions: EditOptionsSlider<"minRotateAngle"> = {
   type: "slider",
-  label: "Starting angle",
-  name: "startAngle",
-  default: 0,
+  label: "Minimum rotation angle",
+  name: "minRotateAngle",
+  default: 15,
   min: -360,
   max: 360,
   step: 1,
 } as const;
 
-const endAngleOptions: EditOptionsSlider<"endAngle"> = {
+const maxRotateAngleOptions: EditOptionsSlider<"maxRotateAngle"> = {
   type: "slider",
-  label: "Ending angle",
-  name: "endAngle",
-  default: 360,
+  label: "Maximum rotation angle",
+  name: "maxRotateAngle",
+  default: 25,
   min: -360,
   max: 360,
   step: 1,
 } as const;
 
-const alternateOptions: EditOptionsSlider<"alternate"> = {
+const minTranslateXOptions: EditOptionsSlider<"minTranslateX"> = {
   type: "slider",
-  label: "Alterate",
-  name: "alternate",
+  label: "Minimum translation (X-axis)",
+  name: "minTranslateX",
   default: 0,
   min: 0,
   max: 1,
-  step: 1,
+  step: 0.01,
 } as const;
 
-const originXOptions: EditOptionsSlider<"originX"> = {
+const maxTranslateXOptions: EditOptionsSlider<"maxTranslateX"> = {
   type: "slider",
-  label: "Rotation origin (X-axis)",
-  name: "originX",
-  default: 0,
-  min: -1,
+  label: "Maximum translation (X-axis)",
+  name: "maxTranslateX",
+  default: 0.1,
+  min: 0,
   max: 1,
   step: 0.01,
 } as const;
 
-const originYOptions: EditOptionsSlider<"originY"> = {
+const minTranslateYOptions: EditOptionsSlider<"minTranslateY"> = {
   type: "slider",
-  label: "Rotation origin (Y-axis)",
-  name: "originY",
+  label: "Minimum translation (Y-axis)",
+  name: "minTranslateY",
   default: 0,
-  min: -1,
+  min: 0,
   max: 1,
   step: 0.01,
 } as const;
 
-export const SpinningEditOptions = [
-  startAngleOptions,
-  endAngleOptions,
-  alternateOptions,
-  originXOptions,
-  originYOptions,
+const maxTranslateYOptions: EditOptionsSlider<"maxTranslateY"> = {
+  type: "slider",
+  label: "Maximum translation (Y-axis)",
+  name: "maxTranslateY",
+  default: 0.1,
+  min: 0,
+  max: 1,
+  step: 0.01,
+} as const;
+
+export const ExcitedEditOptions = [
+  minRotateAngleOptions,
+  maxRotateAngleOptions,
+  minTranslateXOptions,
+  maxTranslateXOptions,
+  minTranslateYOptions,
+  maxTranslateYOptions,
 ];
 
-export type SpinningOptions = MappedOptions<
-  typeof SpinningEditOptions,
-  "spinning"
+export type ExcitedOptions = MappedOptions<
+  typeof ExcitedEditOptions,
+  "excited"
 >;
 
 export function render(
   gl: WebGL2RenderingContext,
   percentage: number,
-  options: SpinningOptions,
+  options: ExcitedOptions,
 ) {
   if (!state.initialized) {
-    throw new Error("Animation has not been initialized: spinning");
+    throw new Error("Animation has not been initialized: excited");
   }
   gl.useProgram(state.program.program);
   gl.bindVertexArray(state.vao);
   gl.uniform1f(state.program.uniformLocations.u_percentage, percentage);
   gl.uniform1i(state.program.uniformLocations.u_image, 0);
-  gl.uniform1f(state.program.uniformLocations.u_startAngle, options.startAngle);
-  gl.uniform1f(state.program.uniformLocations.u_endAngle, options.endAngle);
-  gl.uniform1i(state.program.uniformLocations.u_alternate, options.alternate);
-  gl.uniform2f(state.program.uniformLocations.u_origin, options.originX, options.originY);
+  gl.uniform1f(state.program.uniformLocations.u_minRotateAngle, options.minRotateAngle);
+  gl.uniform1f(state.program.uniformLocations.u_maxRotateAngle, options.maxRotateAngle);
+  gl.uniform2f(state.program.uniformLocations.u_minTranslate, options.minTranslateX, options.minTranslateY);
+  gl.uniform2f(state.program.uniformLocations.u_maxTranslate, options.maxTranslateX, options.maxTranslateY);
   gl.drawArrays(gl.TRIANGLE_FAN, 0, 10);
 
   return true;

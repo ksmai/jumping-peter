@@ -207,7 +207,7 @@ export function render(
   options: JumpingOptions,
 ) {
   if (!state.initialized) {
-    throw new Error("Animation has not been initialized: extreme-speed");
+    throw new Error("Animation has not been initialized: jumping");
   }
   gl.useProgram(state.program.program);
   gl.bindVertexArray(state.vao);

@@ -18,6 +18,7 @@
   import { JumpingEditOptions } from "$lib/animations/jumping";
   import { ExtremeSpeedEditOptions } from "$lib/animations/extreme-speed";
   import { SpinningEditOptions } from "$lib/animations/spinning";
+  import { ExcitedEditOptions } from "$lib/animations/excited";
 
   let result: WorkerResult | undefined;
   let worker: Worker | undefined;
@@ -43,6 +44,12 @@
       text: "Spinning",
       options: SpinningEditOptions,
       defaults: getDefaultOptions(SpinningEditOptions),
+    },
+    {
+      name: "excited",
+      text: "Excited",
+      options: ExcitedEditOptions,
+      defaults: getDefaultOptions(ExcitedEditOptions),
     },
   ] as const;
 
