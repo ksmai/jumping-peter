@@ -1,5 +1,6 @@
 import { compileProgram } from "../program";
 import type { Program } from "../program";
+import type { EditOptionsSlider, MappedOptions } from '../options';
 
 const vertexShaderSource = `\
 #version 300 es
@@ -130,11 +131,32 @@ function updateTexture(gl: WebGL2RenderingContext, image: TexImageSource) {
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
 }
 
-export interface ExtremeSpeedOptions {
-  name: 'extreme-speed';
-  velocityX: number;
-  velocityY: number;
-}
+const VelocityXOptions: EditOptionsSlider<'velocityX'> = {
+  type: 'slider',
+  label: 'Horizontal velocity',
+  name: 'velocityX',
+  default: -1,
+  min: -1,
+  max: 1,
+  step: 1,
+} as const;
+
+const VelocityYOptions: EditOptionsSlider<'velocityY'> = {
+  type: 'slider',
+  label: 'Vertical velocity',
+  name: 'velocityY',
+  default: 0,
+  min: -1,
+  max: 1,
+  step: 1,
+} as const;
+
+export const ExtremeSpeedEditOptions = [
+  VelocityXOptions,
+  VelocityYOptions,
+];
+
+export type ExtremeSpeedOptions = MappedOptions<typeof ExtremeSpeedEditOptions, 'extreme-speed'>;
 
 export function render(gl: WebGL2RenderingContext, percentage: number, options: ExtremeSpeedOptions) {
   if (!state.initialized) {

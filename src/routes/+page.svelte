@@ -33,7 +33,7 @@
         name: 'extreme-speed',
         velocityX: 1,
         velocityY: 0,
-      },
+      } as any,
     };
 
     worker?.postMessage(data);
