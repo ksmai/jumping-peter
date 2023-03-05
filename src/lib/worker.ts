@@ -30,14 +30,13 @@ export interface WorkerResultError {
 
 export type WorkerResult = WorkerResultSuccess | WorkerResultError;
 
+const canvas = new OffscreenCanvas(128, 128);
+const gl = canvas.getContext("webgl2") as WebGL2RenderingContext;
+let texture: WebGLTexture | null = null;
+
 self.onmessage = async (e) => {
   const data = e.data as WorkerData;
-  const response = await fetch(data.gif.imageUrl);
-  const blob = await response.blob();
-  const image = await createImageBitmap(blob);
 
-  const canvas = new OffscreenCanvas(data.gif.width, data.gif.height);
-  const gl = canvas.getContext("webgl2") as WebGL2RenderingContext;
   if (!gl) {
     const result: WorkerResultError = {
       id: data.id,
@@ -48,10 +47,25 @@ self.onmessage = async (e) => {
     return;
   }
 
+  const response = await fetch(data.gif.imageUrl);
+  const blob = await response.blob();
+  const image = await createImageBitmap(blob);
+
+  if (texture) {
+    gl.deleteTexture(texture);
+  }
+  texture = gl.createTexture();
+  gl.activeTexture(gl.TEXTURE0 + 0);
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+
+  canvas.width = data.gif.width;
+  canvas.height = data.gif.height;
+
   try {
     switch (data.animation.name) {
       case 'extreme-speed':
-	ExtremeSpeed.init(gl, image);
+	ExtremeSpeed.init(gl);
 	break;
       default:
 	((_: never) => {throw new Error('Unknown animation');})(data.animation.name);

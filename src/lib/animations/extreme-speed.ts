@@ -40,13 +40,17 @@ type Uniform = "u_percentage" | "u_velocity" | "u_image";
 
 type State =
   | { initialized: false }
-  | { initialized: true, program: Program<Attribute, Uniform>, vao: WebGLVertexArrayObject, texture?: WebGLTexture };
+  | { initialized: true, program: Program<Attribute, Uniform>, vao: WebGLVertexArrayObject };
 
 let state: State = { initialized: false };
 
-export function init(gl: WebGL2RenderingContext, image: TexImageSource) {
+export function init(gl: WebGL2RenderingContext) {
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+
   if (state.initialized) {
-    updateTexture(gl, image);
     return;
   }
 
@@ -105,30 +109,6 @@ export function init(gl: WebGL2RenderingContext, image: TexImageSource) {
     program,
     vao,
   };
-
-  updateTexture(gl, image);
-}
-
-function updateTexture(gl: WebGL2RenderingContext, image: TexImageSource) {
-  if (!state.initialized) {
-    throw new Error('Animation has not been initialized: extreme-speed');
-  }
-  if (state.texture) {
-    gl.deleteTexture(state.texture);
-  }
-
-  const texture = gl.createTexture();
-  if (!texture) {
-    throw new Error('Failed to create texture');
-  }
-  state.texture = texture;
-  gl.activeTexture(gl.TEXTURE0 + 0);
-  gl.bindTexture(gl.TEXTURE_2D, texture);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
 }
 
 const VelocityXOptions: EditOptionsSlider<'velocityX'> = {
