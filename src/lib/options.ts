@@ -28,7 +28,7 @@ export type MappedOptions<T extends unknown[], Name extends string> = Omit<{
 export function getDefaultOptions<T, Name extends string>(editOptions: T[]): MappedOptions<T[], Name> {
   const result = {} as any;
   for (const options of editOptions) {
-    result[(options as any).name] = result[(options as any).default];
+    result[(options as any).name] = (options as any).default;
   }
   return result;
 }
