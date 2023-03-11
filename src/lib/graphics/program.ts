@@ -1,11 +1,11 @@
-export const ATTRIB_LOCATIONS: Record<string, number> = {
+export const ATTRIB_LOCATIONS = {
   a_position: 0,
   a_texCoords: 1,
-};
+} as const;
 
 export interface Program {
-  program: WebGLProgram;
-  uniformLocations: Record<string, WebGLUniformLocation | null>;
+  readonly program: WebGLProgram;
+  readonly uniformLocations: Record<string, WebGLUniformLocation | null>;
 }
 
 const SHADER_PAIRS = {
@@ -40,7 +40,7 @@ void main {
 }
     `,
   },
-};
+} as const;
 
 type ShaderType = keyof typeof SHADER_PAIRS;
 
