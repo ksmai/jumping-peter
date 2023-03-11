@@ -1,3 +1,4 @@
+import { loadImage } from "./graphics/texture";
 import { GIFEncoder } from "./antimatter15-jsgif";
 import * as ExtremeSpeed from "./animations/extreme-speed";
 import type { ExtremeSpeedOptions } from "./animations/extreme-speed";
@@ -45,7 +46,6 @@ export type WorkerResult = WorkerResultSuccess | WorkerResultError;
 
 const canvas = new OffscreenCanvas(128, 128);
 const gl = canvas.getContext("webgl2") as WebGL2RenderingContext;
-let texture: WebGLTexture | null = null;
 
 self.onmessage = async (e) => {
   const data = e.data as WorkerData;
@@ -60,17 +60,7 @@ self.onmessage = async (e) => {
     return;
   }
 
-  const response = await fetch(data.gif.imageUrl);
-  const blob = await response.blob();
-  const image = await createImageBitmap(blob);
-
-  if (texture) {
-    gl.deleteTexture(texture);
-  }
-  texture = gl.createTexture();
-  gl.activeTexture(gl.TEXTURE0 + 0);
-  gl.bindTexture(gl.TEXTURE_2D, texture);
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+  await loadImage(gl, data.gif.imageUrl);
 
   canvas.width = data.gif.width;
   canvas.height = data.gif.height;
