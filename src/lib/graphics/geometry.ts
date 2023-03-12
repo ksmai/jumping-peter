@@ -65,15 +65,16 @@ const geometryCreators = {
 
 type GeometryType = keyof typeof geometryCreators;
 
-const geometries: Partial<Record<GeometryType, Geometry>> = {};
+export class GeometryFactory {
+  private readonly geometries: Partial<Record<GeometryType, Geometry>> = {};
 
-export function createGeometry(
-  gl: WebGL2RenderingContext,
-  type: GeometryType,
-): Geometry {
-  let result = geometries[type];
-  if (!result) {
-    result = geometries[type] = geometryCreators[type](gl);
+  constructor(private readonly gl: WebGL2RenderingContext) {}
+
+  createGeometry(type: GeometryType): Geometry {
+    let result = this.geometries[type];
+    if (!result) {
+      result = this.geometries[type] = geometryCreators[type](this.gl);
+    }
+    return result;
   }
-  return result;
 }

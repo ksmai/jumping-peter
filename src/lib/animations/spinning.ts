@@ -2,8 +2,8 @@ import { compileProgram } from "../program";
 import type { Program } from "../program";
 import type { EditOptionsSlider, MappedOptions } from "../options";
 import type { Sprite } from "../graphics/renderer";
-import { createProgram } from "../graphics/program";
-import { createGeometry } from "../graphics/geometry";
+import type { ProgramFactory } from "../graphics/program";
+import type { GeometryFactory } from "../graphics/geometry";
 
 const vertexShaderSource = `\
 #version 300 es
@@ -242,11 +242,12 @@ export function render(
 }
 
 export function createSprites(
-  gl: WebGL2RenderingContext,
+  programFactory: ProgramFactory,
+  geometryFactory: GeometryFactory,
   options: SpinningOptions,
 ): Sprite[] {
-  const program = createProgram(gl, "default");
-  const geometry = createGeometry(gl, "full");
+  const program = programFactory.createProgram("default");
+  const geometry = geometryFactory.createGeometry("full");
 
   return [
     {

@@ -1,6 +1,6 @@
 import type { Program } from "./program";
 import { setUniforms } from "./program";
-import { texture } from "./texture";
+import type { SingleTexture } from "./texture";
 import type { Geometry } from "./geometry";
 
 export interface Sprite {
@@ -13,6 +13,7 @@ export function render(
   gl: WebGL2RenderingContext,
   t: number,
   sprites: Sprite[],
+  texture: SingleTexture,
 ): void {
   gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
   gl.clearColor(1, 1, 1, 1);

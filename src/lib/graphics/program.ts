@@ -44,24 +44,25 @@ void main() {
 
 type ShaderType = keyof typeof SHADER_PAIRS;
 
-const programs: Partial<Record<ShaderType, Program>> = {};
+export class ProgramFactory {
+  private readonly programs: Partial<Record<ShaderType, Program>> = {};
 
-export function createProgram(
-  gl: WebGL2RenderingContext,
-  type: ShaderType,
-): Program {
-  let result = programs[type];
-  if (!result) {
-    result = programs[type] = {
-      program: linkProgram(
-        gl,
-        SHADER_PAIRS[type].vertex,
-        SHADER_PAIRS[type].fragment,
-      ),
-      uniformLocations: {},
-    };
+  constructor(private readonly gl: WebGL2RenderingContext) {}
+
+  createProgram(type: ShaderType): Program {
+    let result = this.programs[type];
+    if (!result) {
+      result = this.programs[type] = {
+        program: linkProgram(
+          this.gl,
+          SHADER_PAIRS[type].vertex,
+          SHADER_PAIRS[type].fragment,
+        ),
+        uniformLocations: {},
+      };
+    }
+    return result;
   }
-  return result;
 }
 
 export function setUniforms(

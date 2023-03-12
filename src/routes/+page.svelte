@@ -14,7 +14,7 @@
     Loading,
   } from "carbon-components-svelte";
   import type { AnimationRequest } from "$lib/animator";
-  import * as animator from "$lib/animator";
+  import { Animator } from "$lib/animator";
   import { getDefaultOptions } from "$lib/options";
   import { JumpingEditOptions } from "$lib/animations/jumping";
   import { ExtremeSpeedEditOptions } from "$lib/animations/extreme-speed";
@@ -28,7 +28,7 @@
   const defaultImageUrl = `${base}/favicon.png`;
 
   onMount(() => {
-    animator.init(canvas);
+    const animator = new Animator(canvas);
     animator.animate({
       gif: {
         width: 128,
@@ -37,7 +37,7 @@
         totalFrames: 4,
         imageUrl: defaultImageUrl,
       },
-      animation: getDefaultOptions(SpinningEditOptions),
+      animation: { name: 'spinning', ...getDefaultOptions(SpinningEditOptions) },
     }, (frame) => {
       console.log(`frame ${frame} ok`);
     }).then((result) => {
@@ -49,14 +49,44 @@
         width: 128,
         height: 128,
         delayMs: 1000,
-        totalFrames: 4,
+        totalFrames: 5,
         imageUrl: defaultImageUrl,
       },
       frame: 0,
-      animation: getDefaultOptions(SpinningEditOptions),
+      animation: { name: 'spinning', ...getDefaultOptions(SpinningEditOptions) },
     }).then((result) => {
       console.log('anmiation done', result);
     }).catch((e) => console.error(`Animation failed: ${e}`));
+
+    animator.renderFrame({
+      gif: {
+        width: 128,
+        height: 128,
+        delayMs: 1000,
+        totalFrames: 3,
+        imageUrl: defaultImageUrl,
+      },
+      frame: 2,
+      animation: { name: 'spinning', ...getDefaultOptions(SpinningEditOptions) },
+    }).then((result) => {
+      console.log('anmiation done', result);
+    }).catch((e) => console.error(`Animation failed: ${e}`));
+
+    animator.animate({
+      gif: {
+        width: 128,
+        height: 128,
+        delayMs: 1000,
+        totalFrames: 5,
+        imageUrl: defaultImageUrl,
+      },
+      animation: { name: 'spinning', ...getDefaultOptions(SpinningEditOptions) },
+    }, (frame) => {
+      console.log(`frame ${frame} ok`);
+    }).then((result) => {
+      console.log('anmiation done', result);
+    }).catch((e) => console.error(`Animation failed: ${e}`));
+
   });
 
   const animations = [
