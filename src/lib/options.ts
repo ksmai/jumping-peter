@@ -41,6 +41,18 @@ export function createCoordinate<Name extends string>(
   };
 }
 
+export function createScale<Name extends string>(
+  options: CreateSlider<Name>,
+): Slider<Name> {
+  return {
+    ...options,
+    type: "slider",
+    min: 0.1,
+    max: 5,
+    step: 0.1,
+  };
+}
+
 interface Toggle<Name extends string> {
   type: "toggle";
   name: Name;
@@ -62,20 +74,20 @@ export function createToggle<Name extends string>(
   };
 }
 
-type MappedType<T> = T extends { type: "slider" }
+type OptionType<T> = T extends { type: "slider" }
   ? number
   : T extends { type: "toggle" }
   ? boolean
   : never;
 
-type MappedName<T> = T extends { name: infer N }
+type OptionName<T> = T extends { name: infer N }
   ? N extends string
     ? N
     : never
   : never;
 
 export type MappedOptions<T extends readonly unknown[], Name extends string> = {
-  [U in T[number] as MappedName<U>]: MappedType<U>;
+  [U in T[number] as OptionName<U>]: OptionType<U>;
 } & { name: Name };
 
 export function getDefaultOptions<

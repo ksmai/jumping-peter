@@ -45,12 +45,12 @@ export const EditOptions = [
   } as const),
 ];
 
-export type RenderOptions = MappedOptions<typeof EditOptions, Name>;
+export type RenderOption = MappedOptions<typeof EditOptions, Name>;
 
 export function createSprites(
   programFactory: ProgramFactory,
   geometryFactory: GeometryFactory,
-  options: RenderOptions,
+  options: RenderOption,
 ): Sprite[] {
   const program = programFactory.createProgram("default");
   const geometry = geometryFactory.createGeometry("full");

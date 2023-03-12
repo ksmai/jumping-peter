@@ -1,7 +1,7 @@
 import { SingleTexture } from "./graphics/texture";
 import { GIFEncoder } from "./antimatter15-jsgif";
 import * as Spinning from "./animations/spinning";
-import type { SpinningOptions } from "./animations/spinning";
+import * as Expanding from "./animations/expanding";
 import type { Sprite } from "./graphics/renderer";
 import { render } from "./graphics/renderer";
 import { ProgramFactory } from "./graphics/program";
@@ -15,7 +15,7 @@ export interface GifOptions {
   imageUrl: string;
 }
 
-export type AnimationOptions = SpinningOptions;
+export type AnimationOptions = Spinning.RenderOption | Expanding.RenderOption;
 
 export interface AnimationRequestGif {
   gif: GifOptions;
@@ -127,10 +127,16 @@ export class Animator {
           this.geometryFactory,
           options,
         );
+      case "expanding":
+        return Expanding.createSprites(
+          this.programFactory,
+          this.geometryFactory,
+          options,
+        );
       default:
-        ((_: never) => {
-          throw new Error(`Unknown animation options: ${options.name}`);
-        })(options.name);
+        ((o: never) => {
+          throw new Error(`Unknown animation options: ${JSON.stringify(o)}`);
+        })(options);
     }
   }
 

@@ -21,12 +21,10 @@
         imageUrl: defaultImageUrl,
       },
       animation: {
-        name: 'spinning',
-        startAngle: 0,
-        endAngle: 90,
-        alternate: true,
-        originX: 1,
-        originY: 0,
+        name: 'expanding',
+        minScale: 0.1,
+        maxScale: 5,
+        alternate: false,
       },
     }, (frame) => {
       console.log(`frame ${frame} ok`);
