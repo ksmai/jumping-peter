@@ -1,6 +1,9 @@
 import { compileProgram } from "../program";
 import type { Program } from "../program";
 import type { EditOptionsSlider, MappedOptions } from "../options";
+import type { Sprite } from "../graphics/renderer";
+import { createProgram } from "../graphics/program";
+import { createGeometry } from "../graphics/geometry";
 
 const vertexShaderSource = `\
 #version 300 es
@@ -236,4 +239,27 @@ export function render(
   gl.drawArrays(gl.TRIANGLE_FAN, 0, 10);
 
   return true;
+}
+
+export function createSprites(
+  gl: WebGL2RenderingContext,
+  options: SpinningOptions,
+): Sprite[] {
+  const program = createProgram(gl, "default");
+  const geometry = createGeometry(gl, "full");
+
+  return [
+    {
+      program,
+      geometry,
+      getUniforms(t: number) {
+        const angle = t * 2 * Math.PI;
+        const cos = Math.cos(angle);
+        const sin = Math.sin(angle);
+        return {
+          u_transform: [cos, sin, 0, -sin, cos, 0, 0, 0, 0],
+        };
+      },
+    },
+  ];
 }

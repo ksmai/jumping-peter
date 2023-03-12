@@ -13,7 +13,8 @@
     Link,
     Loading,
   } from "carbon-components-svelte";
-  import type { WorkerData, WorkerResult } from "$lib/worker";
+  import type { AnimationRequest } from "$lib/animator";
+  import * as animator from "$lib/animator";
   import { getDefaultOptions } from "$lib/options";
   import { JumpingEditOptions } from "$lib/animations/jumping";
   import { ExtremeSpeedEditOptions } from "$lib/animations/extreme-speed";
@@ -21,11 +22,42 @@
   import { ExcitedEditOptions } from "$lib/animations/excited";
   import { ExpandingEditOptions } from "$lib/animations/expanding";
 
-  let result: WorkerResult | undefined;
-  let worker: Worker | undefined;
   let generating = false;
+  let canvas: HTMLCanvasElement;
 
   const defaultImageUrl = `${base}/favicon.png`;
+
+  onMount(() => {
+    animator.init(canvas);
+    animator.animate({
+      gif: {
+        width: 128,
+        height: 128,
+        delayMs: 1000,
+        totalFrames: 4,
+        imageUrl: defaultImageUrl,
+      },
+      animation: getDefaultOptions(SpinningEditOptions),
+    }, (frame) => {
+      console.log(`frame ${frame} ok`);
+    }).then((result) => {
+      console.log('anmiation done', result);
+    }).catch((e) => console.error(`Animation failed: ${e}`));
+
+    animator.renderFrame({
+      gif: {
+        width: 128,
+        height: 128,
+        delayMs: 1000,
+        totalFrames: 4,
+        imageUrl: defaultImageUrl,
+      },
+      frame: 0,
+      animation: getDefaultOptions(SpinningEditOptions),
+    }).then((result) => {
+      console.log('anmiation done', result);
+    }).catch((e) => console.error(`Animation failed: ${e}`));
+  });
 
   const animations = [
     {
@@ -60,10 +92,9 @@
     },
   ] as const;
 
-  let selectedAnimation: (typeof animations)[number] = animations[0];
+  let selectedAnimation: (typeof animations)[number] = animations[2];
 
-  const data: WorkerData = {
-    id: 0,
+  const data: AnimationRequest = {
     gif: {
       width: 128,
       height: 128,
@@ -95,17 +126,6 @@
     } as any;
   }
 
-  onMount(async () => {
-    const { default: Worker } = await import("../lib/worker?worker");
-    worker = new Worker();
-    worker.onmessage = (e) => {
-      if (e.data.id === data.id) {
-        result = e.data;
-        generating = false;
-      }
-    };
-  });
-
   function onImageChange(e: Event) {
     const target = e.target as HTMLInputElement;
     const file = target.files?.[0];
@@ -119,16 +139,10 @@
     data.gif.imageUrl = URL.createObjectURL(file);
   }
 
-  function onGenerate() {
-    if (!generating) {
-      data.id += 1;
-      generating = true;
-      worker?.postMessage(data);
-    }
-  }
 </script>
 
 <Grid fullWidth padding>
+  <canvas bind:this={canvas}></canvas>
   <Row>
     <Column>
       <h1 class="title">
@@ -245,27 +259,11 @@
 
       <Button
         class="generate-button"
-        on:click={onGenerate}
-        disabled={generating}>Generate</Button
-      >
+        >Generate</Button>
 
       <div class="separator" />
     </Column>
 
-    <Column sm={4} md={8} lg={8}>
-      <div class="result-container">
-        {#if generating}
-          <Loading withOverlay={false} />
-        {:else if result?.type === "success"}
-          <img class="gif-preview" src={result.dataUri} alt="gif" />
-          <Link href={result.dataUri} download="jumping-peter.gif"
-            >Download</Link
-          >
-        {:else if result?.type === "error"}
-          <p class="error">Failed: {result.error}</p>
-        {/if}
-      </div>
-    </Column>
   </Row>
 </Grid>
 

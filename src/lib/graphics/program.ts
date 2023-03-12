@@ -35,7 +35,7 @@ uniform sampler2D u_image;
 
 out vec4 outColor;
 
-void main {
+void main() {
   outColor = texture(u_image, v_texCoords);
 }
     `,
@@ -71,20 +71,28 @@ export function setUniforms(
 ): void {
   for (const [name, value] of Object.entries(uniforms)) {
     if (!(name in program.uniformLocations)) {
-      program.uniformLocations[name] = gl.getUniformLocation(program, name);
+      program.uniformLocations[name] = gl.getUniformLocation(
+        program.program,
+        name,
+      );
     }
+    const location = program.uniformLocations[name];
     if (name === "u_image" && typeof value === "number") {
-      gl.uniform1i(name, value);
+      gl.uniform1i(location, value);
     } else if (Array.isArray(value)) {
       if (value.length === 2) {
-        gl.uniform2fv(name, value);
+        gl.uniform2fv(location, value);
       } else if (value.length === 3) {
-        gl.uniform3fv(name, value);
+        gl.uniform3fv(location, value);
       } else if (value.length === 4) {
-        gl.uniform4fv(name, value);
+        gl.uniform4fv(location, value);
+      } else if (value.length === 9) {
+        gl.uniformMatrix3fv(location, false, value);
+      } else if (value.length === 16) {
+        gl.uniformMatrix4fv(location, false, value);
       }
     } else if (typeof value === "number") {
-      gl.uniform1f(name, value);
+      gl.uniform1f(location, value);
     }
   }
 }

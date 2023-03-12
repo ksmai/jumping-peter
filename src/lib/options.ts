@@ -41,7 +41,10 @@ type MappedName<T> = T extends { name: infer N }
     : never
   : never;
 
-export type MappedOptions<T extends unknown[], Name extends string> = Omit<
+export type MappedOptions<
+  T extends readonly unknown[],
+  Name extends string,
+> = Omit<
   {
     [Index in keyof T as MappedName<T[Index]>]: MappedType<T[Index]>;
   },
@@ -50,7 +53,7 @@ export type MappedOptions<T extends unknown[], Name extends string> = Omit<
 
 // FIXME types
 export function getDefaultOptions<T, Name extends string>(
-  editOptions: T[],
+  editOptions: readonly T[],
 ): MappedOptions<T[], Name> {
   const result = {} as any;
   for (const options of editOptions) {

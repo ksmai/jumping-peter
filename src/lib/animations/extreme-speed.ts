@@ -134,7 +134,10 @@ const VelocityYOptions: EditOptionsSlider<"velocityY"> = {
   step: 1,
 } as const;
 
-export const ExtremeSpeedEditOptions = [VelocityXOptions, VelocityYOptions];
+export const ExtremeSpeedEditOptions = [
+  VelocityXOptions,
+  VelocityYOptions,
+] as const;
 
 export type ExtremeSpeedOptions = MappedOptions<
   typeof ExtremeSpeedEditOptions,
