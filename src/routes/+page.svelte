@@ -21,9 +21,13 @@
         imageUrl: defaultImageUrl,
       },
       animation: {
-        name: 'extreme-speed',
-        directionX: 1,
-        directionY: -1,
+        name: 'excited',
+        minAngle: 15,
+        maxAngle: 25,
+        minCenterX: 0.5,
+        maxCenterX: 0.55,
+        minCenterY: 0.5,
+        maxCenterY: 0.55,
       },
     }, (frame) => {
       console.log(`frame ${frame} ok`);

@@ -3,6 +3,7 @@ import { GIFEncoder } from "./antimatter15-jsgif";
 import * as Spinning from "./animations/spinning";
 import * as Expanding from "./animations/expanding";
 import * as ExtremeSpeed from "./animations/extreme-speed";
+import * as Excited from "./animations/excited";
 import type { Sprite } from "./graphics/renderer";
 import { render } from "./graphics/renderer";
 import { ProgramFactory } from "./graphics/program";
@@ -19,6 +20,7 @@ export interface GifOptions {
 export type AnimationOptions =
   | Spinning.RenderOption
   | Expanding.RenderOption
+  | Excited.RenderOption
   | ExtremeSpeed.RenderOption;
 
 export interface AnimationRequestGif {
@@ -139,6 +141,12 @@ export class Animator {
         );
       case "extreme-speed":
         return ExtremeSpeed.createSprites(
+          this.programFactory,
+          this.geometryFactory,
+          options,
+        );
+      case "excited":
+        return Excited.createSprites(
           this.programFactory,
           this.geometryFactory,
           options,
