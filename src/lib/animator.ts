@@ -40,7 +40,7 @@ interface QueueItemGif {
   frame: number;
   sprites: Sprite[];
   callback: (frame: number) => void;
-  encoder: any; // TODO
+  encoder: GIFEncoder;
 }
 
 interface QueueItemFrame {
@@ -77,11 +77,16 @@ export class Animator {
     callback: (frame: number) => void,
   ): Promise<AnimationResultGifSuccess> {
     return new Promise((resolve, reject) => {
-      const encoder = new (GIFEncoder as any)();
+      const encoder = new GIFEncoder();
       encoder.setRepeat(0);
       encoder.setDelay(request.gif.delayMs);
       encoder.setSize(request.gif.width, request.gif.height);
-      encoder.start();
+
+      const started = encoder.start();
+      if (!started) {
+        reject("Failed to start gif encoder");
+        return;
+      }
 
       this.queue.push({
         type: "gif",
@@ -179,7 +184,7 @@ export class Animator {
         pixels,
       );
       encoder.addFrame(pixels, true);
-      // encoder.setTransparent(0xffffff);
+      encoder.setTransparent(0xffffff);
 
       if (frame === request.gif.totalFrames - 1) {
         encoder.finish();
