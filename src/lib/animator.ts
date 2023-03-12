@@ -1,11 +1,7 @@
 import { SingleTexture } from "./graphics/texture";
 import { GIFEncoder } from "./antimatter15-jsgif";
-import * as Spinning from "./animations/spinning";
-import * as Expanding from "./animations/expanding";
-import * as ExtremeSpeed from "./animations/extreme-speed";
-import * as Excited from "./animations/excited";
-import * as Jumping from "./animations/jumping";
 import type { Sprite } from "./graphics/renderer";
+import { type AnimationOptions, createSprites } from "./animation";
 import { render } from "./graphics/renderer";
 import { ProgramFactory } from "./graphics/program";
 import { GeometryFactory } from "./graphics/geometry";
@@ -17,13 +13,6 @@ export interface GifOptions {
   totalFrames: number;
   imageUrl: string;
 }
-
-export type AnimationOptions =
-  | Spinning.RenderOption
-  | Expanding.RenderOption
-  | Excited.RenderOption
-  | Jumping.RenderOption
-  | ExtremeSpeed.RenderOption;
 
 export interface AnimationRequestGif {
   gif: GifOptions;
@@ -102,7 +91,11 @@ export class Animator {
         resolve,
         reject,
         frame: 0,
-        sprites: this.createSprites(request.animation),
+        sprites: createSprites(
+          this.programFactory,
+          this.geometryFactory,
+          request.animation,
+        ),
         callback,
         encoder,
       });
@@ -119,51 +112,16 @@ export class Animator {
         request,
         resolve,
         reject,
-        sprites: this.createSprites(request.animation),
+        sprites: createSprites(
+          this.programFactory,
+          this.geometryFactory,
+          request.animation,
+        ),
       });
       if (this.animationFrame === null) {
         this.animationFrame = requestAnimationFrame(() => this.processLoop());
       }
     });
-  }
-
-  private createSprites(options: AnimationOptions): Sprite[] {
-    switch (options.name) {
-      case "spinning":
-        return Spinning.createSprites(
-          this.programFactory,
-          this.geometryFactory,
-          options,
-        );
-      case "expanding":
-        return Expanding.createSprites(
-          this.programFactory,
-          this.geometryFactory,
-          options,
-        );
-      case "extreme-speed":
-        return ExtremeSpeed.createSprites(
-          this.programFactory,
-          this.geometryFactory,
-          options,
-        );
-      case "excited":
-        return Excited.createSprites(
-          this.programFactory,
-          this.geometryFactory,
-          options,
-        );
-      case "jumping":
-        return Jumping.createSprites(
-          this.programFactory,
-          this.geometryFactory,
-          options,
-        );
-      default:
-        ((o: never) => {
-          throw new Error(`Unknown animation options: ${JSON.stringify(o)}`);
-        })(options);
-    }
   }
 
   private async processLoop(): Promise<void> {
