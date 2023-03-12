@@ -4,6 +4,7 @@ import * as Spinning from "./animations/spinning";
 import * as Expanding from "./animations/expanding";
 import * as ExtremeSpeed from "./animations/extreme-speed";
 import * as Excited from "./animations/excited";
+import * as Jumping from "./animations/jumping";
 import type { Sprite } from "./graphics/renderer";
 import { render } from "./graphics/renderer";
 import { ProgramFactory } from "./graphics/program";
@@ -21,6 +22,7 @@ export type AnimationOptions =
   | Spinning.RenderOption
   | Expanding.RenderOption
   | Excited.RenderOption
+  | Jumping.RenderOption
   | ExtremeSpeed.RenderOption;
 
 export interface AnimationRequestGif {
@@ -147,6 +149,12 @@ export class Animator {
         );
       case "excited":
         return Excited.createSprites(
+          this.programFactory,
+          this.geometryFactory,
+          options,
+        );
+      case "jumping":
+        return Jumping.createSprites(
           this.programFactory,
           this.geometryFactory,
           options,

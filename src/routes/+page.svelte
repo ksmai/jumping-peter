@@ -16,18 +16,15 @@
       gif: {
         width: 64,
         height: 64,
-        delayMs: 100,
+        delayMs: 50,
         totalFrames: 20,
         imageUrl: defaultImageUrl,
       },
       animation: {
-        name: 'excited',
-        minAngle: 15,
-        maxAngle: 25,
-        minCenterX: 0.5,
-        maxCenterX: 0.55,
-        minCenterY: 0.5,
-        maxCenterY: 0.55,
+        name: 'jumping',
+        jumpHeight: 0.5,
+        compressTime: 0.4,
+        maxCompress: 0.3,
       },
     }, (frame) => {
       console.log(`frame ${frame} ok`);
