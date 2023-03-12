@@ -2,6 +2,7 @@ import { SingleTexture } from "./graphics/texture";
 import { GIFEncoder } from "./antimatter15-jsgif";
 import * as Spinning from "./animations/spinning";
 import * as Expanding from "./animations/expanding";
+import * as ExtremeSpeed from "./animations/extreme-speed";
 import type { Sprite } from "./graphics/renderer";
 import { render } from "./graphics/renderer";
 import { ProgramFactory } from "./graphics/program";
@@ -15,7 +16,10 @@ export interface GifOptions {
   imageUrl: string;
 }
 
-export type AnimationOptions = Spinning.RenderOption | Expanding.RenderOption;
+export type AnimationOptions =
+  | Spinning.RenderOption
+  | Expanding.RenderOption
+  | ExtremeSpeed.RenderOption;
 
 export interface AnimationRequestGif {
   gif: GifOptions;
@@ -129,6 +133,12 @@ export class Animator {
         );
       case "expanding":
         return Expanding.createSprites(
+          this.programFactory,
+          this.geometryFactory,
+          options,
+        );
+      case "extreme-speed":
+        return ExtremeSpeed.createSprites(
           this.programFactory,
           this.geometryFactory,
           options,

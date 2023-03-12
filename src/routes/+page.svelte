@@ -21,10 +21,9 @@
         imageUrl: defaultImageUrl,
       },
       animation: {
-        name: 'expanding',
-        minScale: 0.1,
-        maxScale: 5,
-        alternate: false,
+        name: 'extreme-speed',
+        directionX: 1,
+        directionY: -1,
       },
     }, (frame) => {
       console.log(`frame ${frame} ok`);

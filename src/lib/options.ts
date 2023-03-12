@@ -41,6 +41,9 @@ export function createCoordinate<Name extends string>(
   };
 }
 
+// 1 = original size
+// > 1 = larger
+// < 1 = smaller
 export function createScale<Name extends string>(
   options: CreateSlider<Name>,
 ): Slider<Name> {
@@ -50,6 +53,21 @@ export function createScale<Name extends string>(
     min: 0.1,
     max: 5,
     step: 0.1,
+  };
+}
+
+// 1 = right / down
+// 0 = stationary
+// -1 = left / up
+export function createDirection<Name extends string>(
+  options: CreateSlider<Name>,
+): Slider<Name> {
+  return {
+    ...options,
+    type: "slider",
+    min: -1,
+    max: 1,
+    step: 1,
   };
 }
 
