@@ -1,12 +1,13 @@
-import * as Spinning from "./animations/spinning";
-import * as Expanding from "./animations/expanding";
-import * as ExtremeSpeed from "./animations/extreme-speed";
-import * as Excited from "./animations/excited";
-import * as Jumping from "./animations/jumping";
-import type { Sprite } from "./graphics/renderer";
-import { getDefaultOptions } from "./options";
-import type { ProgramFactory } from "./graphics/program";
-import type { GeometryFactory } from "./graphics/geometry";
+import type { Sprite } from "$lib/graphics/renderer";
+import { getDefaultOptions } from "$lib/options";
+import type { ProgramFactory } from "$lib/graphics/program";
+import type { GeometryFactory } from "$lib/graphics/geometry";
+
+import * as Spinning from "./spinning";
+import * as Expanding from "./expanding";
+import * as ExtremeSpeed from "./extreme-speed";
+import * as Excited from "./excited";
+import * as Jumping from "./jumping";
 
 export const animations = [
   Jumping,

@@ -1,7 +1,7 @@
 import { SingleTexture } from "./graphics/texture";
 import { GIFEncoder } from "./antimatter15-jsgif";
 import type { Sprite } from "./graphics/renderer";
-import { type AnimationOptions, createSprites } from "./animation";
+import { type AnimationOptions, createSprites } from "./animations";
 import { render } from "./graphics/renderer";
 import { ProgramFactory } from "./graphics/program";
 import { GeometryFactory } from "./graphics/geometry";
