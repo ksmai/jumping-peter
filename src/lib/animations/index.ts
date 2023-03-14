@@ -1,8 +1,8 @@
 import type { Sprite } from "$lib/graphics/renderer";
-import { getDefaultOptions } from "$lib/options";
 import type { ProgramFactory } from "$lib/graphics/program";
 import type { GeometryFactory } from "$lib/graphics/geometry";
 
+import { getDefaultOptions } from "./options";
 import * as Spinning from "./spinning";
 import * as Expanding from "./expanding";
 import * as ExtremeSpeed from "./extreme-speed";

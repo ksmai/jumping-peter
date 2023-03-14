@@ -1,6 +1,6 @@
 import { mat2d } from "gl-matrix";
 
-import { createCoordinate, type MappedOptions } from "../options";
+import { createCoordinate, type MappedOptions } from "./options";
 import type { Sprite } from "../graphics/renderer";
 import type { ProgramFactory } from "../graphics/program";
 import type { GeometryFactory } from "../graphics/geometry";
