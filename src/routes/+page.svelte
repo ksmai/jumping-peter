@@ -1,31 +1,19 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { base } from "$app/paths";
-  import type { AnimationRequestGif } from "$lib/animator";
   import { Animator } from "$lib/animator";
-  import { getDefaultOptions } from "$lib/options";
+  import { currentAnimation, gifOptions, animationOptions } from "$lib/store";
 
-  let generating = false;
   let canvas: HTMLCanvasElement;
 
   const defaultImageUrl = `${base}/favicon.png`;
 
   onMount(() => {
+    currentAnimation.change("extreme-speed");
     const animator = new Animator(canvas);
     animator.animate({
-      gif: {
-        width: 64,
-        height: 64,
-        delayMs: 50,
-        totalFrames: 20,
-        imageUrl: defaultImageUrl,
-      },
-      animation: {
-        name: 'jumping',
-        jumpHeight: 0.5,
-        compressTime: 0.4,
-        maxCompress: 0.3,
-      },
+      gif: $gifOptions,
+      animation: $animationOptions,
     }, (frame) => {
       console.log(`frame ${frame} ok`);
     }).then((result) => {

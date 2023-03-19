@@ -21,6 +21,10 @@ const config = {
       relative: false,
     },
   },
+
+  compilerOptions: {
+    immutable: true,
+  },
 };
 
 export default config;
