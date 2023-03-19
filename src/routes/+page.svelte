@@ -1,46 +1,12 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import { base } from "$app/paths";
-  import { Animator } from "$lib/animator";
-  import { currentAnimation, gifOptions, animationOptions } from "$lib/store";
-
-  let canvas: HTMLCanvasElement;
+  import Nav from "$lib/components/Nav.svelte";
+  import GifOptions from "$lib/components/GifOptions.svelte";
+  import AnimationOptions from "$lib/components/AnimationOptions.svelte";
+  import Animations from "$lib/components/Animations.svelte";
+  import Preview from "$lib/components/Preview.svelte";
 
   const defaultImageUrl = `${base}/favicon.png`;
-
-  onMount(() => {
-    currentAnimation.change("extreme-speed");
-    const animator = new Animator(canvas);
-    animator.animate({
-      gif: $gifOptions,
-      animation: $animationOptions,
-    }, (frame) => {
-      console.log(`frame ${frame} ok`);
-    }).then((result) => {
-      console.log('anmiation done', result);
-    }).catch((e) => console.error(`Animation failed: ${e}`));
-
-  });
-
-
-
-  function onAnimationChange(e: Event) {
-    const target = e.target as HTMLInputElement;
-
-    if (target.value === data.animation.name) {
-      return;
-    }
-
-    const selected = animations.find((x) => x.name === target.value);
-    if (!selected) {
-      return;
-    }
-    selectedAnimation = selected;
-    data.animation = {
-      ...selected.defaults,
-      name: target.value,
-    } as any;
-  }
 
   function onImageChange(e: Event) {
     const target = e.target as HTMLInputElement;
@@ -54,75 +20,61 @@
     }
     data.gif.imageUrl = URL.createObjectURL(file);
   }
-
 </script>
 
+<div class="grid">
+  <nav class="nav">
+    <Nav />
+  </nav>
 
-<canvas bind:this={canvas} style="transform: scaleY(-1)"></canvas>
+  <aside class="animations">
+    <Animations />
+  </aside>
+
+  <aside class="gif-options">
+    <GifOptions />
+  </aside>
+
+  <aside class="animation-options">
+    <AnimationOptions />
+  </aside>
+
+  <main class="preview">
+    <Preview />
+  </main>
+</div>
 
 <style>
-  .image__label {
-    border: 1px solid #222;
-    padding: 16px;
-    display: flex;
-    cursor: pointer;
-    align-items: center;
-    margin-bottom: 24px;
+  .grid {
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--color-bg-dp-00);
+    display: grid;
+    grid-template-rows: 2.2rem 1fr 5rem;
+    grid-template-columns: 15rem 1fr 15rem;
+    grid-template-areas:
+      "nav         nav        nav              "
+      "gif-options preview    animation-options"
+      "gif-options animations animation-options";
   }
 
-  .image__preview {
-    display: block;
-    width: 2rem;
-    max-width: 100%;
-    margin-right: 1rem;
+  .nav {
+    grid-area: nav;
+    background-color: var(--color-bg-dp-04);
   }
 
-  .image__input {
-    display: none;
+  .animations {
+    grid-area: animations;
+    background-color: var(--color-bg-dp-01);
   }
 
-  .separator {
-    margin-top: 64px;
-    margin-bottom: 64px;
-    border-bottom: 1px solid #222;
+  .gif-options {
+    grid-area: gif-options;
+    background-color: var(--color-bg-dp-01);
   }
 
-  .input-container {
-    margin-bottom: 24px;
-  }
-
-  .result-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    height: 90%;
-    max-height: 90vh;
-  }
-
-  .gif-preview {
-    max-width: 100%;
-    margin-bottom: 24px;
-  }
-
-  :global(.generate-button) {
-    display: block;
-    text-align: center;
-    width: 100%;
-    display: block;
-    max-width: none;
-  }
-
-  .error {
-    color: red;
-  }
-
-  .title {
-    font-size: 1.5rem;
-    font-weight: bold;
-  }
-
-  .demo {
-    width: 48px;
+  .animation-options {
+    grid-area: animation-options;
+    background-color: var(--color-bg-dp-01);
   }
 </style>
