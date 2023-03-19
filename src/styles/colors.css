@@ -1,24 +1,24 @@
 :root {
-	/* obtained from https://m2.material.io/design/color/dark-theme.html */
-	--color-bg-dp-00: #121212;
-	--color-bg-dp-01: #1e1e1e;
-	--color-bg-dp-02: #232323;
-	--color-bg-dp-03: #252525;
-	--color-bg-dp-04: #272727;
-	--color-bg-dp-06: #2c2c2c;
-	--color-bg-dp-08: #2e2e2e;
-	--color-bg-dp-12: #333333;
-	--color-bg-dp-16: #363636;
-	--color-bg-dp-24: #383838;
+  /* obtained from https://m2.material.io/design/color/dark-theme.html */
+  --color-bg-dp-00: #121212;
+  --color-bg-dp-01: #1e1e1e;
+  --color-bg-dp-02: #232323;
+  --color-bg-dp-03: #252525;
+  --color-bg-dp-04: #272727;
+  --color-bg-dp-06: #2c2c2c;
+  --color-bg-dp-08: #2e2e2e;
+  --color-bg-dp-12: #333333;
+  --color-bg-dp-16: #363636;
+  --color-bg-dp-24: #383838;
 
-	--color-fg-emphasis-high: rgba(255, 255, 255, 0.87);
-	--color-fg-emphasis-medium: rgba(255, 255, 255, 0.60);
-	--color-fg-disabled: rgba(255, 255, 255, 0.38);
+  --color-fg-emphasis-high: rgba(255, 255, 255, 0.87);
+  --color-fg-emphasis-medium: rgba(255, 255, 255, 0.6);
+  --color-fg-disabled: rgba(255, 255, 255, 0.38);
 
-	--color-container-disabled: rgba(255, 255, 255, 0.12);
+  --color-container-disabled: rgba(255, 255, 255, 0.12);
 
-	--color-primary: #bb86fc;
-	--color-primary-variant: #3700b3;
-	--color-secondary: #03dac6;
-	--color-error: #cf6679;
+  --color-primary: #bb86fc;
+  --color-primary-variant: #3700b3;
+  --color-secondary: #03dac6;
+  --color-error: #cf6679;
 }
