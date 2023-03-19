@@ -32,7 +32,8 @@
   <a
     class="contribute"
     href="https://github.com/ksmai/jumping-peter"
-    target="_blank">Contribute</a
+    target="_blank"
+    rel="noreferrer">Contribute</a
   >
 </div>
 
@@ -76,12 +77,46 @@
     border-radius: 3px;
     font-size: 0.8rem;
     cursor: pointer;
+    position: relative;
+  }
+
+  .download::after {
+    display: none;
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+
+  .download:hover::after {
+    display: block;
+    background-color: rgba(255, 255, 255, 0.04);
+  }
+
+  .download:focus {
+    outline: 1px solid #fff;
+  }
+
+  .download:focus::after {
+    display: block;
+    background-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .download:active::after {
+    display: block;
+    background-color: rgba(255, 255, 255, 0.1);
   }
 
   .download:disabled {
     background-color: var(--color-container-disabled);
     color: var(--color-fg-disabled);
     cursor: not-allowed;
+  }
+
+  .download:disabled::after {
+    display: none;
   }
 
   .contribute {

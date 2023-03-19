@@ -1,3 +1,9 @@
 html {
 	color: var(--color-fg-emphasis-high);
 }
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}

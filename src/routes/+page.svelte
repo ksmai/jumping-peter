@@ -50,12 +50,13 @@
     height: 100vh;
     background-color: var(--color-bg-dp-00);
     display: grid;
-    grid-template-rows: 2.2rem 1fr 5rem;
+    grid-template-rows: 2.2rem 1fr 10rem;
     grid-template-columns: 15rem 1fr 15rem;
     grid-template-areas:
       "nav         nav        nav              "
       "gif-options preview    animation-options"
       "gif-options animations animation-options";
+    gap: 8px;
   }
 
   .nav {
@@ -75,6 +76,11 @@
 
   .animation-options {
     grid-area: animation-options;
+    background-color: var(--color-bg-dp-01);
+  }
+
+  .preview {
+    grid-area: preview;
     background-color: var(--color-bg-dp-01);
   }
 </style>
