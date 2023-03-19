@@ -141,4 +141,11 @@ export class GeometryFactory {
     }
     return result;
   }
+
+  destroy(): void {
+    for (const geometry of Object.values(this.geometries)) {
+      this.gl.deleteVertexArray(geometry.vao);
+      this.gl.deleteBuffer(geometry.vbo);
+    }
+  }
 }

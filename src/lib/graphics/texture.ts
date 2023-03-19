@@ -40,4 +40,10 @@ export class SingleTexture {
     this.texture = webglTexture;
     this.url = url;
   }
+
+  destroy(): void {
+    if (this.texture) {
+      this.gl.deleteTexture(this.texture);
+    }
+  }
 }

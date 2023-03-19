@@ -1,7 +1,8 @@
 import { SingleTexture } from "./graphics/texture";
 import { GIFEncoder } from "./antimatter15-jsgif";
 import type { Sprite } from "./graphics/renderer";
-import { type AnimationOptions, createSprites } from "./animations";
+import { createSprites } from "./animations";
+import type { AnimationOptions } from "./animations";
 import { render } from "./graphics/renderer";
 import { ProgramFactory } from "./graphics/program";
 import { GeometryFactory } from "./graphics/geometry";
@@ -14,14 +15,8 @@ export interface GifOptions {
   imageUrl: string;
 }
 
-export interface AnimationRequestGif {
+export interface AnimationRequest {
   gif: GifOptions;
-  animation: AnimationOptions;
-}
-
-export interface AnimationRequestFrame {
-  gif: GifOptions;
-  frame: number;
   animation: AnimationOptions;
 }
 
@@ -31,7 +26,7 @@ export interface AnimationResultGifSuccess {
 
 interface QueueItemGif {
   type: "gif";
-  request: AnimationRequestGif;
+  request: AnimationRequest;
   resolve: (result: AnimationResultGifSuccess) => void;
   reject: (e: Error) => void;
   frame: number;
@@ -42,9 +37,10 @@ interface QueueItemGif {
 
 interface QueueItemFrame {
   type: "frame";
-  request: AnimationRequestFrame;
+  request: AnimationRequest;
   resolve: () => void;
   reject: (e: Error) => void;
+  frame: number;
   sprites: Sprite[];
 }
 
@@ -70,7 +66,7 @@ export class Animator {
   }
 
   animate(
-    request: AnimationRequestGif,
+    request: AnimationRequest,
     callback: (frame: number) => void,
   ): Promise<AnimationResultGifSuccess> {
     return new Promise((resolve, reject) => {
@@ -105,13 +101,14 @@ export class Animator {
     });
   }
 
-  renderFrame(request: AnimationRequestFrame): Promise<void> {
+  renderFrame(request: AnimationRequest, frame: number): Promise<void> {
     return new Promise((resolve, reject) => {
       this.queue.push({
         type: "frame",
         request,
         resolve,
         reject,
+        frame,
         sprites: createSprites(
           this.programFactory,
           this.geometryFactory,
@@ -137,7 +134,7 @@ export class Animator {
       this.queue.splice(0, this.queue.length - 1);
     }
 
-    const { type, request, resolve, sprites } = this.queue[0];
+    const { type, request, resolve, sprites, frame } = this.queue[0];
     if (type === "frame" || (type === "gif" && this.queue[0].frame === 0)) {
       await this.texture.loadImage(request.gif.imageUrl);
       this.canvas.width = request.gif.width;
@@ -145,17 +142,12 @@ export class Animator {
     }
 
     if (type === "frame") {
-      render(
-        this.gl,
-        request.frame / request.gif.totalFrames,
-        sprites,
-        this.texture,
-      );
+      render(this.gl, frame / request.gif.totalFrames, sprites, this.texture);
       resolve();
       this.queue.shift();
       this.animationFrame = null;
     } else {
-      const { frame, encoder, sprites, callback } = this.queue[0];
+      const { encoder, sprites, callback } = this.queue[0];
 
       render(this.gl, frame / request.gif.totalFrames, sprites, this.texture);
       callback(frame);
@@ -187,6 +179,15 @@ export class Animator {
         this.queue[0].frame += 1;
         this.animationFrame = requestAnimationFrame(() => this.processLoop());
       }
+    }
+  }
+
+  destroy(): void {
+    this.programFactory.destroy();
+    this.geometryFactory.destroy();
+    this.texture.destroy();
+    if (this.animationFrame !== null) {
+      window.cancelAnimationFrame(this.animationFrame);
     }
   }
 }

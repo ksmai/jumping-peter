@@ -63,6 +63,12 @@ export class ProgramFactory {
     }
     return result;
   }
+
+  destroy() {
+    for (const program of Object.values(this.programs)) {
+      this.gl.deleteProgram(program.program);
+    }
+  }
 }
 
 export function setUniforms(
