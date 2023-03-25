@@ -89,6 +89,12 @@
         border-radius: 0.4rem;
       }
 
+      &::-moz-range-progress {
+        background: var(--color-secondary);
+        height: 0.4rem;
+        border-radius: 0.4rem;
+      }
+
       &::-webkit-slider-thumb {
         -webkit-appearance: none;
         appearance: none;
