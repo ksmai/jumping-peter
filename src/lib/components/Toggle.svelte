@@ -50,7 +50,7 @@
         width: 1.5rem;
         height: 1.5rem;
         border-radius: 1.5rem;
-        background-color: #9e9e9e;
+        background-color: var(--color-disabled);
         top: -0.25rem;
         left: -0.25rem;
         z-index: 1;

@@ -25,11 +25,18 @@
 </script>
 
 <div class="slider">
-  <label class="slider__label">
-    {label}
+  {#if label}
+    <label class="slider__label">
+      {label}
 
-    <input class="slider__text-input" type="text" on:input={onInput} {value} />
-  </label>
+      <input
+        class="slider__text-input"
+        type="text"
+        on:input={onInput}
+        {value}
+      />
+    </label>
+  {/if}
 
   <div class="slider__container">
     <span class="slider__range slider__range--min">{displayNumber(min)}</span>

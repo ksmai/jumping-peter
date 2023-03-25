@@ -102,14 +102,10 @@ export const animator = (function () {
   }
 
   function animate(): ReturnType<Animator["animate"]> {
-    const { running, animator } = get(store);
+    const { animator } = get(store);
 
     if (!animator) {
       return Promise.reject("Animator has not been created");
-    }
-
-    if (running) {
-      return Promise.reject("Animator is already running");
     }
 
     update((state) => ({ ...state, running: true, frame: 0 }));
@@ -128,14 +124,10 @@ export const animator = (function () {
   }
 
   function renderFrame(frame: number): ReturnType<Animator["renderFrame"]> {
-    const { running, animator } = get(store);
+    const { animator } = get(store);
 
     if (!animator) {
       return Promise.reject("Animator has not been created");
-    }
-
-    if (running) {
-      return Promise.reject("Animator is already running");
     }
 
     update((state) => ({ ...state, frame, running: true }));
