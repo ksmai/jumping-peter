@@ -1,6 +1,9 @@
 <script lang="ts">
   import { animator } from "$lib/store";
 
+  let className = "";
+  export { className as class };
+
   function onDownload() {
     animator
       .animate()
@@ -14,13 +17,11 @@
   }
 </script>
 
-<div class="container">
-  <header class="header">
-    <img class="logo" src="/demo-jumping.gif" alt="" />
-    <h1 class="title">Jumping Peter</h1>
+<header class={`header ${className}`}>
+  <img class="logo" src="/demo-jumping.gif" alt="" />
+  <h1 class="title">Jumping Peter</h1>
 
-    <p class="subtitle">Generate GIF emojis</p>
-  </header>
+  <p class="subtitle">generate gif emojis</p>
 
   <button
     class="download"
@@ -35,20 +36,15 @@
     target="_blank"
     rel="noreferrer">Contribute</a
   >
-</div>
+</header>
 
 <style>
-  .container {
-    display: flex;
-    align-items: center;
-    height: 100%;
-    padding: 0 1rem;
-  }
-
   .header {
     display: flex;
     align-items: baseline;
-    flex: 1;
+    height: 100%;
+    width: 100%;
+    padding: 0.5rem 1rem;
     white-space: nowrap;
   }
 

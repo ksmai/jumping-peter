@@ -1,6 +1,6 @@
 <script lang="ts">
   import { base } from "$app/paths";
-  import Nav from "$lib/components/Nav.svelte";
+  import Header from "$lib/components/Header.svelte";
   import GifOptions from "$lib/components/GifOptions.svelte";
   import AnimationOptions from "$lib/components/AnimationOptions.svelte";
   import Animations from "$lib/components/Animations.svelte";
@@ -23,9 +23,7 @@
 </script>
 
 <div class="grid">
-  <nav class="nav">
-    <Nav />
-  </nav>
+  <Header class="header" />
 
   <aside class="animations">
     <Animations />
@@ -50,17 +48,17 @@
     height: 100vh;
     background-color: var(--color-bg-dp-00);
     display: grid;
-    grid-template-rows: 2.2rem 1fr 10rem;
+    grid-template-rows: auto 1fr 10rem;
     grid-template-columns: 15rem 1fr 15rem;
     grid-template-areas:
-      "nav         nav        nav              "
+      "header      header     header           "
       "gif-options preview    animation-options"
       "gif-options animations animation-options";
     gap: 8px;
   }
 
-  .nav {
-    grid-area: nav;
+  * > :global(.header) {
+    grid-area: header;
     background-color: var(--color-bg-dp-04);
   }
 
