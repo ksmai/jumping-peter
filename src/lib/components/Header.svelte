@@ -1,10 +1,12 @@
 <script lang="ts">
+  import { base } from "$app/paths";
+
   let className = "";
   export { className as class };
 </script>
 
 <header class={`header ${className}`}>
-  <img class="logo" src="/demo-jumping.gif" alt="" />
+  <img class="logo" src={`${base}/demo-jumping.gif`} alt="" />
   <h1 class="title">Jumping Peter</h1>
 
   <p class="subtitle">generate gif emojis</p>

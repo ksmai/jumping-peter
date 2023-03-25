@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { base } from "$app/paths";
   import { animations } from "$lib/animations";
   import { currentAnimation } from "$lib/store";
 
@@ -20,7 +21,7 @@
       class:option--selected={name === $currentAnimation.name}
       on:click={() => onChange(name)}
     >
-      <img class="image" src={`/demo-${name}.gif`} alt={name} />
+      <img class="image" src={`${base}/demo-${name}.gif`} alt={name} />
       <span>{name}</span>
     </button>
   {/each}
