@@ -2,6 +2,9 @@
   import { animations } from "$lib/animations";
   import { currentAnimation, animator } from "$lib/store";
 
+  let className = "";
+  export { className as class };
+
   function onChange(name: (typeof animations)[number]["name"]) {
     if (name !== $currentAnimation.name) {
       currentAnimation.change(name);
@@ -10,7 +13,7 @@
   }
 </script>
 
-<div class="container">
+<aside class={`container ${className}`}>
   {#each animations as { name } (name)}
     <button
       type="button"
@@ -22,7 +25,7 @@
       <span>{name}</span>
     </button>
   {/each}
-</div>
+</aside>
 
 <style>
   .container {

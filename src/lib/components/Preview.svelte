@@ -3,6 +3,8 @@
   import { animator } from "$lib/store";
 
   let canvas: HTMLCanvasElement;
+  let className = "";
+  export { className as class };
 
   onMount(() => {
     animator.changeCanvas(canvas);
@@ -15,4 +17,6 @@
   });
 </script>
 
-<canvas bind:this={canvas} style="transform: scaleY(-1)" />
+<main class={className}>
+  <canvas bind:this={canvas} style="transform: scaleY(-1)" />
+</main>

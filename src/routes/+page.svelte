@@ -24,22 +24,10 @@
 
 <div class="grid">
   <Header class="header" />
-
-  <aside class="animations">
-    <Animations />
-  </aside>
-
-  <aside class="gif-options">
-    <GifOptions />
-  </aside>
-
-  <aside class="animation-options">
-    <AnimationOptions />
-  </aside>
-
-  <main class="preview">
-    <Preview />
-  </main>
+  <Animations class="animations" />
+  <GifOptions class="gif-options" />
+  <AnimationOptions class="animation-options" />
+  <Preview class="preview" />
 </div>
 
 <style>
@@ -62,22 +50,22 @@
     background-color: var(--color-bg-dp-04);
   }
 
-  .animations {
+  * > :global(.animations) {
     grid-area: animations;
     background-color: var(--color-bg-dp-01);
   }
 
-  .gif-options {
+  * > :global(.gif-options) {
     grid-area: gif-options;
     background-color: var(--color-bg-dp-01);
   }
 
-  .animation-options {
+  * > :global(.animation-options) {
     grid-area: animation-options;
     background-color: var(--color-bg-dp-01);
   }
 
-  .preview {
+  * > :global(.preview) {
     grid-area: preview;
     background-color: var(--color-bg-dp-01);
   }
