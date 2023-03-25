@@ -2,6 +2,10 @@ html {
   color: var(--color-fg-emphasis-high);
 }
 
+body {
+  font-size: 0.9rem;
+}
+
 *,
 *::before,
 *::after {

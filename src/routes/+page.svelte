@@ -1,25 +1,9 @@
 <script lang="ts">
-  import { base } from "$app/paths";
   import Header from "$lib/components/Header.svelte";
   import GifOptions from "$lib/components/GifOptions.svelte";
   import AnimationOptions from "$lib/components/AnimationOptions.svelte";
   import Animations from "$lib/components/Animations.svelte";
   import Preview from "$lib/components/Preview.svelte";
-
-  const defaultImageUrl = `${base}/favicon.png`;
-
-  function onImageChange(e: Event) {
-    const target = e.target as HTMLInputElement;
-    const file = target.files?.[0];
-    if (!file) {
-      return;
-    }
-
-    if (data.gif.imageUrl !== defaultImageUrl) {
-      URL.revokeObjectURL(data.gif.imageUrl);
-    }
-    data.gif.imageUrl = URL.createObjectURL(file);
-  }
 </script>
 
 <div class="grid">

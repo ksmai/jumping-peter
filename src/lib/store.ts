@@ -29,19 +29,33 @@ export const currentAnimation = (function () {
 })();
 
 export const gifOptions = (function () {
+  const defaultImageUrl = `${base}/favicon.png`;
+
   const { subscribe, update } = writable<GifOptions>({
     width: 64,
     height: 64,
     delayMs: 50,
     totalFrames: 20,
-    imageUrl: `${base}/favicon.png`,
+    imageUrl: defaultImageUrl,
   });
 
-  function change(updates: Partial<GifOptions>) {
+  function change(updates: Partial<Omit<GifOptions, "imageUrl">>) {
     update((options) => ({ ...options, ...updates }));
   }
 
-  return { subscribe, change };
+  function changeImage(file: File) {
+    update((options) => {
+      if (options.imageUrl !== defaultImageUrl) {
+        URL.revokeObjectURL(options.imageUrl);
+      }
+      return {
+        ...options,
+        imageUrl: URL.createObjectURL(file),
+      };
+    });
+  }
+
+  return { subscribe, change, changeImage };
 })();
 
 export const animationOptions = (function () {

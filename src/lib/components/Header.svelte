@@ -44,7 +44,7 @@
     align-items: baseline;
     height: 100%;
     width: 100%;
-    padding: 0.5rem 1rem;
+    padding: 8px 16px;
     white-space: nowrap;
   }
 
@@ -71,7 +71,6 @@
     border: none;
     padding: 0.25rem 0.75rem;
     border-radius: 3px;
-    font-size: 0.8rem;
     cursor: pointer;
     position: relative;
   }
@@ -117,7 +116,6 @@
 
   .contribute {
     color: var(--color-fg-emphasis-medium);
-    font-size: 0.8rem;
   }
 
   .contribute:hover {
