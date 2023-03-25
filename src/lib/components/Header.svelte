@@ -17,7 +17,7 @@
   >
 </header>
 
-<style>
+<style lang="scss">
   .header {
     display: flex;
     align-items: baseline;
@@ -44,10 +44,16 @@
   }
 
   .contribute {
+    display: none;
     color: var(--color-fg-emphasis-medium);
-  }
 
-  .contribute:hover {
-    color: var(--color-fg-emphasis-high);
+    @media (min-width: 64rem) {
+      display: block;
+      color: var(--color-fg-emphasis-medium);
+
+      &:hover {
+        color: var(--color-fg-emphasis-high);
+      }
+    }
   }
 </style>

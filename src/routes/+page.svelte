@@ -14,19 +14,32 @@
   <Preview class="preview" />
 </div>
 
-<style>
+<style lang="scss">
   .grid {
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
     background-color: var(--color-bg-dp-00);
     display: grid;
-    grid-template-rows: auto 1fr 10rem;
-    grid-template-columns: 15rem 1fr 15rem;
+    grid-template-rows: auto auto auto auto auto;
+    grid-template-columns: 1fr;
     grid-template-areas:
-      "header      header     header           "
-      "gif-options preview    animation-options"
-      "gif-options animations animation-options";
-    gap: 8px;
+      "header"
+      "animations"
+      "gif-options"
+      "animation-options"
+      "preview";
+    gap: 16px;
+
+    @media (min-width: 64rem) {
+      width: 100vw;
+      height: 100vh;
+      grid-template-rows: auto 1fr 10rem;
+      grid-template-columns: 15rem 1fr 15rem;
+      grid-template-areas:
+        "header      header     header           "
+        "gif-options preview    animation-options"
+        "gif-options animations animation-options";
+      gap: 8px;
+    }
   }
 
   * > :global(.header) {
