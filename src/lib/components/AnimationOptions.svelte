@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { currentAnimation, animationOptions, animator } from "$lib/store";
+  import { currentAnimation, animationOptions } from "$lib/store";
   import Slider from "$lib/components/Slider.svelte";
   import Toggle from "$lib/components/Toggle.svelte";
 
@@ -11,7 +11,6 @@
   function onInput(field: string) {
     return function (e: CustomEvent) {
       animationOptions.change({ [field]: e.detail.value });
-      animator.renderFrame($animator.frame);
     };
   }
 </script>
