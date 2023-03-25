@@ -11,37 +11,37 @@ export type Name = typeof Name;
 export const EditOptions = [
   createAngle({
     name: "minAngle",
-    label: "Minimum rotation angle",
+    label: "Min angle",
     default: 15,
   } as const),
 
   createAngle({
     name: "maxAngle",
-    label: "Maximum rotation angle",
+    label: "Max angle",
     default: 25,
   } as const),
 
   createCoordinate({
     name: "minCenterX",
-    label: "Minimum center position (X-axis)",
+    label: "Min center X",
     default: 0.5,
   } as const),
 
   createCoordinate({
     name: "maxCenterX",
-    label: "Maximum center position (X-axis)",
+    label: "Max center X",
     default: 0.55,
   } as const),
 
   createCoordinate({
     name: "minCenterY",
-    label: "Minimum center position (Y-axis)",
+    label: "Min center Y",
     default: 0.5,
   } as const),
 
   createCoordinate({
     name: "maxCenterY",
-    label: "Maximum center position (Y-axis)",
+    label: "Max center Y",
     default: 0.55,
   } as const),
 ];

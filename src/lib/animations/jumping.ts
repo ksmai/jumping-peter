@@ -11,19 +11,19 @@ export type Name = typeof Name;
 export const EditOptions = [
   createCoordinate({
     name: "jumpHeight",
-    label: "Maximum height attained at the start/end of the jumping",
+    label: "Jump height",
     default: 0.5,
   } as const),
 
   createCoordinate({
     name: "compressTime",
-    label: "Time spent for a full compression & decompression",
+    label: "Compress time",
     default: 0.4,
   } as const),
 
   createCoordinate({
     name: "maxCompress",
-    label: "Maximum compression",
+    label: "Max compress",
     default: 0.25,
   } as const),
 ];
