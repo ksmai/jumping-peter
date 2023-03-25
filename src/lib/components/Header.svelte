@@ -1,20 +1,6 @@
 <script lang="ts">
-  import { animator } from "$lib/store";
-
   let className = "";
   export { className as class };
-
-  function onDownload() {
-    animator
-      .animate()
-      .then(({ dataUri }) => {
-        const a = document.createElement("a");
-        a.href = dataUri;
-        a.download = "jumping_peter.gif";
-        a.click();
-      })
-      .catch((e) => console.error(e));
-  }
 </script>
 
 <header class={`header ${className}`}>
@@ -22,13 +8,6 @@
   <h1 class="title">Jumping Peter</h1>
 
   <p class="subtitle">generate gif emojis</p>
-
-  <button
-    class="download"
-    type="button"
-    on:click={onDownload}
-    disabled={$animator.running}>Download</button
-  >
 
   <a
     class="contribute"
@@ -62,56 +41,6 @@
     flex: 1 1 auto;
     font-size: 0.8rem;
     color: var(--color-fg-emphasis-medium);
-  }
-
-  .download {
-    margin-right: 1rem;
-    background: var(--color-primary);
-    color: #fff;
-    border: none;
-    padding: 0.25rem 0.75rem;
-    border-radius: 3px;
-    cursor: pointer;
-    position: relative;
-  }
-
-  .download::after {
-    display: none;
-    content: "";
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-  }
-
-  .download:hover::after {
-    display: block;
-    background-color: rgba(255, 255, 255, 0.04);
-  }
-
-  .download:focus {
-    outline: 1px solid #fff;
-  }
-
-  .download:focus::after {
-    display: block;
-    background-color: rgba(255, 255, 255, 0.12);
-  }
-
-  .download:active::after {
-    display: block;
-    background-color: rgba(255, 255, 255, 0.1);
-  }
-
-  .download:disabled {
-    background-color: var(--color-container-disabled);
-    color: var(--color-fg-disabled);
-    cursor: not-allowed;
-  }
-
-  .download:disabled::after {
-    display: none;
   }
 
   .contribute {

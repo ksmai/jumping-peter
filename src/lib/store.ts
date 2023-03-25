@@ -123,19 +123,33 @@ export const animator = (function () {
       });
   }
 
-  function renderFrame(frame: number): ReturnType<Animator["renderFrame"]> {
-    const { animator } = get(store);
+  function renderFrame(
+    requestedFrame?: number,
+  ): ReturnType<Animator["renderFrame"]> {
+    const { animator, frame } = get(store);
 
     if (!animator) {
       return Promise.reject("Animator has not been created");
     }
 
-    update((state) => ({ ...state, frame, running: true }));
+    let nextFrame: number;
+    if (typeof requestedFrame === "undefined") {
+      nextFrame = frame;
+    } else {
+      nextFrame = requestedFrame;
+    }
+
+    const gifOptionsValue = get(gifOptions);
+    if (nextFrame >= gifOptionsValue.totalFrames) {
+      nextFrame = gifOptionsValue.totalFrames - 1;
+    }
+
+    update((state) => ({ ...state, frame: nextFrame, running: true }));
 
     return animator
       .renderFrame(
         {
-          gif: get(gifOptions),
+          gif: gifOptionsValue,
           animation: get(animationOptions),
         },
         frame,

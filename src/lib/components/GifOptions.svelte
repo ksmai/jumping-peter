@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { gifOptions, animator } from "$lib/store";
+  import { gifOptions } from "$lib/store";
   import Slider from "$lib/components/Slider.svelte";
 
   let className = "";
@@ -12,17 +12,11 @@
       return;
     }
     gifOptions.changeImage(file);
-    animator.renderFrame($animator.frame);
   }
 
   function onInput(field: string) {
     return function (e: CustomEvent) {
       gifOptions.change({ [field]: e.detail.value });
-      if ($animator.frame >= $gifOptions.totalFrames) {
-        animator.renderFrame(0);
-      } else {
-        animator.renderFrame($animator.frame);
-      }
     };
   }
 </script>

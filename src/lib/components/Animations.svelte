@@ -1,6 +1,6 @@
 <script lang="ts">
   import { animations } from "$lib/animations";
-  import { currentAnimation, animator } from "$lib/store";
+  import { currentAnimation } from "$lib/store";
 
   let className = "";
   export { className as class };
@@ -8,7 +8,6 @@
   function onChange(name: (typeof animations)[number]["name"]) {
     if (name !== $currentAnimation.name) {
       currentAnimation.change(name);
-      animator.renderFrame($animator.frame);
     }
   }
 </script>
