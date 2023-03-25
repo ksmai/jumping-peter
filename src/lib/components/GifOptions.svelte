@@ -60,6 +60,7 @@
     value={$gifOptions.height}
     on:input={onInput("height")}
   />
+
   <Slider
     label="Delay ms"
     min={20}
@@ -68,6 +69,7 @@
     value={$gifOptions.delayMs}
     on:input={onInput("delayMs")}
   />
+
   <Slider
     label="Total frames"
     min={1}
