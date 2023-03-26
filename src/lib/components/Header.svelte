@@ -25,37 +25,39 @@
     align-items: baseline;
     height: 100%;
     width: 100%;
-    padding: 8px 16px;
+    padding: 12px 16px;
     white-space: nowrap;
   }
 
   .logo {
-    height: 1.2rem;
+    height: 1.8rem;
     margin-right: 0.8rem;
+    align-self: center;
   }
 
   .title {
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     margin-right: 0.5rem;
   }
 
   .subtitle {
     flex: 1 1 auto;
-    font-size: 0.8rem;
+    font-size: 1rem;
     color: var(--color-fg-emphasis-medium);
-  }
-
-  .contribute {
     display: none;
-    color: var(--color-fg-emphasis-medium);
 
     @media (min-width: 64rem) {
       display: block;
-      color: var(--color-fg-emphasis-medium);
+    }
+  }
 
-      &:hover {
-        color: var(--color-fg-emphasis-high);
-      }
+  .contribute {
+    display: block;
+    margin-left: auto;
+    color: var(--color-fg-emphasis-medium);
+
+    &:hover {
+      color: var(--color-fg-emphasis-high);
     }
   }
 </style>

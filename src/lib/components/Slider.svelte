@@ -61,20 +61,20 @@
       display: flex;
       align-items: baseline;
       justify-content: space-between;
-      margin-bottom: 16px;
+      margin-bottom: 8px;
     }
 
     &__text-input {
-      width: 2rem;
+      width: 3rem;
       text-align: center;
-      font-size: 0.7rem;
       color: #fff;
       background: none;
       border: 1px solid #fff;
+      font-size: inherit;
     }
 
     &__input-container {
-      margin: 0 0.3rem;
+      margin: 0 0.5rem;
     }
 
     &__input {
@@ -123,14 +123,12 @@
 
     &__container {
       display: grid;
-      grid-template-columns: 2rem 1fr 2rem;
+      grid-template-columns: 2.8rem 1fr 2.8rem;
       align-items: center;
       white-space: nowrap;
     }
 
     &__range {
-      font-size: 0.7rem;
-
       &--min {
         text-align: right;
       }

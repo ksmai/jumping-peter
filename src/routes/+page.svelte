@@ -57,11 +57,11 @@
       width: 100vw;
       height: 100vh;
       grid-template-rows: auto 1fr 10rem;
-      grid-template-columns: 15rem 1fr 15rem;
+      grid-template-columns: 9rem 2fr 6fr 2fr 9rem;
       grid-template-areas:
-        "header         header     header           "
-        "common-options preview    animation-options"
-        "common-options animations animation-options";
+        "header         header         header     header            header"
+        "common-options common-options preview    animation-options animation-options"
+        "common-options common-options animations animation-options animation-options";
       gap: 8px;
     }
   }

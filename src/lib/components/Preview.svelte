@@ -129,13 +129,12 @@
     padding: 16px;
     display: grid;
     grid-template-rows: 1.5rem 1fr;
-    align-items: center;
     gap: 16px;
     min-width: 0;
     min-height: 0;
 
     &__debug-input {
-      width: 8.5rem;
+      width: 9rem;
       justify-self: end;
     }
 
@@ -143,8 +142,6 @@
       display: grid;
       grid-template-rows: 1fr 2.5rem;
       gap: 32px;
-      width: 100%;
-      height: 100%;
       min-width: 0;
       min-height: 0;
     }
@@ -158,8 +155,6 @@
     }
 
     &__image-container {
-      width: 100%;
-      height: 100%;
       border: 1px solid #fff;
       display: flex;
       align-items: center;
@@ -176,7 +171,6 @@
     }
 
     &__loading {
-      font-size: 1rem;
       display: grid;
       gap: 16px;
       grid-auto-rows: max-content;

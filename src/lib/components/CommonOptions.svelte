@@ -17,7 +17,7 @@
 
 <aside class={`container ${className}`}>
   <label class="image">
-    Upload image
+    Select image
 
     <input
       class="image__input"
@@ -104,6 +104,7 @@
     grid-template-columns: 1fr;
     grid-auto-rows: max-content;
     gap: 32px;
+    justify-items: stretch;
   }
 
   .image {
@@ -114,8 +115,7 @@
     }
 
     &__container {
-      width: 100%;
-      height: 100px;
+      height: 120px;
       padding: 8px 16px;
       display: flex;
       align-items: center;

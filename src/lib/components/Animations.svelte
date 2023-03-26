@@ -48,6 +48,7 @@
     flex-direction: column;
     align-items: center;
     color: var(--color-fg-emphasis-high);
+    font-size: inherit;
   }
 
   .option--selected {
