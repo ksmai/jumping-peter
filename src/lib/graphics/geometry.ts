@@ -7,117 +7,78 @@ export interface Geometry {
   readonly drawCount: number;
 }
 
-const geometryCreators = {
-  full(gl: WebGL2RenderingContext): Geometry {
-    const vao = gl.createVertexArray();
-    if (vao === null) {
-      throw new Error("Failed to create vertex array");
-    }
-    const vbo = gl.createBuffer();
-    if (!vbo) {
-      gl.deleteVertexArray(vao);
-      throw new Error("Failed to create buffer");
-    }
+// prettier-ignore
+type Quad = Readonly<[
+  number, number, number, number,
+  number, number, number, number,
+  number, number, number, number,
+  number, number, number, number,
+]>;
 
-    gl.bindVertexArray(vao);
-    gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+function createQuad(gl: WebGL2RenderingContext, quad: Quad): Geometry {
+  const vao = gl.createVertexArray();
+  if (vao === null) {
+    throw new Error("Failed to create vertex array");
+  }
+  const vbo = gl.createBuffer();
+  if (!vbo) {
+    gl.deleteVertexArray(vao);
+    throw new Error("Failed to create buffer");
+  }
 
-    // prettier-ignore
-    const data = new Float32Array([
-      // a_position.xy, a_texCoords.xy
-      -1, -1, 0, 1,
-      +1, -1, 1, 1,
-      -1, +1, 0, 0,
-      +1, +1, 1, 0,
-    ]);
-    gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+  gl.bindVertexArray(vao);
+  gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
 
-    gl.enableVertexAttribArray(ATTRIB_LOCATIONS.a_position);
-    gl.vertexAttribPointer(
-      ATTRIB_LOCATIONS.a_position,
-      2,
-      gl.FLOAT,
-      false,
-      4 * 4,
-      0,
-    );
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(quad), gl.STATIC_DRAW);
 
-    gl.enableVertexAttribArray(ATTRIB_LOCATIONS.a_texCoords);
-    gl.vertexAttribPointer(
-      ATTRIB_LOCATIONS.a_texCoords,
-      2,
-      gl.FLOAT,
-      false,
-      4 * 4,
-      2 * 4,
-    );
+  gl.enableVertexAttribArray(ATTRIB_LOCATIONS.a_position);
+  gl.vertexAttribPointer(
+    ATTRIB_LOCATIONS.a_position,
+    2,
+    gl.FLOAT,
+    false,
+    4 * 4,
+    0,
+  );
 
-    gl.bindVertexArray(null);
+  gl.enableVertexAttribArray(ATTRIB_LOCATIONS.a_texCoords);
+  gl.vertexAttribPointer(
+    ATTRIB_LOCATIONS.a_texCoords,
+    2,
+    gl.FLOAT,
+    false,
+    4 * 4,
+    2 * 4,
+  );
 
-    return {
-      vao,
-      vbo,
-      drawMode: gl.TRIANGLE_STRIP,
-      drawCount: 4,
-    };
-  },
+  gl.bindVertexArray(null);
 
-  nine(gl: WebGL2RenderingContext): Geometry {
-    const vao = gl.createVertexArray();
-    if (vao === null) {
-      throw new Error("Failed to create vertex array");
-    }
-    const vbo = gl.createBuffer();
-    if (!vbo) {
-      gl.deleteVertexArray(vao);
-      throw new Error("Failed to create buffer");
-    }
+  return {
+    vao,
+    vbo,
+    drawMode: gl.TRIANGLE_STRIP,
+    drawCount: 4,
+  };
+}
 
-    gl.bindVertexArray(vao);
-    gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
-
-    // prettier-ignore
-    const data = new Float32Array([
-      // a_position.xy, a_texCoords.xy
-      -3, -3, 0, 3,
-      +3, -3, 3, 3,
-      -3, +3, 0, 0,
-      +3, +3, 3, 0,
-    ]);
-    gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
-
-    gl.enableVertexAttribArray(ATTRIB_LOCATIONS.a_position);
-    gl.vertexAttribPointer(
-      ATTRIB_LOCATIONS.a_position,
-      2,
-      gl.FLOAT,
-      false,
-      4 * 4,
-      0,
-    );
-
-    gl.enableVertexAttribArray(ATTRIB_LOCATIONS.a_texCoords);
-    gl.vertexAttribPointer(
-      ATTRIB_LOCATIONS.a_texCoords,
-      2,
-      gl.FLOAT,
-      false,
-      4 * 4,
-      2 * 4,
-    );
-
-    gl.bindVertexArray(null);
-
-    return {
-      vao,
-      vbo,
-      drawMode: gl.TRIANGLE_STRIP,
-      drawCount: 4,
-    };
-  },
+// a_position.xy, a_texCoords.xy
+// prettier-ignore
+const quads = {
+  full: [
+    -1, -1, 0, 1,
+    +1, -1, 1, 1,
+    -1, +1, 0, 0,
+    +1, +1, 1, 0,
+  ],
+  sudoku: [
+    -3, -3, 0, 3,
+    +3, -3, 3, 3,
+    -3, +3, 0, 0,
+    +3, +3, 3, 0,
+  ],
 } as const;
 
-type GeometryType = keyof typeof geometryCreators;
+type GeometryType = keyof typeof quads;
 
 export class GeometryFactory {
   private readonly geometries: Partial<Record<GeometryType, Geometry>> = {};
@@ -127,7 +88,7 @@ export class GeometryFactory {
   createGeometry(type: GeometryType): Geometry {
     let result = this.geometries[type];
     if (!result) {
-      result = this.geometries[type] = geometryCreators[type](this.gl);
+      result = this.geometries[type] = createQuad(this.gl, quads[type]);
     }
     return result;
   }

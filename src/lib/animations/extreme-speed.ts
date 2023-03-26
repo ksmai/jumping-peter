@@ -34,7 +34,7 @@ export function createSprites(
   options: RenderOption,
 ): Sprite[] {
   const program = programFactory.createProgram("default");
-  const geometry = geometryFactory.createGeometry("nine");
+  const geometry = geometryFactory.createGeometry("sudoku");
 
   const { directionX, directionY } = options;
   const maxOffsetX = directionX * 2;
