@@ -1,6 +1,7 @@
-import { mat2d, vec2 } from "gl-matrix";
-
-import { createDirection, type MappedOptions } from "./options";
+import * as mat2d from "./matrix2d";
+import * as utils from "./utils";
+import { createDirection } from "./options";
+import type { MappedOptions } from "./options";
 import type { Sprite } from "../graphics/renderer";
 import type { ProgramFactory } from "../graphics/program";
 import type { GeometryFactory } from "../graphics/geometry";
@@ -30,25 +31,17 @@ export function createSprites(
   const program = programFactory.createProgram("default");
   const geometry = geometryFactory.createGeometry("nine");
 
-  let { directionX, directionY } = options;
-  directionX *= 2;
-  directionY *= 2;
+  const { directionX, directionY } = options;
+  const maxOffsetX = directionX * 2;
+  const maxOffsetY = directionY * 2;
 
   const getUniforms: Sprite["getUniforms"] = (t) => {
-    const transform = mat2d.create();
-    mat2d.translate(
-      transform,
-      transform,
-      vec2.lerp(vec2.create(), [0, 0], [directionX, directionY], t),
-    );
-    mat2d.scale(transform, transform, [3, 3]);
+    const mat = mat2d.identity();
+    const translateX = utils.interpolate(0, maxOffsetX, t);
+    const translateY = utils.interpolate(0, maxOffsetY, t);
+    mat2d.translate(mat, translateX, translateY);
     return {
-      // prettier-ignore
-      u_transform: [
-        transform[0], transform[1], 0,
-        transform[2], transform[3], 0,
-        transform[4], transform[5], 1,
-      ],
+      u_transform: mat2d.toTransform(mat),
     };
   };
 

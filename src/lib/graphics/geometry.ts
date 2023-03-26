@@ -76,18 +76,13 @@ const geometryCreators = {
     gl.bindVertexArray(vao);
     gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
 
-    // the texture coordinates are actually flipped in the vertical direction.
-    // This is needed because when we use gl.readPixels(), it reads from the
-    // bottom to the top, which makes it correct again when the GIF is
-    // created. If the canvas needs to be displayed directly, we can use
-    // `transform: scaleY(-1)`.
     // prettier-ignore
     const data = new Float32Array([
       // a_position.xy, a_texCoords.xy
-      -1, -1, 0, 0,
-      +1, -1, 3, 0,
-      -1, +1, 0, 3,
-      +1, +1, 3, 3,
+      -3, -3, 0, 3,
+      +3, -3, 3, 3,
+      -3, +3, 0, 0,
+      +3, +3, 3, 0,
     ]);
     gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
 
