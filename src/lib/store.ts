@@ -4,7 +4,7 @@ import { base } from "$app/paths";
 import { animations } from "$lib/animations";
 import type { AnimationOptions } from "$lib/animations";
 import { Animator } from "$lib/animator";
-import type { GifOptions } from "$lib/animator";
+import type { FrameOptions, ImageOptions } from "$lib/animator";
 
 export const currentAnimation = (function () {
   const { subscribe, update } = writable<(typeof animations)[number]>(
@@ -28,34 +28,45 @@ export const currentAnimation = (function () {
   return { subscribe, change };
 })();
 
-export const gifOptions = (function () {
-  const defaultImageUrl = `${base}/favicon.png`;
+export const imageOptions = (function () {
+  const defaultUrl = `${base}/favicon.png`;
 
-  const { subscribe, update } = writable<GifOptions>({
+  const { subscribe, update } = writable<ImageOptions>({
     width: 64,
     height: 64,
-    delayMs: 50,
-    totalFrames: 20,
-    imageUrl: defaultImageUrl,
+    url: defaultUrl,
   });
 
-  function change(updates: Partial<Omit<GifOptions, "imageUrl">>) {
+  function change(updates: Partial<Omit<ImageOptions, "url">>) {
     update((options) => ({ ...options, ...updates }));
   }
 
   function changeImage(file: File) {
     update((options) => {
-      if (options.imageUrl !== defaultImageUrl) {
-        URL.revokeObjectURL(options.imageUrl);
+      if (options.url !== defaultUrl) {
+        URL.revokeObjectURL(options.url);
       }
       return {
         ...options,
-        imageUrl: URL.createObjectURL(file),
+        url: URL.createObjectURL(file),
       };
     });
   }
 
   return { subscribe, change, changeImage };
+})();
+
+export const frameOptions = (function () {
+  const { subscribe, update } = writable<FrameOptions>({
+    delayMs: 50,
+    totalFrames: 20,
+  });
+
+  function change(updates: Partial<FrameOptions>) {
+    update((options) => ({ ...options, ...updates }));
+  }
+
+  return { subscribe, change };
 })();
 
 export const animationOptions = (function () {
@@ -113,7 +124,8 @@ export const animator = (function () {
     return animator
       .animate(
         {
-          gif: get(gifOptions),
+          image: get(imageOptions),
+          frame: get(frameOptions),
           animation: get(animationOptions),
         },
         (frame) => update((state) => ({ ...state, frame })),
@@ -139,9 +151,9 @@ export const animator = (function () {
       nextFrame = requestedFrame;
     }
 
-    const gifOptionsValue = get(gifOptions);
-    if (nextFrame >= gifOptionsValue.totalFrames) {
-      nextFrame = gifOptionsValue.totalFrames - 1;
+    const frameOptionsValue = get(frameOptions);
+    if (nextFrame >= frameOptionsValue.totalFrames) {
+      nextFrame = frameOptionsValue.totalFrames - 1;
     }
 
     update((state) => ({ ...state, frame: nextFrame, running: true }));
@@ -149,7 +161,8 @@ export const animator = (function () {
     return animator
       .renderFrame(
         {
-          gif: gifOptionsValue,
+          image: get(imageOptions),
+          frame: frameOptionsValue,
           animation: get(animationOptions),
         },
         nextFrame,

@@ -1,6 +1,6 @@
 <script lang="ts">
   import Header from "$lib/components/Header.svelte";
-  import GifOptions from "$lib/components/GifOptions.svelte";
+  import CommonOptions from "$lib/components/CommonOptions.svelte";
   import AnimationOptions from "$lib/components/AnimationOptions.svelte";
   import Animations from "$lib/components/Animations.svelte";
   import Preview from "$lib/components/Preview.svelte";
@@ -33,7 +33,7 @@
 <div class="grid">
   <Header class="header" />
   <Animations class="animations" />
-  <GifOptions class="gif-options" />
+  <CommonOptions class="common-options" />
   <AnimationOptions class="animation-options" />
   <Preview class="preview" />
 </div>
@@ -48,7 +48,7 @@
     grid-template-areas:
       "header"
       "animations"
-      "gif-options"
+      "common-options"
       "animation-options"
       "preview";
     gap: 16px;
@@ -59,9 +59,9 @@
       grid-template-rows: auto 1fr 10rem;
       grid-template-columns: 15rem 1fr 15rem;
       grid-template-areas:
-        "header      header     header           "
-        "gif-options preview    animation-options"
-        "gif-options animations animation-options";
+        "header         header     header           "
+        "common-options preview    animation-options"
+        "common-options animations animation-options";
       gap: 8px;
     }
   }
@@ -76,8 +76,8 @@
     background-color: var(--color-bg-dp-01);
   }
 
-  * > :global(.gif-options) {
-    grid-area: gif-options;
+  * > :global(.common-options) {
+    grid-area: common-options;
     background-color: var(--color-bg-dp-01);
   }
 

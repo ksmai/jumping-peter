@@ -7,16 +7,20 @@ import { render } from "./graphics/renderer";
 import { ProgramFactory } from "./graphics/program";
 import { GeometryFactory } from "./graphics/geometry";
 
-export interface GifOptions {
+export interface ImageOptions {
   width: number;
   height: number;
+  url: string;
+}
+
+export interface FrameOptions {
   delayMs: number;
   totalFrames: number;
-  imageUrl: string;
 }
 
 export interface AnimationRequest {
-  gif: GifOptions;
+  image: ImageOptions;
+  frame: FrameOptions;
   animation: AnimationOptions;
 }
 
@@ -72,8 +76,8 @@ export class Animator {
     return new Promise((resolve, reject) => {
       const encoder = new GIFEncoder();
       encoder.setRepeat(0);
-      encoder.setDelay(request.gif.delayMs);
-      encoder.setSize(request.gif.width, request.gif.height);
+      encoder.setDelay(request.frame.delayMs);
+      encoder.setSize(request.image.width, request.image.height);
 
       const started = encoder.start();
       if (!started) {
@@ -136,20 +140,20 @@ export class Animator {
 
     const { type, request, resolve, sprites, frame } = this.queue[0];
     if (type === "frame" || (type === "gif" && this.queue[0].frame === 0)) {
-      await this.texture.loadImage(request.gif.imageUrl);
-      this.canvas.width = request.gif.width;
-      this.canvas.height = request.gif.height;
+      await this.texture.loadImage(request.image.url);
+      this.canvas.width = request.image.width;
+      this.canvas.height = request.image.height;
     }
 
     if (type === "frame") {
-      render(this.gl, frame / request.gif.totalFrames, sprites, this.texture);
+      render(this.gl, frame / request.frame.totalFrames, sprites, this.texture);
       resolve();
       this.queue.shift();
       this.animationFrame = null;
     } else {
       const { encoder, sprites, callback } = this.queue[0];
 
-      render(this.gl, frame / request.gif.totalFrames, sprites, this.texture);
+      render(this.gl, frame / request.frame.totalFrames, sprites, this.texture);
       callback(frame);
 
       const pixels = new Uint8ClampedArray(
@@ -168,7 +172,7 @@ export class Animator {
       encoder.addFrame(pixels, true);
       encoder.setTransparent(0xffffff);
 
-      if (frame === request.gif.totalFrames - 1) {
+      if (frame === request.frame.totalFrames - 1) {
         encoder.finish();
         const gif = encoder.stream().getData();
         const dataUri = "data:image/gif;base64," + window.btoa(gif);

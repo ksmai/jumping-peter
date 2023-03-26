@@ -3,7 +3,8 @@
   import { browser } from "$app/environment";
   import {
     animator,
-    gifOptions,
+    imageOptions,
+    frameOptions,
     animationOptions,
     currentAnimation,
   } from "$lib/store";
@@ -34,7 +35,8 @@
   }
 
   $: {
-    $gifOptions;
+    $imageOptions;
+    $frameOptions;
     $animationOptions;
     $currentAnimation;
 
@@ -81,10 +83,10 @@
       {#await result}
         <div class="preview__loading">
           <p>Generating...</p>
-          <p>[{$animator.frame} / {$gifOptions.totalFrames}]</p>
+          <p>[{$animator.frame} / {$frameOptions.totalFrames}]</p>
           <progress
             class="preview__progress"
-            max={$gifOptions.totalFrames}
+            max={$frameOptions.totalFrames}
             value={$animator.frame}
           />
         </div>
@@ -114,7 +116,7 @@
 
     <Slider
       min={0}
-      max={$gifOptions.totalFrames - 1}
+      max={$frameOptions.totalFrames - 1}
       step={1}
       value={$animator.frame}
       on:input={onInput}

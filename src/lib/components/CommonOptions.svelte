@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { gifOptions } from "$lib/store";
+  import { imageOptions, frameOptions } from "$lib/store";
   import Slider from "$lib/components/Slider.svelte";
 
   let className = "";
@@ -11,12 +11,18 @@
     if (!file) {
       return;
     }
-    gifOptions.changeImage(file);
+    imageOptions.changeImage(file);
   }
 
-  function onInput(field: string) {
+  function onInputImage(field: string) {
     return function (e: CustomEvent) {
-      gifOptions.change({ [field]: e.detail.value });
+      imageOptions.change({ [field]: e.detail.value });
+    };
+  }
+
+  function onInputFrame(field: string) {
+    return function (e: CustomEvent) {
+      frameOptions.change({ [field]: e.detail.value });
     };
   }
 </script>
@@ -33,7 +39,7 @@
     />
 
     <div class="image__container">
-      <img class="image__preview" src={$gifOptions.imageUrl} alt="source" />
+      <img class="image__preview" src={$imageOptions.url} alt="source" />
     </div>
   </label>
 
@@ -42,8 +48,8 @@
     min={1}
     max={1024}
     step={1}
-    value={$gifOptions.width}
-    on:input={onInput("width")}
+    value={$imageOptions.width}
+    on:input={onInputImage("width")}
   />
 
   <Slider
@@ -51,8 +57,8 @@
     min={1}
     max={1024}
     step={1}
-    value={$gifOptions.height}
-    on:input={onInput("height")}
+    value={$imageOptions.height}
+    on:input={onInputImage("height")}
   />
 
   <Slider
@@ -60,8 +66,8 @@
     min={20}
     max={1000}
     step={10}
-    value={$gifOptions.delayMs}
-    on:input={onInput("delayMs")}
+    value={$frameOptions.delayMs}
+    on:input={onInputFrame("delayMs")}
   />
 
   <Slider
@@ -69,8 +75,8 @@
     min={1}
     max={1000}
     step={1}
-    value={$gifOptions.totalFrames}
-    on:input={onInput("totalFrames")}
+    value={$frameOptions.totalFrames}
+    on:input={onInputFrame("totalFrames")}
   />
 </aside>
 
