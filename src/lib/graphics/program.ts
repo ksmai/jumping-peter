@@ -21,7 +21,9 @@ uniform mat3 u_transform;
 out vec2 v_texCoords;
 
 void main() {
-  gl_Position = vec4((u_transform * vec3(a_position, 1.0)).xy, 0.0, 1.0);
+  vec3 pos = u_transform * vec3(a_position, 1.0);
+  // flip y coordinate because readPixels() will invert the image again
+  gl_Position = vec4(pos.x, -pos.y, 0.0, 1.0);
   v_texCoords = a_texCoords;
 }
     `,

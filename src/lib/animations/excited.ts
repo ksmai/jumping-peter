@@ -1,6 +1,11 @@
-import { glMatrix, mat2d, vec2 } from "gl-matrix";
-
-import { createAngle, createCoordinate, type MappedOptions } from "./options";
+import {
+  createAngle,
+  createPositiveInteger,
+  createTwoWayPercentage,
+} from "./options";
+import * as mat2d from "./matrix2d";
+import * as utils from "./utils";
+import type { MappedOptions } from "./options";
 import type { Sprite } from "../graphics/renderer";
 import type { ProgramFactory } from "../graphics/program";
 import type { GeometryFactory } from "../graphics/geometry";
@@ -10,39 +15,27 @@ export type Name = typeof Name;
 
 export const EditOptions = [
   createAngle({
-    name: "minAngle",
-    label: "Min angle",
+    name: "angle",
+    label: "Angle",
     default: 15,
   } as const),
 
-  createAngle({
-    name: "maxAngle",
-    label: "Max angle",
-    default: 25,
+  createTwoWayPercentage({
+    name: "startOffset",
+    label: "startOffset",
+    default: -0.1,
   } as const),
 
-  createCoordinate({
-    name: "minCenterX",
-    label: "Min center X",
-    default: 0.5,
+  createTwoWayPercentage({
+    name: "endOffset",
+    label: "endOffset",
+    default: 0.1,
   } as const),
 
-  createCoordinate({
-    name: "maxCenterX",
-    label: "Max center X",
-    default: 0.55,
-  } as const),
-
-  createCoordinate({
-    name: "minCenterY",
-    label: "Min center Y",
-    default: 0.5,
-  } as const),
-
-  createCoordinate({
-    name: "maxCenterY",
-    label: "Max center Y",
-    default: 0.55,
+  createPositiveInteger({
+    name: "cycles",
+    label: "Cycles",
+    default: 2,
   } as const),
 ];
 
@@ -56,46 +49,33 @@ export function createSprites(
   const program = programFactory.createProgram("default");
   const geometry = geometryFactory.createGeometry("full");
 
-  let { minAngle, maxAngle, minCenterX, maxCenterX, minCenterY, maxCenterY } =
-    options;
-  minAngle = glMatrix.toRadian(minAngle);
-  maxAngle = glMatrix.toRadian(maxAngle);
-  minCenterX = minCenterX * 2 - 1;
-  minCenterY = minCenterY * 2 - 1;
-  maxCenterX = maxCenterX * 2 - 1;
-  maxCenterY = maxCenterY * 2 - 1;
+  const { angle, startOffset, endOffset, cycles } = options;
+
+  const radians = utils.toRadians(angle);
+  const cos = Math.cos(radians);
+  const sin = Math.sin(radians);
 
   const getUniforms: Sprite["getUniforms"] = (t) => {
-    let angle = minAngle + (maxAngle - minAngle) * Math.random();
-    if (Math.random() < 0.5) {
-      angle = -angle;
-    }
-
-    const translate = vec2.lerp(
-      vec2.create(),
-      [minCenterX, minCenterY],
-      [maxCenterX, maxCenterY],
-      Math.random(),
+    const cycleT = (t * 2 * cycles) % 1;
+    const translateT = Math.min(cycleT, 1 - cycleT) / 0.5;
+    const translateX = utils.interpolate(
+      -startOffset * sin,
+      -endOffset * sin,
+      translateT,
     );
-    if (Math.random() < 0.5) {
-      vec2.negate(translate, translate);
-    }
+    const translateY = utils.interpolate(
+      startOffset * cos,
+      endOffset * cos,
+      translateT,
+    );
 
-    const scale =
-      Math.random() < 0.5 ? vec2.fromValues(-1, 1) : vec2.fromValues(1, 1);
-
-    const transform = mat2d.create();
-    mat2d.scale(transform, transform, scale);
-    mat2d.translate(transform, transform, translate);
-    mat2d.rotate(transform, transform, angle);
+    const mat = mat2d.identity();
+    mat2d.rotate(mat, angle);
+    mat2d.translate(mat, translateX, translateY);
+    mat2d.scale(mat, t > 0.5 ? -1 : 1, 1);
 
     return {
-      // prettier-ignore
-      u_transform: [
-        transform[0], transform[1], 0,
-        transform[2], transform[3], 0,
-        transform[4], transform[5], 1,
-      ],
+      u_transform: mat2d.toTransform(mat),
     };
   };
 

@@ -41,6 +41,30 @@ export function createCoordinate<Name extends string>(
   };
 }
 
+export function createPercentage<Name extends string>(
+  options: CreateSlider<Name>,
+): Slider<Name> {
+  return {
+    ...options,
+    type: "slider",
+    min: 0,
+    max: 1,
+    step: 0.01,
+  };
+}
+
+export function createTwoWayPercentage<Name extends string>(
+  options: CreateSlider<Name>,
+): Slider<Name> {
+  return {
+    ...options,
+    type: "slider",
+    min: -1,
+    max: 1,
+    step: 0.01,
+  };
+}
+
 // 1 = original size
 // > 1 = larger
 // < 1 = smaller
@@ -67,6 +91,18 @@ export function createDirection<Name extends string>(
     type: "slider",
     min: -1,
     max: 1,
+    step: 1,
+  };
+}
+
+export function createPositiveInteger<Name extends string>(
+  options: CreateSlider<Name>,
+): Slider<Name> {
+  return {
+    ...options,
+    type: "slider",
+    min: 1,
+    max: 100,
     step: 1,
   };
 }
