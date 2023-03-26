@@ -45,7 +45,10 @@ export function createSprites(
   const program = programFactory.createProgram("default");
   const geometry = geometryFactory.createGeometry("full");
 
-  const { angle, startOffset, endOffset, cycles } = options;
+  const { angle, cycles } = options;
+  let { startOffset, endOffset } = options;
+  startOffset *= 2;
+  endOffset *= 2;
 
   const radians = utils.toRadian(angle);
   const cos = Math.cos(radians);
