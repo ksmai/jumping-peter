@@ -152,7 +152,7 @@ export const animator = (function () {
           gif: gifOptionsValue,
           animation: get(animationOptions),
         },
-        frame,
+        nextFrame,
       )
       .finally(() => {
         update((state) => ({ ...state, running: false }));
