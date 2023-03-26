@@ -12,6 +12,13 @@ The UI is built with Svelte, powered by [`create-svelte`](https://github.com/sve
 
 Although `OffscreenCanvas` is useful to generate the GIF in a worker thread, it is not well supported by safari yet. We will keep using the main thread for rendering until it has better support. This means that our rendering speed will be unfortunately limited by the frame rate.
 
+## How to add new animations?
+
+1. Create a new animation in `src/lib/animations/{name}.ts` with the same interface as the other animations, such as `jumping.ts`, implementing new functionality as needed
+2. Register the animation in `src/lib/animations/index.ts`
+3. Using the default options, generate a demo GIF file and save it as `static/demo-{name}.gif`
+4. Update `README.md` to demonstrate the new animation
+
 ## Supported animations
 
 ### jumping
