@@ -13,18 +13,6 @@
     }
     imageOptions.changeImage(file);
   }
-
-  function onInputImage(field: string) {
-    return function (e: CustomEvent) {
-      imageOptions.change({ [field]: e.detail.value });
-    };
-  }
-
-  function onInputFrame(field: string) {
-    return function (e: CustomEvent) {
-      frameOptions.change({ [field]: e.detail.value });
-    };
-  }
 </script>
 
 <aside class={`container ${className}`}>
@@ -49,7 +37,7 @@
     max={1024}
     step={1}
     value={$imageOptions.width}
-    on:input={onInputImage("width")}
+    on:input={(e) => imageOptions.change({ width: e.detail.value })}
   />
 
   <Slider
@@ -58,7 +46,34 @@
     max={1024}
     step={1}
     value={$imageOptions.height}
-    on:input={onInputImage("height")}
+    on:input={(e) => imageOptions.change({ height: e.detail.value })}
+  />
+
+  <Slider
+    label="clearRed"
+    min={0}
+    max={1}
+    step={0.01}
+    value={$imageOptions.clearRed}
+    on:input={(e) => imageOptions.change({ clearRed: e.detail.value })}
+  />
+
+  <Slider
+    label="clearGreen"
+    min={0}
+    max={1}
+    step={0.01}
+    value={$imageOptions.clearGreen}
+    on:input={(e) => imageOptions.change({ clearGreen: e.detail.value })}
+  />
+
+  <Slider
+    label="clearBlue"
+    min={0}
+    max={1}
+    step={0.01}
+    value={$imageOptions.clearBlue}
+    on:input={(e) => imageOptions.change({ clearBlue: e.detail.value })}
   />
 
   <Slider
@@ -67,7 +82,7 @@
     max={1000}
     step={10}
     value={$frameOptions.delayMs}
-    on:input={onInputFrame("delayMs")}
+    on:input={(e) => frameOptions.change({ delayMs: e.detail.value })}
   />
 
   <Slider
@@ -76,7 +91,7 @@
     max={1000}
     step={1}
     value={$frameOptions.totalFrames}
-    on:input={onInputFrame("totalFrames")}
+    on:input={(e) => frameOptions.change({ totalFrames: e.detail.value })}
   />
 </aside>
 

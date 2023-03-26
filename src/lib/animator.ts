@@ -11,6 +11,9 @@ export interface ImageOptions {
   width: number;
   height: number;
   url: string;
+  clearRed: number;
+  clearGreen: number;
+  clearBlue: number;
 }
 
 export interface FrameOptions {
@@ -145,15 +148,34 @@ export class Animator {
       this.canvas.height = request.image.height;
     }
 
+    const clearColor = [
+      request.image.clearRed,
+      request.image.clearGreen,
+      request.image.clearBlue,
+      1,
+    ];
+
     if (type === "frame") {
-      render(this.gl, frame / request.frame.totalFrames, sprites, this.texture);
+      render(
+        this.gl,
+        frame / request.frame.totalFrames,
+        sprites,
+        this.texture,
+        clearColor,
+      );
       resolve();
       this.queue.shift();
       this.animationFrame = null;
     } else {
       const { encoder, sprites, callback } = this.queue[0];
 
-      render(this.gl, frame / request.frame.totalFrames, sprites, this.texture);
+      render(
+        this.gl,
+        frame / request.frame.totalFrames,
+        sprites,
+        this.texture,
+        clearColor,
+      );
       callback(frame);
 
       const pixels = new Uint8ClampedArray(

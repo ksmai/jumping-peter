@@ -14,9 +14,10 @@ export function render(
   t: number,
   sprites: Sprite[],
   texture: SingleTexture,
+  clearColor: [number, number, number, number],
 ): void {
   gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-  gl.clearColor(1, 1, 1, 1);
+  gl.clearColor(...clearColor);
   gl.clear(gl.COLOR_BUFFER_BIT);
 
   let lastProgram;

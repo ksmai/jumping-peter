@@ -35,6 +35,9 @@ export const imageOptions = (function () {
     width: 64,
     height: 64,
     url: defaultUrl,
+    clearRed: 1,
+    clearBlue: 1,
+    clearGreen: 1,
   });
 
   function change(updates: Partial<Omit<ImageOptions, "url">>) {
