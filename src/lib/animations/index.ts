@@ -22,6 +22,7 @@ export const animations = [
     animation.EditOptions,
     animation.Name,
   ),
+  defaultFrameOptions: animation.FrameOptions,
 }));
 
 export type AnimationOptions =

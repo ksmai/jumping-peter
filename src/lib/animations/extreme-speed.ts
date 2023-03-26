@@ -9,6 +9,11 @@ import type { GeometryFactory } from "../graphics/geometry";
 export const Name = "extreme-speed" as const;
 export type Name = typeof Name;
 
+export const FrameOptions = {
+  delayMs: 20,
+  totalFrames: 10,
+} as const;
+
 export const EditOptions = [
   createDirection({
     name: "directionX",

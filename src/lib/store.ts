@@ -57,9 +57,12 @@ export const imageOptions = (function () {
 })();
 
 export const frameOptions = (function () {
-  const { subscribe, update } = writable<FrameOptions>({
-    delayMs: 50,
-    totalFrames: 20,
+  const { subscribe, update } = writable<FrameOptions>(undefined, (set) => {
+    const unsubscribe = currentAnimation.subscribe((animation) => {
+      set(animation.defaultFrameOptions);
+    });
+
+    return unsubscribe;
   });
 
   function change(updates: Partial<FrameOptions>) {

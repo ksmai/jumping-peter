@@ -13,6 +13,11 @@ import type { GeometryFactory } from "../graphics/geometry";
 export const Name = "excited" as const;
 export type Name = typeof Name;
 
+export const FrameOptions = {
+  delayMs: 50,
+  totalFrames: 25,
+} as const;
+
 export const EditOptions = [
   createAngle({
     name: "angle",
@@ -31,7 +36,7 @@ export const EditOptions = [
 
   createPositiveInteger({
     name: "cycles",
-    default: 2,
+    default: 3,
   } as const),
 ];
 

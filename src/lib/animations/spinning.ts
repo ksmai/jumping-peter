@@ -9,6 +9,11 @@ import type { GeometryFactory } from "../graphics/geometry";
 export const Name = "spinning" as const;
 export type Name = typeof Name;
 
+export const FrameOptions = {
+  delayMs: 50,
+  totalFrames: 15,
+} as const;
+
 export const EditOptions = [
   createAngle({
     name: "startAngle",

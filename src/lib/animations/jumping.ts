@@ -8,10 +8,15 @@ import type { GeometryFactory } from "../graphics/geometry";
 export const Name = "jumping" as const;
 export type Name = typeof Name;
 
+export const FrameOptions = {
+  delayMs: 50,
+  totalFrames: 20,
+} as const;
+
 export const EditOptions = [
   createPercentage({
     name: "maxOffset",
-    default: 0.5,
+    default: 0.6,
   } as const),
 
   createPercentage({
@@ -21,7 +26,7 @@ export const EditOptions = [
 
   createPercentage({
     name: "maxCompress",
-    default: 0.25,
+    default: 0.3,
   } as const),
 ];
 
