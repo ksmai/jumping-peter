@@ -11,19 +11,16 @@ export type Name = typeof Name;
 export const EditOptions = [
   createCoordinate({
     name: "jumpHeight",
-    label: "Jump height",
     default: 0.5,
   } as const),
 
   createCoordinate({
     name: "compressTime",
-    label: "Compress time",
     default: 0.4,
   } as const),
 
   createCoordinate({
     name: "maxCompress",
-    label: "Max compress",
     default: 0.25,
   } as const),
 ];

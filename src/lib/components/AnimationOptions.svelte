@@ -19,7 +19,7 @@
   {#each $currentAnimation.editOptions as option}
     {#if option.type === "slider"}
       <Slider
-        label={option.label}
+        label={option.name}
         min={option.min}
         max={option.max}
         step={option.step}
@@ -28,7 +28,7 @@
       />
     {:else if option.type === "toggle"}
       <Toggle
-        label={option.label}
+        label={option.name}
         value={currentValues[option.name]}
         on:change={onInput(option.name)}
       />

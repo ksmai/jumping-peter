@@ -1,17 +1,13 @@
 interface Slider<Name extends string> {
   type: "slider";
   name: Name;
-  label: string;
   default: number;
   min: number;
   max: number;
   step: number;
 }
 
-type CreateSlider<Name extends string> = Pick<
-  Slider<Name>,
-  "name" | "label" | "default"
->;
+type CreateSlider<Name extends string> = Pick<Slider<Name>, "name" | "default">;
 
 // 0 degrees is right
 // 90 degrees is down
@@ -110,14 +106,10 @@ export function createPositiveInteger<Name extends string>(
 interface Toggle<Name extends string> {
   type: "toggle";
   name: Name;
-  label: string;
   default: boolean;
 }
 
-type CreateToggle<Name extends string> = Pick<
-  Toggle<Name>,
-  "name" | "label" | "default"
->;
+type CreateToggle<Name extends string> = Pick<Toggle<Name>, "name" | "default">;
 
 export function createToggle<Name extends string>(
   options: CreateToggle<Name>,

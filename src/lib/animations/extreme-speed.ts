@@ -11,13 +11,11 @@ export type Name = typeof Name;
 export const EditOptions = [
   createDirection({
     name: "directionX",
-    label: "Horizontal direction",
     default: -1,
   } as const),
 
   createDirection({
     name: "directionY",
-    label: "Vertical direction",
     default: 0,
   } as const),
 ];

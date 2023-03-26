@@ -16,25 +16,21 @@ export type Name = typeof Name;
 export const EditOptions = [
   createAngle({
     name: "angle",
-    label: "Angle",
     default: 15,
   } as const),
 
   createTwoWayPercentage({
     name: "startOffset",
-    label: "startOffset",
     default: -0.1,
   } as const),
 
   createTwoWayPercentage({
     name: "endOffset",
-    label: "endOffset",
     default: 0.1,
   } as const),
 
   createPositiveInteger({
     name: "cycles",
-    label: "Cycles",
     default: 2,
   } as const),
 ];

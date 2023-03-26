@@ -38,7 +38,7 @@
   </label>
 
   <Slider
-    label="Output width"
+    label="width"
     min={1}
     max={1024}
     step={1}
@@ -47,7 +47,7 @@
   />
 
   <Slider
-    label="Output height"
+    label="height"
     min={1}
     max={1024}
     step={1}
@@ -56,7 +56,7 @@
   />
 
   <Slider
-    label="Delay ms"
+    label="delayMs"
     min={20}
     max={1000}
     step={10}
@@ -65,7 +65,7 @@
   />
 
   <Slider
-    label="Total frames"
+    label="totalFrames"
     min={1}
     max={1000}
     step={1}

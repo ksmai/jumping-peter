@@ -11,19 +11,16 @@ export type Name = typeof Name;
 export const EditOptions = [
   createScale({
     name: "minScale",
-    label: "Min scale",
     default: 1,
   } as const),
 
   createScale({
     name: "maxScale",
-    label: "Max scale",
     default: 2,
   } as const),
 
   createToggle({
     name: "alternate",
-    label: "Alterate",
     default: false,
   } as const),
 ];

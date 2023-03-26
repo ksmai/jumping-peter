@@ -16,31 +16,26 @@ export type Name = typeof Name;
 export const EditOptions = [
   createAngle({
     name: "startAngle",
-    label: "Start angle",
     default: 0,
   } as const),
 
   createAngle({
     name: "endAngle",
-    label: "End angle",
     default: 360,
   } as const),
 
   createToggle({
     name: "alternate",
-    label: "Alterate",
     default: false,
   } as const),
 
   createCoordinate({
     name: "originX",
-    label: "Rotate origin X",
     default: 0.5,
   } as const),
 
   createCoordinate({
     name: "originY",
-    label: "Rotate origin Y",
     default: 0.5,
   } as const),
 ];
