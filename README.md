@@ -41,6 +41,10 @@ Although `OffscreenCanvas` is useful to generate the GIF in a worker thread, it 
 
 ![expanding](/static/demo-expanding.gif)
 
+### tower
+
+![tower](/static/demo-tower.gif)
+
 ## Development
 
 ```bash

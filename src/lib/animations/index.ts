@@ -8,6 +8,7 @@ import * as Expanding from "./expanding";
 import * as ExtremeSpeed from "./extreme-speed";
 import * as Excited from "./excited";
 import * as Jumping from "./jumping";
+import * as Tower from "./tower";
 
 export const animations = [
   Jumping,
@@ -15,6 +16,7 @@ export const animations = [
   Spinning,
   Excited,
   Expanding,
+  Tower,
 ].map((animation) => ({
   name: animation.Name,
   editOptions: animation.EditOptions,
@@ -30,7 +32,8 @@ export type AnimationOptions =
   | ExtremeSpeed.RenderOption
   | Spinning.RenderOption
   | Excited.RenderOption
-  | Expanding.RenderOption;
+  | Expanding.RenderOption
+  | Tower.RenderOption;
 
 export function createSprites(
   programFactory: ProgramFactory,
@@ -52,6 +55,8 @@ export function createSprites(
       return Excited.createSprites(programFactory, geometryFactory, options);
     case "jumping":
       return Jumping.createSprites(programFactory, geometryFactory, options);
+    case "tower":
+      return Tower.createSprites(programFactory, geometryFactory, options);
     default:
       ((o: never) => {
         throw new Error(`Unknown animation options: ${JSON.stringify(o)}`);
