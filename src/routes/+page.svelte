@@ -51,7 +51,7 @@
       "common-options"
       "animation-options"
       "preview";
-    gap: 16px;
+    gap: 32px;
 
     @media (min-width: 64rem) {
       width: 100vw;

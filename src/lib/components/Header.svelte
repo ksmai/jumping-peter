@@ -27,6 +27,12 @@
     width: 100%;
     padding: 12px 16px;
     white-space: nowrap;
+
+    &::before {
+      display: inline-block;
+      height: 100%;
+      content: "";
+    }
   }
 
   .logo {
@@ -41,7 +47,6 @@
   }
 
   .subtitle {
-    flex: 1 1 auto;
     font-size: 1rem;
     color: var(--color-fg-emphasis-medium);
     display: none;
