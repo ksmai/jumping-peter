@@ -1,6 +1,7 @@
-import { mat2d } from "gl-matrix";
-
-import { createToggle, createScale, type MappedOptions } from "./options";
+import * as mat2d from "./matrix2d";
+import * as utils from "./utils";
+import { createToggle, createScale } from "./options";
+import type { MappedOptions } from "./options";
 import type { Sprite } from "../graphics/renderer";
 import type { ProgramFactory } from "../graphics/program";
 import type { GeometryFactory } from "../graphics/geometry";
@@ -20,7 +21,7 @@ export const EditOptions = [
   } as const),
 
   createToggle({
-    name: "alternate",
+    name: "alternates",
     default: false,
   } as const),
 ];
@@ -35,22 +36,15 @@ export function createSprites(
   const program = programFactory.createProgram("default");
   const geometry = geometryFactory.createGeometry("full");
 
-  const { minScale, maxScale, alternate } = options;
+  const { minScale, maxScale, alternates } = options;
 
   const getUniforms: Sprite["getUniforms"] = (t) => {
-    if (alternate && t > 0.5) {
-      return getUniforms(1 - t);
-    }
-    const scale = minScale + (maxScale - minScale) * t * (alternate ? 2 : 1);
-    const transform = mat2d.create();
-    mat2d.scale(transform, transform, [scale, scale]);
+    const cycleT = alternates ? Math.min(t, 1 - t) * 2 : t;
+    const scale = utils.interpolate(minScale, maxScale, cycleT);
+    const mat = mat2d.identity();
+    mat2d.scale(mat, scale, scale);
     return {
-      // prettier-ignore
-      u_transform: [
-        transform[0], transform[1], 0,
-        transform[2], transform[3], 0,
-        transform[4], transform[5], 1,
-      ],
+      u_transform: mat2d.toTransform(mat),
     };
   };
 
