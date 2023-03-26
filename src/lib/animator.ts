@@ -8,47 +8,47 @@ import { ProgramFactory } from "./graphics/program";
 import { GeometryFactory } from "./graphics/geometry";
 
 export interface ImageOptions {
-  width: number;
-  height: number;
-  url: string;
-  clearRed: number;
-  clearGreen: number;
-  clearBlue: number;
+  readonly width: number;
+  readonly height: number;
+  readonly url: string;
+  readonly clearRed: number;
+  readonly clearGreen: number;
+  readonly clearBlue: number;
 }
 
 export interface FrameOptions {
-  delayMs: number;
-  totalFrames: number;
+  readonly delayMs: number;
+  readonly totalFrames: number;
 }
 
 export interface AnimationRequest {
-  image: ImageOptions;
-  frame: FrameOptions;
-  animation: AnimationOptions;
+  readonly image: ImageOptions;
+  readonly frame: FrameOptions;
+  readonly animation: AnimationOptions;
 }
 
 export interface AnimationResultGifSuccess {
-  dataUri: string;
+  readonly dataUri: string;
 }
 
 interface QueueItemGif {
-  type: "gif";
-  request: AnimationRequest;
-  resolve: (result: AnimationResultGifSuccess) => void;
-  reject: (e: Error) => void;
+  readonly type: "gif";
+  readonly request: AnimationRequest;
+  readonly resolve: (result: AnimationResultGifSuccess) => void;
+  readonly reject: (e: Error) => void;
   frame: number;
-  sprites: Sprite[];
-  callback: (frame: number) => void;
-  encoder: GIFEncoder;
+  readonly sprites: Sprite[];
+  readonly callback: (frame: number) => void;
+  readonly encoder: GIFEncoder;
 }
 
 interface QueueItemFrame {
-  type: "frame";
-  request: AnimationRequest;
-  resolve: () => void;
-  reject: (e: Error) => void;
-  frame: number;
-  sprites: Sprite[];
+  readonly type: "frame";
+  readonly request: AnimationRequest;
+  readonly resolve: () => void;
+  readonly reject: (e: Error) => void;
+  readonly frame: number;
+  readonly sprites: Sprite[];
 }
 
 type QueueItem = QueueItemGif | QueueItemFrame;
@@ -148,7 +148,7 @@ export class Animator {
       this.canvas.height = request.image.height;
     }
 
-    const clearColor = [
+    const clearColor: [number, number, number, number] = [
       request.image.clearRed,
       request.image.clearGreen,
       request.image.clearBlue,

@@ -19,8 +19,8 @@
     dispatch("input", { value });
   }
 
-  function displayNumber(n: number): number {
-    return +(Math.round((n + "e+2") as any) + "e-2");
+  function displayNumber(n: number): string {
+    return n.toFixed(2).replace(/\.?0+$/, "");
   }
 </script>
 

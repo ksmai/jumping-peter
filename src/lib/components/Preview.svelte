@@ -135,7 +135,7 @@
     min-height: 0;
 
     &__debug-input {
-      width: 10rem;
+      width: 8.5rem;
       justify-self: end;
     }
 
