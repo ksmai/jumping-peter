@@ -53,7 +53,7 @@ export function createSprites(
 
   const getUniforms: Sprite["getUniforms"] = (t) => {
     const cycleT = (t * 2 * cycles) % 1;
-    const translateT = Math.min(cycleT, 1 - cycleT) / 0.5;
+    const translateT = Math.min(cycleT, 1 - cycleT) * 2;
     const translateX = utils.interpolate(
       -startOffset * sin,
       -endOffset * sin,
