@@ -6,6 +6,6 @@ export function interpolate(
   return start + (end - start) * percentage;
 }
 
-export function toRadians(degrees: number): number {
+export function toRadian(degrees: number): number {
   return (degrees * Math.PI) / 180;
 }

@@ -23,15 +23,16 @@ export function createAngle<Name extends string>(
   };
 }
 
-// (0, 0) is top left
-// (1, 1) is bottom right
+// follow webgl convention:
+// (-1, -1) is bottom left
+// (1, 1) is top right
 export function createCoordinate<Name extends string>(
   options: CreateSlider<Name>,
 ): Slider<Name> {
   return {
     ...options,
     type: "slider",
-    min: 0,
+    min: -1,
     max: 1,
     step: 0.01,
   };

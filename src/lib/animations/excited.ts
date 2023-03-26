@@ -47,7 +47,7 @@ export function createSprites(
 
   const { angle, startOffset, endOffset, cycles } = options;
 
-  const radians = utils.toRadians(angle);
+  const radians = utils.toRadian(angle);
   const cos = Math.cos(radians);
   const sin = Math.sin(radians);
 

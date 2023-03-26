@@ -1,11 +1,7 @@
-import { glMatrix, mat2d } from "gl-matrix";
-
-import {
-  createAngle,
-  createToggle,
-  createCoordinate,
-  type MappedOptions,
-} from "./options";
+import * as mat2d from "./matrix2d";
+import * as utils from "./utils";
+import { createAngle, createToggle, createCoordinate } from "./options";
+import type { MappedOptions } from "./options";
 import type { Sprite } from "../graphics/renderer";
 import type { ProgramFactory } from "../graphics/program";
 import type { GeometryFactory } from "../graphics/geometry";
@@ -24,19 +20,19 @@ export const EditOptions = [
     default: 360,
   } as const),
 
-  createToggle({
-    name: "alternate",
-    default: false,
-  } as const),
-
   createCoordinate({
     name: "originX",
-    default: 0.5,
+    default: 0,
   } as const),
 
   createCoordinate({
     name: "originY",
-    default: 0.5,
+    default: 0,
+  } as const),
+
+  createToggle({
+    name: "alternates",
+    default: false,
   } as const),
 ];
 
@@ -50,30 +46,17 @@ export function createSprites(
   const program = programFactory.createProgram("default");
   const geometry = geometryFactory.createGeometry("full");
 
-  const { alternate } = options;
-  let { startAngle, endAngle, originX, originY } = options;
-  startAngle = glMatrix.toRadian(startAngle);
-  endAngle = glMatrix.toRadian(endAngle);
-  originX = originX * 2 - 1;
-  originY = originY * 2 - 1;
+  const { alternates, startAngle, endAngle, originX, originY } = options;
 
   const getUniforms: Sprite["getUniforms"] = (t) => {
-    if (alternate && t > 0.5) {
-      return getUniforms(1 - t);
-    }
-    const angle =
-      startAngle + (endAngle - startAngle) * t * (alternate ? 2 : 1);
-    const transform = mat2d.create();
-    mat2d.translate(transform, transform, [originX, originY]);
-    mat2d.rotate(transform, transform, angle);
-    mat2d.translate(transform, transform, [-originX, -originY]);
+    const cycleT = alternates ? Math.min(t, 1 - t) * 2 : t;
+    const angle = utils.interpolate(startAngle, endAngle, cycleT);
+    const mat = mat2d.identity();
+    mat2d.translate(mat, -originX, -originY);
+    mat2d.rotate(mat, angle);
+    mat2d.translate(mat, originX, originY);
     return {
-      // prettier-ignore
-      u_transform: [
-        transform[0], transform[1], 0,
-        transform[2], transform[3], 0,
-        transform[4], transform[5], 1,
-      ],
+      u_transform: mat2d.toTransform(mat),
     };
   };
 
