@@ -1,4 +1,4 @@
-import * as mat2d from "./matrix2d";
+import * as transform from "./transform";
 import * as utils from "./utils";
 import { createDirection } from "./options";
 import type { MappedOptions } from "./options";
@@ -38,12 +38,12 @@ export function createSprites(
   const maxOffsetY = directionY * 2;
 
   const getUniforms: Sprite["getUniforms"] = (t) => {
-    const mat = mat2d.identity();
+    const mat = transform.identity();
     const translateX = utils.interpolate(0, maxOffsetX, t);
     const translateY = utils.interpolate(0, maxOffsetY, t);
-    mat2d.translate(mat, translateX, translateY);
+    transform.translate2d(mat, translateX, translateY);
     return {
-      u_transform: mat2d.toTransform(mat),
+      u_transform: mat,
     };
   };
 

@@ -3,7 +3,7 @@ import {
   createPositiveInteger,
   createTwoWayPercentage,
 } from "./options";
-import * as mat2d from "./matrix2d";
+import * as transform from "./transform";
 import * as utils from "./utils";
 import type { MappedOptions } from "./options";
 import type { Sprite } from "../graphics/renderer";
@@ -70,13 +70,13 @@ export function createSprites(
       translateT,
     );
 
-    const mat = mat2d.identity();
-    mat2d.rotate(mat, angle);
-    mat2d.translate(mat, translateX, translateY);
-    mat2d.scale(mat, t > 0.5 ? -1 : 1, 1);
+    const mat = transform.identity();
+    transform.rotate2d(mat, angle);
+    transform.translate2d(mat, translateX, translateY);
+    transform.scale2d(mat, t > 0.5 ? -1 : 1, 1);
 
     return {
-      u_transform: mat2d.toTransform(mat),
+      u_transform: mat,
     };
   };
 

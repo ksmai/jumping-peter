@@ -1,4 +1,4 @@
-import * as mat2d from "./matrix2d";
+import * as transform from "./transform";
 import { createPercentage } from "./options";
 import type { MappedOptions } from "./options";
 import type { Sprite } from "../graphics/renderer";
@@ -41,22 +41,22 @@ export function createSprites(
 
   const getUniforms: Sprite["getUniforms"] = (t) => {
     const cycleT = Math.min(t, 1 - t) * 2;
-    const mat = mat2d.identity();
+    const mat = transform.identity();
     const airTime = cycleT / (1 - compressTime);
     if (airTime < 1) {
       const offset = (1 - airTime * airTime) * maxOffset * 2;
-      mat2d.translate(mat, 0, offset);
+      transform.translate2d(mat, 0, offset);
     } else {
       const groundTime = (1 - cycleT) / compressTime;
       const compressAmount = (1 - groundTime * groundTime) * maxCompress;
       const deform = 1 - compressAmount;
-      mat2d.translate(mat, 0, 1);
-      mat2d.scale(mat, 1 / deform, deform);
-      mat2d.translate(mat, 0, -1);
+      transform.translate2d(mat, 0, 1);
+      transform.scale2d(mat, 1 / deform, deform);
+      transform.translate2d(mat, 0, -1);
     }
 
     return {
-      u_transform: mat2d.toTransform(mat),
+      u_transform: mat,
     };
   };
 

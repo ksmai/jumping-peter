@@ -1,4 +1,4 @@
-import * as mat2d from "./matrix2d";
+import * as transform from "./transform";
 import * as utils from "./utils";
 import { createAngle, createToggle, createCoordinate } from "./options";
 import type { MappedOptions } from "./options";
@@ -53,12 +53,12 @@ export function createSprites(
   const getUniforms: Sprite["getUniforms"] = (t) => {
     const cycleT = alternates ? Math.min(t, 1 - t) * 2 : t;
     const angle = utils.interpolate(startAngle, endAngle, cycleT);
-    const mat = mat2d.identity();
-    mat2d.translate(mat, -originX, -originY);
-    mat2d.rotate(mat, angle);
-    mat2d.translate(mat, originX, originY);
+    const mat = transform.identity();
+    transform.translate2d(mat, -originX, -originY);
+    transform.rotate2d(mat, angle);
+    transform.translate2d(mat, originX, originY);
     return {
-      u_transform: mat2d.toTransform(mat),
+      u_transform: mat,
     };
   };
 

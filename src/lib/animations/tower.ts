@@ -1,4 +1,4 @@
-import * as mat2d from "./matrix2d";
+import * as transform from "./transform";
 import * as utils from "./utils";
 import { createPercentage, createAngle } from "./options";
 import type { MappedOptions } from "./options";
@@ -41,18 +41,18 @@ export function createSprites(
   const { startAngle, endAngle, startTime } = options;
 
   const getUniforms: Sprite["getUniforms"] = (t) => {
-    const mat = mat2d.identity();
+    const mat = transform.identity();
 
     if (t < startTime) {
       const cycleT = t / startTime;
       const rotateT = Math.min(cycleT, 1 - cycleT) * 2;
       const angle = utils.interpolate(0, startAngle, rotateT);
-      mat2d.rotate(mat, angle);
+      transform.rotate2d(mat, angle);
     } else {
       const cycleT = (t - startTime) / (1 - startTime);
       const rotateT = Math.min(cycleT, 1 - cycleT) * 2;
       const angle = utils.interpolate(0, endAngle, rotateT);
-      mat2d.rotate(mat, angle);
+      transform.rotate2d(mat, angle);
 
       if (cycleT > 0.5) {
         const radian = utils.toRadian(angle);
@@ -61,12 +61,12 @@ export function createSprites(
         const translateT = (cycleT - 0.5) * 2;
         const translateX = utils.interpolate(0, -2 * sin, translateT);
         const translateY = utils.interpolate(0, 2 * cos, translateT);
-        mat2d.translate(mat, translateX, translateY);
+        transform.translate2d(mat, translateX, translateY);
       }
     }
 
     return {
-      u_transform: mat2d.toTransform(mat),
+      u_transform: mat,
     };
   };
 

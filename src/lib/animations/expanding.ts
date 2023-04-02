@@ -1,4 +1,4 @@
-import * as mat2d from "./matrix2d";
+import * as transform from "./transform";
 import * as utils from "./utils";
 import { createToggle, createScale } from "./options";
 import type { MappedOptions } from "./options";
@@ -43,10 +43,10 @@ export function createSprites(
   const getUniforms: Sprite["getUniforms"] = (t) => {
     const cycleT = alternates ? Math.min(t, 1 - t) * 2 : t;
     const scale = utils.interpolate(minScale, maxScale, cycleT);
-    const mat = mat2d.identity();
-    mat2d.scale(mat, scale, scale);
+    const mat = transform.identity();
+    transform.scale2d(mat, scale, scale);
     return {
-      u_transform: mat2d.toTransform(mat),
+      u_transform: mat,
     };
   };
 
