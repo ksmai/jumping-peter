@@ -49,6 +49,10 @@ Although `OffscreenCanvas` is useful to generate the GIF in a worker thread, it 
 
 ![repeated](/static/demo-repeated.gif)
 
+### mirror-left
+
+![mirror-left](/static/demo-mirror-left.gif)
+
 ## Development
 
 ```bash

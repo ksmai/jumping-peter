@@ -10,6 +10,7 @@ import * as Excited from "./excited";
 import * as Jumping from "./jumping";
 import * as Tower from "./tower";
 import * as Repeated from "./repeated";
+import * as MirrorLeft from "./mirror-left";
 
 export interface FrameOptions {
   readonly delayMs: number;
@@ -24,6 +25,7 @@ export const ANIMATIONS = [
   Expanding,
   Tower,
   Repeated,
+  MirrorLeft,
 ];
 
 export function createSprites(
@@ -51,6 +53,8 @@ export function createSprites(
       return Tower.createSprites(programFactory, geometryFactory, options);
     case "repeated":
       return Repeated.createSprites(programFactory, geometryFactory, options);
+    case "mirror-left":
+      return MirrorLeft.createSprites(programFactory, geometryFactory, options);
     default:
       ((animation: never) => {
         throw new Error(`Unknown animation: ${JSON.stringify(animation)}`);
