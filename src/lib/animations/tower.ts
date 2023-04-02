@@ -17,17 +17,17 @@ export const FrameOptions = {
 export const EditOptions = [
   createAngle({
     name: "startAngle",
-    default: 20,
+    value: 20,
   } as const),
 
   createAngle({
     name: "endAngle",
-    default: -45,
+    value: -45,
   } as const),
 
   createPercentage({
     name: "startTime",
-    default: 0.5,
+    value: 0.5,
   } as const),
 ];
 

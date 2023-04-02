@@ -1,13 +1,13 @@
 interface Slider<Name extends string> {
   type: "slider";
   name: Name;
-  default: number;
+  value: number;
   min: number;
   max: number;
   step: number;
 }
 
-type CreateSlider<Name extends string> = Pick<Slider<Name>, "name" | "default">;
+type CreateSlider<Name extends string> = Pick<Slider<Name>, "name" | "value">;
 
 // 0 degrees is right
 // 90 degrees is down
@@ -107,10 +107,10 @@ export function createPositiveInteger<Name extends string>(
 interface Toggle<Name extends string> {
   type: "toggle";
   name: Name;
-  default: boolean;
+  value: boolean;
 }
 
-type CreateToggle<Name extends string> = Pick<Toggle<Name>, "name" | "default">;
+type CreateToggle<Name extends string> = Pick<Toggle<Name>, "name" | "value">;
 
 export function createToggle<Name extends string>(
   options: CreateToggle<Name>,
@@ -121,9 +121,11 @@ export function createToggle<Name extends string>(
   };
 }
 
-type OptionType<T> = T extends { type: "slider" }
+type EditOption = Slider<string> | Toggle<string>;
+
+type OptionType<T extends EditOption> = T extends Slider<string>
   ? number
-  : T extends { type: "toggle" }
+  : T extends Toggle<string>
   ? boolean
   : never;
 
@@ -133,26 +135,22 @@ type OptionName<T> = T extends { name: infer N }
     : never
   : never;
 
-export type MappedOptions<T extends readonly unknown[], Name extends string> = {
+export type MappedOptions<
+  T extends readonly EditOption[],
+  Name extends string,
+> = {
   [U in T[number] as OptionName<U>]: OptionType<U>;
 } & { name: Name };
 
-export function getDefaultOptions<
-  T extends readonly unknown[],
-  Name extends string,
->(editOptions: T, name: Name): MappedOptions<T, Name> {
-  const result: any = { name };
-  for (const option of editOptions) {
-    if (!option || typeof option !== "object") {
-      continue;
-    }
-    if (!("name" in option) || typeof option.name !== "string") {
-      continue;
-    }
-    if (!("default" in option) || typeof option.default === "undefined") {
-      continue;
-    }
-    result[option.name] = option.default;
-  }
-  return result;
+export function getValues<T extends readonly EditOption[], Name extends string>(
+  editOptions: T,
+  name: Name,
+): MappedOptions<T, Name> {
+  return editOptions.reduce(
+    (result, option) => {
+      Object.assign(result, { [option.name]: option.value });
+      return result;
+    },
+    { name } as Partial<MappedOptions<T, Name>>,
+  ) as MappedOptions<T, Name>;
 }

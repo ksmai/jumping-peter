@@ -21,22 +21,22 @@ export const FrameOptions = {
 export const EditOptions = [
   createAngle({
     name: "angle",
-    default: 15,
+    value: 15,
   } as const),
 
   createTwoWayPercentage({
     name: "startOffset",
-    default: -0.1,
+    value: -0.1,
   } as const),
 
   createTwoWayPercentage({
     name: "endOffset",
-    default: 0.1,
+    value: 0.1,
   } as const),
 
   createPositiveInteger({
     name: "cycles",
-    default: 3,
+    value: 3,
   } as const),
 ];
 

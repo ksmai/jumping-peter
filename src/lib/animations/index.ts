@@ -2,7 +2,7 @@ import type { Sprite } from "$lib/graphics/renderer";
 import type { ProgramFactory } from "$lib/graphics/program";
 import type { GeometryFactory } from "$lib/graphics/geometry";
 
-import { getDefaultOptions } from "./options";
+import { getValues } from "./options";
 import * as Spinning from "./spinning";
 import * as Expanding from "./expanding";
 import * as ExtremeSpeed from "./extreme-speed";
@@ -20,10 +20,7 @@ export const animations = [
 ].map((animation) => ({
   name: animation.Name,
   editOptions: animation.EditOptions,
-  defaultRenderOptions: getDefaultOptions(
-    animation.EditOptions,
-    animation.Name,
-  ),
+  defaultRenderOptions: getValues(animation.EditOptions, animation.Name),
   defaultFrameOptions: animation.FrameOptions,
 }));
 

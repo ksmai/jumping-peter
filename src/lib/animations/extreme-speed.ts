@@ -17,12 +17,12 @@ export const FrameOptions = {
 export const EditOptions = [
   createDirection({
     name: "directionX",
-    default: -1,
+    value: -1,
   } as const),
 
   createDirection({
     name: "directionY",
-    default: 0,
+    value: 0,
   } as const),
 ];
 

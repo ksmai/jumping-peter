@@ -17,27 +17,27 @@ export const FrameOptions = {
 export const EditOptions = [
   createAngle({
     name: "startAngle",
-    default: 0,
+    value: 0,
   } as const),
 
   createAngle({
     name: "endAngle",
-    default: 360,
+    value: 360,
   } as const),
 
   createCoordinate({
     name: "originX",
-    default: 0,
+    value: 0,
   } as const),
 
   createCoordinate({
     name: "originY",
-    default: 0,
+    value: 0,
   } as const),
 
   createToggle({
     name: "alternates",
-    default: false,
+    value: false,
   } as const),
 ];
 

@@ -16,17 +16,17 @@ export const FrameOptions = {
 export const EditOptions = [
   createPercentage({
     name: "maxOffset",
-    default: 0.6,
+    value: 0.6,
   } as const),
 
   createPercentage({
     name: "compressTime",
-    default: 0.4,
+    value: 0.4,
   } as const),
 
   createPercentage({
     name: "maxCompress",
-    default: 0.3,
+    value: 0.3,
   } as const),
 ];
 

@@ -17,17 +17,17 @@ export const FrameOptions = {
 export const EditOptions = [
   createScale({
     name: "minScale",
-    default: 1,
+    value: 1,
   } as const),
 
   createScale({
     name: "maxScale",
-    default: 2,
+    value: 2,
   } as const),
 
   createToggle({
     name: "alternates",
-    default: false,
+    value: false,
   } as const),
 ];
 
