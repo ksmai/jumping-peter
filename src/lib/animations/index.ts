@@ -10,8 +10,7 @@ import * as Excited from "./excited";
 import * as Jumping from "./jumping";
 import * as Tower from "./tower";
 import * as Repeated from "./repeated";
-import * as MirrorLeft from "./mirror-left";
-import * as MirrorRight from "./mirror-right";
+import * as Mirror from "./mirror";
 import * as Panic from "./panic";
 
 export interface FrameOptions {
@@ -27,8 +26,7 @@ export const ANIMATIONS = [
   Expanding,
   Tower,
   Repeated,
-  MirrorLeft,
-  MirrorRight,
+  Mirror,
   Panic,
 ];
 
@@ -57,14 +55,8 @@ export function createSprites(
       return Tower.createSprites(programFactory, geometryFactory, options);
     case "repeated":
       return Repeated.createSprites(programFactory, geometryFactory, options);
-    case "mirror-left":
-      return MirrorLeft.createSprites(programFactory, geometryFactory, options);
-    case "mirror-right":
-      return MirrorRight.createSprites(
-        programFactory,
-        geometryFactory,
-        options,
-      );
+    case "mirror":
+      return Mirror.createSprites(programFactory, geometryFactory, options);
     case "panic":
       return Panic.createSprites(programFactory, geometryFactory, options);
     default:
