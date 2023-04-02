@@ -15,7 +15,7 @@ export const frameOptions = {
 
 export const editOptions = [
   createToggle({
-    name: "right",
+    name: "rightHalf",
     value: false,
   }),
 ];
@@ -26,9 +26,9 @@ export function createSprites(
   options: MappedOptions<typeof editOptions>,
 ): Sprite[] {
   const program = programFactory.createProgram("default");
-  const { right } = options;
+  const { rightHalf } = options;
   const geometry = geometryFactory.createGeometry(
-    right ? "rightHalf" : "leftHalf",
+    rightHalf ? "rightHalf" : "leftHalf",
   );
 
   const getLeftUniforms: Sprite["getUniforms"] = (t) => {
@@ -36,7 +36,7 @@ export function createSprites(
     const mat = transform.identity();
     const p = utils.easeOutBack(t2);
     const offset = utils.interpolate(-2, -1, p);
-    if (!right) {
+    if (!rightHalf) {
       transform.scale2d(mat, -1, 1);
     }
     transform.translate2d(mat, offset, 0);
@@ -50,7 +50,7 @@ export function createSprites(
     const mat = transform.identity();
     const p = utils.easeOutBack(t2);
     const offset = utils.interpolate(2, 1, p);
-    if (right) {
+    if (rightHalf) {
       transform.scale2d(mat, -1, 1);
     }
     transform.translate2d(mat, offset, 0);
