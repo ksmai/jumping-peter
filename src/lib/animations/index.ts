@@ -29,43 +29,24 @@ export function createSprites(
   geometryFactory: GeometryFactory,
   animation: (typeof ANIMATIONS)[number],
 ): Sprite[] {
-  switch (animation.Name) {
+  const options = getValues(animation.editOptions);
+  switch (animation.name) {
     case "spinning":
-      return Spinning.createSprites(
-        programFactory,
-        geometryFactory,
-        getValues(animation.EditOptions, animation.Name),
-      );
+      return Spinning.createSprites(programFactory, geometryFactory, options);
     case "expanding":
-      return Expanding.createSprites(
-        programFactory,
-        geometryFactory,
-        getValues(animation.EditOptions, animation.Name),
-      );
+      return Expanding.createSprites(programFactory, geometryFactory, options);
     case "extreme-speed":
       return ExtremeSpeed.createSprites(
         programFactory,
         geometryFactory,
-        getValues(animation.EditOptions, animation.Name),
+        options,
       );
     case "excited":
-      return Excited.createSprites(
-        programFactory,
-        geometryFactory,
-        getValues(animation.EditOptions, animation.Name),
-      );
+      return Excited.createSprites(programFactory, geometryFactory, options);
     case "jumping":
-      return Jumping.createSprites(
-        programFactory,
-        geometryFactory,
-        getValues(animation.EditOptions, animation.Name),
-      );
+      return Jumping.createSprites(programFactory, geometryFactory, options);
     case "tower":
-      return Tower.createSprites(
-        programFactory,
-        geometryFactory,
-        getValues(animation.EditOptions, animation.Name),
-      );
+      return Tower.createSprites(programFactory, geometryFactory, options);
     default:
       ((animation: never) => {
         throw new Error(`Unknown animation: ${JSON.stringify(animation)}`);

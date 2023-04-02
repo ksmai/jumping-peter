@@ -81,7 +81,7 @@
     min={20}
     max={1000}
     step={10}
-    value={$animations.current.FrameOptions.delayMs}
+    value={$animations.current.frameOptions.delayMs}
     on:input={(e) => animations.changeFrameOptions({ delayMs: e.detail.value })}
   />
 
@@ -90,7 +90,7 @@
     min={1}
     max={1000}
     step={1}
-    value={$animations.current.FrameOptions.totalFrames}
+    value={$animations.current.frameOptions.totalFrames}
     on:input={(e) =>
       animations.changeFrameOptions({ totalFrames: e.detail.value })}
   />

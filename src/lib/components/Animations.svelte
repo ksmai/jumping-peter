@@ -7,7 +7,7 @@
 </script>
 
 <aside class={`container ${className}`}>
-  {#each $animations.animations as animation (animation.Name)}
+  {#each $animations.animations as animation (animation.name)}
     <button
       type="button"
       class="option"
@@ -16,10 +16,10 @@
     >
       <img
         class="image"
-        src={`${base}/demo-${animation.Name}.gif`}
-        alt={animation.Name}
+        src={`${base}/demo-${animation.name}.gif`}
+        alt={animation.name}
       />
-      <span>{animation.Name}</span>
+      <span>{animation.name}</span>
     </button>
   {/each}
 </aside>

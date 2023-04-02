@@ -36,12 +36,12 @@ export const animations = (function () {
   function changeFrameOptions(updates: Partial<FrameOptions>) {
     update(({ animations, current }) => {
       const nextFrameOptions: FrameOptions = {
-        ...current.FrameOptions,
+        ...current.frameOptions,
         ...updates,
       };
       const next: Animation = {
         ...current,
-        FrameOptions: nextFrameOptions,
+        frameOptions: nextFrameOptions,
       };
 
       return {
@@ -55,14 +55,14 @@ export const animations = (function () {
 
   function changeEditOptions<
     T extends Animation,
-    U extends T["EditOptions"][number],
+    U extends T["editOptions"][number],
   >(editOption: U, value: U["value"]) {
     update(({ animations, current }) => {
       const next = {
         ...current,
-        EditOptions: current.EditOptions.map((option) =>
+        editOptions: current.editOptions.map((option) =>
           option === editOption ? { ...editOption, value } : option,
-        ) as T["EditOptions"],
+        ) as T["editOptions"],
       } as T;
 
       return {
@@ -180,8 +180,8 @@ export const animator = (function () {
 
     const currentAnimation = get(animations).current;
 
-    if (nextFrame >= currentAnimation.FrameOptions.totalFrames) {
-      nextFrame = currentAnimation.FrameOptions.totalFrames - 1;
+    if (nextFrame >= currentAnimation.frameOptions.totalFrames) {
+      nextFrame = currentAnimation.frameOptions.totalFrames - 1;
     }
 
     update((state) => ({ ...state, frame: nextFrame, running: true }));

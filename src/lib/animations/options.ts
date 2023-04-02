@@ -135,22 +135,15 @@ type OptionName<T> = T extends { name: infer N }
     : never
   : never;
 
-export type MappedOptions<
-  T extends readonly EditOption[],
-  Name extends string,
-> = {
+export type MappedOptions<T extends readonly EditOption[]> = {
   [U in T[number] as OptionName<U>]: OptionType<U>;
-} & { name: Name };
+};
 
-export function getValues<T extends readonly EditOption[], Name extends string>(
+export function getValues<T extends readonly EditOption[]>(
   editOptions: T,
-  name: Name,
-): MappedOptions<T, Name> {
-  return editOptions.reduce(
-    (result, option) => {
-      Object.assign(result, { [option.name]: option.value });
-      return result;
-    },
-    { name } as Partial<MappedOptions<T, Name>>,
-  ) as MappedOptions<T, Name>;
+): MappedOptions<T> {
+  return editOptions.reduce((result, option) => {
+    Object.assign(result, { [option.name]: option.value });
+    return result;
+  }, {} as MappedOptions<T>);
 }

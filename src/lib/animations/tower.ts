@@ -6,15 +6,14 @@ import type { Sprite } from "../graphics/renderer";
 import type { ProgramFactory } from "../graphics/program";
 import type { GeometryFactory } from "../graphics/geometry";
 
-export const Name = "tower" as const;
-export type Name = typeof Name;
+export const name = "tower" as const;
 
-export const FrameOptions = {
+export const frameOptions = {
   delayMs: 40,
   totalFrames: 20,
 };
 
-export const EditOptions = [
+export const editOptions = [
   createAngle({
     name: "startAngle",
     value: 20,
@@ -31,12 +30,10 @@ export const EditOptions = [
   }),
 ];
 
-export type RenderOption = MappedOptions<typeof EditOptions, Name>;
-
 export function createSprites(
   programFactory: ProgramFactory,
   geometryFactory: GeometryFactory,
-  options: RenderOption,
+  options: MappedOptions<typeof editOptions>,
 ): Sprite[] {
   const program = programFactory.createProgram("default");
   const geometry = geometryFactory.createGeometry("tower");

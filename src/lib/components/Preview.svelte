@@ -76,11 +76,11 @@
         <div class="preview__loading">
           <p>Generating...</p>
           <p>
-            [{$animator.frame} / {$animations.current.FrameOptions.totalFrames}]
+            [{$animator.frame} / {$animations.current.frameOptions.totalFrames}]
           </p>
           <progress
             class="preview__progress"
-            max={$animations.current.FrameOptions.totalFrames}
+            max={$animations.current.frameOptions.totalFrames}
             value={$animator.frame}
           />
         </div>
@@ -110,7 +110,7 @@
 
     <Slider
       min={0}
-      max={$animations.current.FrameOptions.totalFrames - 1}
+      max={$animations.current.frameOptions.totalFrames - 1}
       step={1}
       value={$animator.frame}
       on:input={onInput}

@@ -72,7 +72,7 @@ export class Animator {
     return new Promise((resolve, reject) => {
       const encoder = new GIFEncoder();
       encoder.setRepeat(0);
-      encoder.setDelay(request.animation.FrameOptions.delayMs);
+      encoder.setDelay(request.animation.frameOptions.delayMs);
       encoder.setSize(request.image.width, request.image.height);
 
       const started = encoder.start();
@@ -151,7 +151,7 @@ export class Animator {
     if (type === "frame") {
       render(
         this.gl,
-        frame / request.animation.FrameOptions.totalFrames,
+        frame / request.animation.frameOptions.totalFrames,
         sprites,
         this.texture,
         clearColor,
@@ -164,7 +164,7 @@ export class Animator {
 
       render(
         this.gl,
-        frame / request.animation.FrameOptions.totalFrames,
+        frame / request.animation.frameOptions.totalFrames,
         sprites,
         this.texture,
         clearColor,
@@ -187,7 +187,7 @@ export class Animator {
       encoder.addFrame(pixels, true);
       encoder.setTransparent(0xffffff);
 
-      if (frame === request.animation.FrameOptions.totalFrames - 1) {
+      if (frame === request.animation.frameOptions.totalFrames - 1) {
         encoder.finish();
         const gif = encoder.stream().getData();
         const dataUri = "data:image/gif;base64," + window.btoa(gif);

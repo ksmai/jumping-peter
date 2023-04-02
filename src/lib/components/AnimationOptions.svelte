@@ -8,7 +8,7 @@
 </script>
 
 <aside class={`container ${className}`}>
-  {#each $animations.current.EditOptions as option}
+  {#each $animations.current.editOptions as option}
     {#if option.type === "slider"}
       <Slider
         label={option.name}
