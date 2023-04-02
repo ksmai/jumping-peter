@@ -104,6 +104,18 @@ export function createPositiveInteger<Name extends string>(
   };
 }
 
+export function createEasing<Name extends string>(
+  options: CreateSlider<Name>,
+): Slider<Name> {
+  return {
+    ...options,
+    type: "slider",
+    min: 1,
+    max: 5,
+    step: 1,
+  };
+}
+
 interface Toggle<Name extends string> {
   readonly type: "toggle";
   readonly name: Name;

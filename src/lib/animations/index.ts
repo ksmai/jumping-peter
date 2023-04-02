@@ -12,6 +12,7 @@ import * as Tower from "./tower";
 import * as Repeated from "./repeated";
 import * as Mirror from "./mirror";
 import * as Panic from "./panic";
+import * as Rotating from "./rotating";
 
 export interface FrameOptions {
   readonly delayMs: number;
@@ -28,6 +29,7 @@ export const ANIMATIONS = [
   Repeated,
   Mirror,
   Panic,
+  Rotating,
 ];
 
 export function createSprites(
@@ -59,6 +61,8 @@ export function createSprites(
       return Mirror.createSprites(programFactory, geometryFactory, options);
     case "panic":
       return Panic.createSprites(programFactory, geometryFactory, options);
+    case "rotating":
+      return Rotating.createSprites(programFactory, geometryFactory, options);
     default:
       ((animation: never) => {
         throw new Error(`Unknown animation: ${JSON.stringify(animation)}`);

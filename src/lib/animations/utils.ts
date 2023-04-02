@@ -21,23 +21,46 @@ export function random(t: number): number {
   return x / (Math.pow(2, 31) - 1);
 }
 
-// reference for easing functions
+// Reference for easing functions
 // https://easings.net/
-export function easeInOutCubic(t: number): number {
-  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+//
+// Note to self: many functions like power functions or sine functions with a
+// smooth curve can be used as an easing function. The only requirements for an
+// easing function f: [0, 1] -> R are f(0) = 0 and f(1) = 1. Most of these
+// functions are monotonically increasing, but occasionally we might want
+// "elastic" or "bouncy" effects that might make the functions
+// overshoot/undershoot for a bit.
+//
+// Given an ease-in function f (whexe f''(t) > 0), it is easy to construct an
+// ease-out function g:
+//  g(t) = 1 - f(1 - t)
+//
+// Notice that g(0) = 1 - f(1 - 0) = 0 and g(1) = 1 - f(1 - 1) = 1
+// Also g'(t) = f'(1 - t) > 0 and g''(t) = -f''(1 - t) < 0
+//
+// We can also piece together f and g to produce an ease-in-out function h:
+//  h(t) = f(t) / f(0.5) / 2 when t < 0.5
+//  h(t) = 1 - f(2 * (1 - t)) / 2 when t >= 0.5
+//
+// It is easy to see that the 2nd derivative is positive in the first half of
+// the function and negative in the second. We carefully scale the function so
+// that they meet at t = 0.5 with h(0.5) = 0.5
+
+export function makeEaseInPower(power: number): (t: number) => number {
+  return (t) => Math.pow(t, power);
 }
 
-export function easeInQuint(t: number): number {
-  return t * t * t * t * t;
+export function makeEaseOutPower(power: number): (t: number) => number {
+  return (t) => 1 - Math.pow(1 - t, power);
 }
 
-export function easeOutQuint(t: number): number {
-  return 1 - Math.pow(1 - t, 5);
+export function makeEaseInOutPower(power: number): (t: number) => number {
+  const p = Math.pow(2, power - 1);
+  return (t) =>
+    t < 0.5 ? p * Math.pow(t, power) : 1 - Math.pow(2 * (1 - t), power) / 2;
 }
 
-export function easeInOutQuint(t: number): number {
-  return t < 0.5 ? 16 * t * t * t * t * t : 1 - Math.pow(-2 * t + 2, 5) / 2;
-}
+export const easeInOutCubic = makeEaseOutPower(3);
 
 export function easeOutBack(t: number): number {
   const c1 = 1.70158;
