@@ -1,6 +1,6 @@
 import * as transform from "./transform";
 import * as utils from "./utils";
-import { createScale } from "./options";
+import { createScale, createToggle } from "./options";
 import type { MappedOptions } from "./options";
 import type { Sprite } from "../graphics/renderer";
 import type { ProgramFactory } from "../graphics/program";
@@ -18,6 +18,11 @@ export const editOptions = [
     name: "initialScale",
     value: 0.1,
   }),
+
+  createToggle({
+    name: "horizontal",
+    value: false,
+  }),
 ];
 
 export function createSprites(
@@ -27,10 +32,32 @@ export function createSprites(
 ): Sprite[] {
   const program = programFactory.createProgram("default");
   const full = geometryFactory.createGeometry("full");
-  const topHalf = geometryFactory.createGeometry("topHalf");
-  const bottomHalf = geometryFactory.createGeometry("bottomHalf");
 
-  const { initialScale } = options;
+  const { initialScale, horizontal } = options;
+
+  const firstHalf = horizontal
+    ? {
+        geometry: geometryFactory.createGeometry("leftHalf"),
+        endX: -1,
+        endY: 0,
+      }
+    : {
+        geometry: geometryFactory.createGeometry("topHalf"),
+        endX: 0,
+        endY: 1,
+      };
+
+  const secondHalf = horizontal
+    ? {
+        geometry: geometryFactory.createGeometry("rightHalf"),
+        endX: 1,
+        endY: 0,
+      }
+    : {
+        geometry: geometryFactory.createGeometry("bottomHalf"),
+        endX: 0,
+        endY: -1,
+      };
 
   const getFullUniforms: Sprite["getUniforms"] = (t) => {
     const mat = transform.identity();
@@ -42,21 +69,23 @@ export function createSprites(
     };
   };
 
-  const getTopHalfUniforms: Sprite["getUniforms"] = (t) => {
+  const getFirstHalfUniforms: Sprite["getUniforms"] = (t) => {
     const mat = transform.identity();
     const p = utils.easeInOutCubic(t);
-    const offset = utils.interpolate(0, 1, p);
-    transform.translate2d(mat, 0, offset);
+    const offsetX = utils.interpolate(0, firstHalf.endX, p);
+    const offsetY = utils.interpolate(0, firstHalf.endY, p);
+    transform.translate2d(mat, offsetX, offsetY);
     return {
       u_transform: mat,
     };
   };
 
-  const getBottomHalfUniforms: Sprite["getUniforms"] = (t) => {
+  const getSecondHalfUniforms: Sprite["getUniforms"] = (t) => {
     const mat = transform.identity();
     const p = utils.easeInOutCubic(t);
-    const offset = utils.interpolate(0, -1, p);
-    transform.translate2d(mat, 0, offset);
+    const offsetX = utils.interpolate(0, secondHalf.endX, p);
+    const offsetY = utils.interpolate(0, secondHalf.endY, p);
+    transform.translate2d(mat, offsetX, offsetY);
     return {
       u_transform: mat,
     };
@@ -70,13 +99,13 @@ export function createSprites(
     },
     {
       program,
-      geometry: topHalf,
-      getUniforms: getTopHalfUniforms,
+      geometry: firstHalf.geometry,
+      getUniforms: getFirstHalfUniforms,
     },
     {
       program,
-      geometry: bottomHalf,
-      getUniforms: getBottomHalfUniforms,
+      geometry: secondHalf.geometry,
+      getUniforms: getSecondHalfUniforms,
     },
   ];
 }
