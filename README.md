@@ -16,10 +16,10 @@ Although `OffscreenCanvas` is useful to generate the GIF in a worker thread, it 
 
 1. Create a new animation in `src/lib/animations/{name}.ts` with the same interface as the other animations, such as `jumping.ts`, implementing new functionality as needed. 4 things are needed for each animation:
 
-    1. name
-    2. default frame options such as interval between each frame and total number of frames
-    3. a list of edit options with their default values
-    4. a `createSprites` function for rendering purpose
+   1. name
+   2. default frame options such as interval between each frame and total number of frames
+   3. a list of edit options with their default values
+   4. a `createSprites` function for rendering purpose
 
 2. Register the animation in `src/lib/animations/index.ts`
 3. Using the default options, generate a demo GIF file and save it as `static/demo-{name}.gif`
