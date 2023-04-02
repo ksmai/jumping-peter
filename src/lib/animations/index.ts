@@ -1,6 +1,6 @@
-import type { Sprite } from "$lib/graphics/renderer";
-import type { ProgramFactory } from "$lib/graphics/program";
 import type { GeometryFactory } from "$lib/graphics/geometry";
+import type { ProgramFactory } from "$lib/graphics/program";
+import type { Sprite } from "$lib/graphics/renderer";
 
 import { getValues } from "./options";
 import * as Spinning from "./spinning";
@@ -10,53 +10,65 @@ import * as Excited from "./excited";
 import * as Jumping from "./jumping";
 import * as Tower from "./tower";
 
-export const animations = [
+export interface FrameOptions {
+  readonly delayMs: number;
+  readonly totalFrames: number;
+}
+
+export const ANIMATIONS = [
   Jumping,
   ExtremeSpeed,
   Spinning,
   Excited,
   Expanding,
   Tower,
-].map((animation) => ({
-  name: animation.Name,
-  editOptions: animation.EditOptions,
-  defaultRenderOptions: getValues(animation.EditOptions, animation.Name),
-  defaultFrameOptions: animation.FrameOptions,
-}));
-
-export type AnimationOptions =
-  | Jumping.RenderOption
-  | ExtremeSpeed.RenderOption
-  | Spinning.RenderOption
-  | Excited.RenderOption
-  | Expanding.RenderOption
-  | Tower.RenderOption;
+];
 
 export function createSprites(
   programFactory: ProgramFactory,
   geometryFactory: GeometryFactory,
-  options: AnimationOptions,
+  animation: (typeof ANIMATIONS)[number],
 ): Sprite[] {
-  switch (options.name) {
+  switch (animation.Name) {
     case "spinning":
-      return Spinning.createSprites(programFactory, geometryFactory, options);
+      return Spinning.createSprites(
+        programFactory,
+        geometryFactory,
+        getValues(animation.EditOptions, animation.Name),
+      );
     case "expanding":
-      return Expanding.createSprites(programFactory, geometryFactory, options);
+      return Expanding.createSprites(
+        programFactory,
+        geometryFactory,
+        getValues(animation.EditOptions, animation.Name),
+      );
     case "extreme-speed":
       return ExtremeSpeed.createSprites(
         programFactory,
         geometryFactory,
-        options,
+        getValues(animation.EditOptions, animation.Name),
       );
     case "excited":
-      return Excited.createSprites(programFactory, geometryFactory, options);
+      return Excited.createSprites(
+        programFactory,
+        geometryFactory,
+        getValues(animation.EditOptions, animation.Name),
+      );
     case "jumping":
-      return Jumping.createSprites(programFactory, geometryFactory, options);
+      return Jumping.createSprites(
+        programFactory,
+        geometryFactory,
+        getValues(animation.EditOptions, animation.Name),
+      );
     case "tower":
-      return Tower.createSprites(programFactory, geometryFactory, options);
+      return Tower.createSprites(
+        programFactory,
+        geometryFactory,
+        getValues(animation.EditOptions, animation.Name),
+      );
     default:
-      ((o: never) => {
-        throw new Error(`Unknown animation options: ${JSON.stringify(o)}`);
-      })(options);
+      ((animation: never) => {
+        throw new Error(`Unknown animation: ${JSON.stringify(animation)}`);
+      })(animation);
   }
 }

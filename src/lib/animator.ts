@@ -1,11 +1,10 @@
-import { SingleTexture } from "./graphics/texture";
 import { GIFEncoder } from "./antimatter15-jsgif";
 import type { Sprite } from "./graphics/renderer";
-import { createSprites } from "./animations";
-import type { AnimationOptions } from "./animations";
+import { SingleTexture } from "./graphics/texture";
 import { render } from "./graphics/renderer";
 import { ProgramFactory } from "./graphics/program";
 import { GeometryFactory } from "./graphics/geometry";
+import { createSprites, ANIMATIONS } from "./animations";
 
 export interface ImageOptions {
   readonly width: number;
@@ -16,15 +15,9 @@ export interface ImageOptions {
   readonly clearBlue: number;
 }
 
-export interface FrameOptions {
-  readonly delayMs: number;
-  readonly totalFrames: number;
-}
-
 export interface AnimationRequest {
   readonly image: ImageOptions;
-  readonly frame: FrameOptions;
-  readonly animation: AnimationOptions;
+  readonly animation: (typeof ANIMATIONS)[number];
 }
 
 export interface AnimationResultGifSuccess {
@@ -79,7 +72,7 @@ export class Animator {
     return new Promise((resolve, reject) => {
       const encoder = new GIFEncoder();
       encoder.setRepeat(0);
-      encoder.setDelay(request.frame.delayMs);
+      encoder.setDelay(request.animation.FrameOptions.delayMs);
       encoder.setSize(request.image.width, request.image.height);
 
       const started = encoder.start();
@@ -158,7 +151,7 @@ export class Animator {
     if (type === "frame") {
       render(
         this.gl,
-        frame / request.frame.totalFrames,
+        frame / request.animation.FrameOptions.totalFrames,
         sprites,
         this.texture,
         clearColor,
@@ -171,7 +164,7 @@ export class Animator {
 
       render(
         this.gl,
-        frame / request.frame.totalFrames,
+        frame / request.animation.FrameOptions.totalFrames,
         sprites,
         this.texture,
         clearColor,
@@ -194,7 +187,7 @@ export class Animator {
       encoder.addFrame(pixels, true);
       encoder.setTransparent(0xffffff);
 
-      if (frame === request.frame.totalFrames - 1) {
+      if (frame === request.animation.FrameOptions.totalFrames - 1) {
         encoder.finish();
         const gif = encoder.stream().getData();
         const dataUri = "data:image/gif;base64," + window.btoa(gif);

@@ -1,31 +1,85 @@
 import { get, writable } from "svelte/store";
 
 import { base } from "$app/paths";
-import { animations } from "$lib/animations";
-import type { AnimationOptions } from "$lib/animations";
+import { ANIMATIONS } from "$lib/animations";
+import type { FrameOptions } from "$lib/animations";
 import { Animator } from "$lib/animator";
-import type { FrameOptions, ImageOptions } from "$lib/animator";
+import type { ImageOptions } from "$lib/animator";
 
-export const currentAnimation = (function () {
-  const { subscribe, update } = writable<(typeof animations)[number]>(
-    animations[0],
-  );
+type Animation = (typeof ANIMATIONS)[number];
 
-  const change = (name: (typeof animations)[number]["name"]) => {
-    update((current) => {
-      if (name === current.name) {
-        return current;
+interface StoredAnimations {
+  readonly animations: typeof ANIMATIONS;
+  readonly current: Animation;
+}
+
+export const animations = (function () {
+  const { subscribe, update } = writable<StoredAnimations>({
+    animations: ANIMATIONS,
+    current: ANIMATIONS[0],
+  });
+
+  const changeCurrentAnimation = (next: Animation) => {
+    update((value) => {
+      if (value.current === next) {
+        return value;
       }
-      const next = animations.find((animation) => animation.name === name);
-      if (!next) {
-        return current;
+      const found = value.animations.find((animation) => animation === next);
+      if (!found) {
+        return value;
       }
 
-      return next;
+      return { animations: value.animations, current: next };
     });
   };
 
-  return { subscribe, change };
+  function changeFrameOptions(updates: Partial<FrameOptions>) {
+    update(({ animations, current }) => {
+      const nextFrameOptions: FrameOptions = {
+        ...current.FrameOptions,
+        ...updates,
+      };
+      const next: Animation = {
+        ...current,
+        FrameOptions: nextFrameOptions,
+      };
+
+      return {
+        animations: animations.map((animation) =>
+          animation === current ? next : animation,
+        ),
+        current: next,
+      };
+    });
+  }
+
+  function changeEditOptions<
+    T extends Animation,
+    U extends T["EditOptions"][number],
+  >(editOption: U, value: U["value"]) {
+    update(({ animations, current }) => {
+      const next = {
+        ...current,
+        EditOptions: current.EditOptions.map((option) =>
+          option === editOption ? { ...editOption, value } : option,
+        ) as T["EditOptions"],
+      } as T;
+
+      return {
+        animations: animations.map((animation) =>
+          animation === current ? next : animation,
+        ),
+        current: next,
+      };
+    });
+  }
+
+  return {
+    subscribe,
+    changeCurrentAnimation,
+    changeFrameOptions,
+    changeEditOptions,
+  };
 })();
 
 export const imageOptions = (function () {
@@ -57,38 +111,6 @@ export const imageOptions = (function () {
   }
 
   return { subscribe, change, changeImage };
-})();
-
-export const frameOptions = (function () {
-  const { subscribe, update } = writable<FrameOptions>(undefined, (set) => {
-    const unsubscribe = currentAnimation.subscribe((animation) => {
-      set(animation.defaultFrameOptions);
-    });
-
-    return unsubscribe;
-  });
-
-  function change(updates: Partial<FrameOptions>) {
-    update((options) => ({ ...options, ...updates }));
-  }
-
-  return { subscribe, change };
-})();
-
-export const animationOptions = (function () {
-  const { subscribe, update } = writable<AnimationOptions>(undefined, (set) => {
-    const unsubscribe = currentAnimation.subscribe((animation) => {
-      set(animation.defaultRenderOptions);
-    });
-
-    return unsubscribe;
-  });
-
-  function change(updates: Partial<Omit<AnimationOptions, "name">>) {
-    update((options) => ({ ...options, ...updates }));
-  }
-
-  return { subscribe, change };
 })();
 
 interface AnimatorWrapper {
@@ -131,8 +153,7 @@ export const animator = (function () {
       .animate(
         {
           image: get(imageOptions),
-          frame: get(frameOptions),
-          animation: get(animationOptions),
+          animation: get(animations).current,
         },
         (frame) => update((state) => ({ ...state, frame })),
       )
@@ -157,9 +178,10 @@ export const animator = (function () {
       nextFrame = requestedFrame;
     }
 
-    const frameOptionsValue = get(frameOptions);
-    if (nextFrame >= frameOptionsValue.totalFrames) {
-      nextFrame = frameOptionsValue.totalFrames - 1;
+    const currentAnimation = get(animations).current;
+
+    if (nextFrame >= currentAnimation.FrameOptions.totalFrames) {
+      nextFrame = currentAnimation.FrameOptions.totalFrames - 1;
     }
 
     update((state) => ({ ...state, frame: nextFrame, running: true }));
@@ -168,8 +190,7 @@ export const animator = (function () {
       .renderFrame(
         {
           image: get(imageOptions),
-          frame: frameOptionsValue,
-          animation: get(animationOptions),
+          animation: currentAnimation,
         },
         nextFrame,
       )

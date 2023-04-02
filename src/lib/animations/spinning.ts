@@ -12,33 +12,33 @@ export type Name = typeof Name;
 export const FrameOptions = {
   delayMs: 50,
   totalFrames: 15,
-} as const;
+};
 
 export const EditOptions = [
   createAngle({
     name: "startAngle",
     value: 0,
-  } as const),
+  }),
 
   createAngle({
     name: "endAngle",
     value: 360,
-  } as const),
+  }),
 
   createCoordinate({
     name: "originX",
     value: 0,
-  } as const),
+  }),
 
   createCoordinate({
     name: "originY",
     value: 0,
-  } as const),
+  }),
 
   createToggle({
     name: "alternates",
     value: false,
-  } as const),
+  }),
 ];
 
 export type RenderOption = MappedOptions<typeof EditOptions, Name>;

@@ -1,10 +1,10 @@
 interface Slider<Name extends string> {
-  type: "slider";
-  name: Name;
-  value: number;
-  min: number;
-  max: number;
-  step: number;
+  readonly type: "slider";
+  readonly name: Name;
+  readonly value: number;
+  readonly min: number;
+  readonly max: number;
+  readonly step: number;
 }
 
 type CreateSlider<Name extends string> = Pick<Slider<Name>, "name" | "value">;
@@ -105,9 +105,9 @@ export function createPositiveInteger<Name extends string>(
 }
 
 interface Toggle<Name extends string> {
-  type: "toggle";
-  name: Name;
-  value: boolean;
+  readonly type: "toggle";
+  readonly name: Name;
+  readonly value: boolean;
 }
 
 type CreateToggle<Name extends string> = Pick<Toggle<Name>, "name" | "value">;
@@ -121,7 +121,7 @@ export function createToggle<Name extends string>(
   };
 }
 
-type EditOption = Slider<string> | Toggle<string>;
+export type EditOption = Slider<string> | Toggle<string>;
 
 type OptionType<T extends EditOption> = T extends Slider<string>
   ? number

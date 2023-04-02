@@ -12,23 +12,23 @@ export type Name = typeof Name;
 export const FrameOptions = {
   delayMs: 50,
   totalFrames: 20,
-} as const;
+};
 
 export const EditOptions = [
   createScale({
     name: "minScale",
     value: 1,
-  } as const),
+  }),
 
   createScale({
     name: "maxScale",
     value: 2,
-  } as const),
+  }),
 
   createToggle({
     name: "alternates",
     value: false,
-  } as const),
+  }),
 ];
 
 export type RenderOption = MappedOptions<typeof EditOptions, Name>;

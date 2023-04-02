@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { imageOptions, frameOptions } from "$lib/store";
+  import { imageOptions, animations } from "$lib/store";
   import Slider from "$lib/components/Slider.svelte";
 
   let className = "";
@@ -81,8 +81,8 @@
     min={20}
     max={1000}
     step={10}
-    value={$frameOptions.delayMs}
-    on:input={(e) => frameOptions.change({ delayMs: e.detail.value })}
+    value={$animations.current.FrameOptions.delayMs}
+    on:input={(e) => animations.changeFrameOptions({ delayMs: e.detail.value })}
   />
 
   <Slider
@@ -90,8 +90,9 @@
     min={1}
     max={1000}
     step={1}
-    value={$frameOptions.totalFrames}
-    on:input={(e) => frameOptions.change({ totalFrames: e.detail.value })}
+    value={$animations.current.FrameOptions.totalFrames}
+    on:input={(e) =>
+      animations.changeFrameOptions({ totalFrames: e.detail.value })}
   />
 </aside>
 

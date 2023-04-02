@@ -12,18 +12,18 @@ export type Name = typeof Name;
 export const FrameOptions = {
   delayMs: 20,
   totalFrames: 10,
-} as const;
+};
 
 export const EditOptions = [
   createDirection({
     name: "directionX",
     value: -1,
-  } as const),
+  }),
 
   createDirection({
     name: "directionY",
     value: 0,
-  } as const),
+  }),
 ];
 
 export type RenderOption = MappedOptions<typeof EditOptions, Name>;

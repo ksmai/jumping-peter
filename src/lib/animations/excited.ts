@@ -16,28 +16,28 @@ export type Name = typeof Name;
 export const FrameOptions = {
   delayMs: 50,
   totalFrames: 25,
-} as const;
+};
 
 export const EditOptions = [
   createAngle({
     name: "angle",
     value: 15,
-  } as const),
+  }),
 
   createTwoWayPercentage({
     name: "startOffset",
     value: -0.1,
-  } as const),
+  }),
 
   createTwoWayPercentage({
     name: "endOffset",
     value: 0.1,
-  } as const),
+  }),
 
   createPositiveInteger({
     name: "cycles",
     value: 3,
-  } as const),
+  }),
 ];
 
 export type RenderOption = MappedOptions<typeof EditOptions, Name>;

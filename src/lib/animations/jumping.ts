@@ -11,23 +11,23 @@ export type Name = typeof Name;
 export const FrameOptions = {
   delayMs: 50,
   totalFrames: 20,
-} as const;
+};
 
 export const EditOptions = [
   createPercentage({
     name: "maxOffset",
     value: 0.6,
-  } as const),
+  }),
 
   createPercentage({
     name: "compressTime",
     value: 0.4,
-  } as const),
+  }),
 
   createPercentage({
     name: "maxCompress",
     value: 0.3,
-  } as const),
+  }),
 ];
 
 export type RenderOption = MappedOptions<typeof EditOptions, Name>;

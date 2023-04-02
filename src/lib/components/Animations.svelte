@@ -1,28 +1,25 @@
 <script lang="ts">
   import { base } from "$app/paths";
-  import { animations } from "$lib/animations";
-  import { currentAnimation } from "$lib/store";
+  import { animations } from "$lib/store";
 
   let className = "";
   export { className as class };
-
-  function onChange(name: (typeof animations)[number]["name"]) {
-    if (name !== $currentAnimation.name) {
-      currentAnimation.change(name);
-    }
-  }
 </script>
 
 <aside class={`container ${className}`}>
-  {#each animations as { name } (name)}
+  {#each $animations.animations as animation (animation.Name)}
     <button
       type="button"
       class="option"
-      class:option--selected={name === $currentAnimation.name}
-      on:click={() => onChange(name)}
+      class:option--selected={animation === $animations.current}
+      on:click={() => animations.changeCurrentAnimation(animation)}
     >
-      <img class="image" src={`${base}/demo-${name}.gif`} alt={name} />
-      <span>{name}</span>
+      <img
+        class="image"
+        src={`${base}/demo-${animation.Name}.gif`}
+        alt={animation.Name}
+      />
+      <span>{animation.Name}</span>
     </button>
   {/each}
 </aside>
