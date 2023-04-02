@@ -1,8 +1,8 @@
 import type { GeometryFactory } from "$lib/graphics/geometry";
 import type { ProgramFactory } from "$lib/graphics/program";
 import type { Sprite } from "$lib/graphics/renderer";
-
 import { getValues } from "./options";
+
 import * as Spinning from "./spinning";
 import * as Expanding from "./expanding";
 import * as ExtremeSpeed from "./extreme-speed";
@@ -11,6 +11,7 @@ import * as Jumping from "./jumping";
 import * as Tower from "./tower";
 import * as Repeated from "./repeated";
 import * as MirrorLeft from "./mirror-left";
+import * as MirrorRight from "./mirror-right";
 
 export interface FrameOptions {
   readonly delayMs: number;
@@ -26,6 +27,7 @@ export const ANIMATIONS = [
   Tower,
   Repeated,
   MirrorLeft,
+  MirrorRight,
 ];
 
 export function createSprites(
@@ -55,6 +57,12 @@ export function createSprites(
       return Repeated.createSprites(programFactory, geometryFactory, options);
     case "mirror-left":
       return MirrorLeft.createSprites(programFactory, geometryFactory, options);
+    case "mirror-right":
+      return MirrorRight.createSprites(
+        programFactory,
+        geometryFactory,
+        options,
+      );
     default:
       ((animation: never) => {
         throw new Error(`Unknown animation: ${JSON.stringify(animation)}`);
