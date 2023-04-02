@@ -57,6 +57,10 @@ Although `OffscreenCanvas` is useful to generate the GIF in a worker thread, it 
 
 ![mirror-right](/static/demo-mirror-right.gif)
 
+### panic
+
+![panic](/static/demo-panic.gif)
+
 ## Development
 
 ```bash
