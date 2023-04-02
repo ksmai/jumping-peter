@@ -9,6 +9,7 @@ import * as ExtremeSpeed from "./extreme-speed";
 import * as Excited from "./excited";
 import * as Jumping from "./jumping";
 import * as Tower from "./tower";
+import * as Repeated from "./repeated";
 
 export interface FrameOptions {
   readonly delayMs: number;
@@ -22,6 +23,7 @@ export const ANIMATIONS = [
   Excited,
   Expanding,
   Tower,
+  Repeated,
 ];
 
 export function createSprites(
@@ -47,6 +49,8 @@ export function createSprites(
       return Jumping.createSprites(programFactory, geometryFactory, options);
     case "tower":
       return Tower.createSprites(programFactory, geometryFactory, options);
+    case "repeated":
+      return Repeated.createSprites(programFactory, geometryFactory, options);
     default:
       ((animation: never) => {
         throw new Error(`Unknown animation: ${JSON.stringify(animation)}`);
