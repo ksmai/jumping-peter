@@ -9,7 +9,7 @@ export interface Program {
 }
 
 const SHADER_PAIRS = {
-  "2d": {
+  default: {
     vertex: `\
 #version 300 es
 

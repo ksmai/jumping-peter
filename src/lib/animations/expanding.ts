@@ -35,7 +35,7 @@ export function createSprites(
   geometryFactory: GeometryFactory,
   options: MappedOptions<typeof editOptions>,
 ): Sprite[] {
-  const program = programFactory.createProgram("2d");
+  const program = programFactory.createProgram("default");
   const geometry = geometryFactory.createGeometry("full");
 
   const { minScale, maxScale, alternates } = options;
