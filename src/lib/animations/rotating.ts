@@ -75,6 +75,9 @@ export function createSprites(
     transform.translate2d(mat, -originX, -originY);
     transform.rotate3d(mat, angle, axis);
     transform.translate2d(mat, originX, originY);
+    transform.view(mat, [0, 0, 5], [0, 0, 0]);
+    transform.perspective(mat, -0.2, 0.2, -0.2, 0.2, 1, 9);
+
     return {
       u_transform: mat,
     };

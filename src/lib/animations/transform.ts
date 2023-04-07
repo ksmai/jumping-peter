@@ -7,6 +7,8 @@ export type Transform = [
   number, number, number, number,
 ];
 
+export type Vec3 = [number, number, number];
+
 export function identity(): Transform {
   // prettier-ignore
   return [
@@ -29,8 +31,18 @@ export function scale2d(mat: Transform, x: number, y: number): void {
 }
 
 export function translate2d(mat: Transform, x: number, y: number): void {
+  translate3d(mat, x, y, 0);
+}
+
+export function translate3d(
+  mat: Transform,
+  x: number,
+  y: number,
+  z: number,
+): void {
   mat[12] += x;
   mat[13] += y;
+  mat[14] += z;
 }
 
 export function rotate2d(mat: Transform, degrees: number): void {
@@ -67,6 +79,53 @@ export function rotate3d(
   multLeft(mat, m);
 }
 
+// https://www.songho.ca/opengl/gl_camera.html
+export function view(mat: Transform, camera: Vec3, target: Vec3): void {
+  translate3d(mat, -camera[0], -camera[1], -camera[2]);
+
+  const z: Vec3 = [
+    camera[0] - target[0],
+    camera[1] - target[1],
+    camera[2] - target[2],
+  ];
+  normalize(z);
+
+  const x: Vec3 = cross([0, 1, 0], z);
+  normalize(x);
+
+  const y: Vec3 = cross(z, x);
+
+  // prettier-ignore
+  const rotation: Transform = [
+    x[0], y[0], z[0], 0,
+    x[1], y[1], z[1], 0,
+    x[2], y[2], z[2], 0,
+    0, 0, 0, 1,
+  ];
+
+  multLeft(mat, rotation);
+}
+
+// https://www.songho.ca/opengl/gl_projectionmatrix.html
+export function perspective(
+  mat: Transform,
+  l: number,
+  r: number,
+  b: number,
+  t: number,
+  n: number,
+  f: number,
+): void {
+  // prettier-ignore
+  const matrix: Transform = [
+    2 * n / (r - l), 0, 0, 0,
+    0, 2 * n / (t - b), 0, 0,
+    (r + l) / (r - l), (t + b) / (t - b), -(f + n) / (f - n), -1,
+    0, 0, -2 * f * n / (f - n), 0,
+  ];
+  multLeft(mat, matrix);
+}
+
 function multLeft(dest: Transform, left: Transform): void {
   const right = dest.slice();
   for (let c = 0; c <= 3; ++c) {
@@ -78,4 +137,21 @@ function multLeft(dest: Transform, left: Transform): void {
       }
     }
   }
+}
+
+function normalize(vec: Vec3): void {
+  const norm = Math.sqrt(vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2]);
+  if (norm !== 0) {
+    vec[0] /= norm;
+    vec[1] /= norm;
+    vec[2] /= norm;
+  }
+}
+
+function cross(v: Vec3, u: Vec3): Vec3 {
+  return [
+    v[1] * u[2] - v[2] * u[1],
+    v[2] * u[0] - v[0] * u[2],
+    v[0] * u[1] - v[1] * u[0],
+  ];
 }

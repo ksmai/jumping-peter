@@ -23,7 +23,7 @@ out vec2 v_texCoords;
 void main() {
   vec4 pos = u_transform * vec4(a_position, 0.0, 1.0);
   // flip y coordinate because readPixels() will invert the image again
-  gl_Position = vec4(pos.x, -pos.y, pos.z, 1.0);
+  gl_Position = vec4(pos.x, -pos.y, pos.z, pos.w);
   v_texCoords = a_texCoords;
 }
     `,
