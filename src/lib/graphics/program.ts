@@ -50,6 +50,8 @@ void main() {
 
   if (u_directionalLighting) {
     outColor.rgb *= dot(normalize(v_normal), u_lightDirection);
+
+    // since y is flipped in the vertex shader, front face becomes back face
     if (!gl_FrontFacing) {
       outColor.rgb *= -1.0;
     }
