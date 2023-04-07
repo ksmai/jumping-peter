@@ -1,6 +1,7 @@
 export const ATTRIB_LOCATIONS = {
   a_position: 0,
   a_texCoords: 1,
+  a_normal: 2,
 } as const;
 
 export interface Program {
@@ -13,18 +14,22 @@ const SHADER_PAIRS = {
     vertex: `\
 #version 300 es
 
-layout(location = ${ATTRIB_LOCATIONS.a_position}) in vec2 a_position;
+layout(location = ${ATTRIB_LOCATIONS.a_position}) in vec3 a_position;
 layout(location = ${ATTRIB_LOCATIONS.a_texCoords}) in vec2 a_texCoords;
+layout(location = ${ATTRIB_LOCATIONS.a_normal}) in vec3 a_normal;
 
-uniform mat4 u_transform;
+uniform mat4 u_world;
+uniform mat4 u_viewProjection;
 
 out vec2 v_texCoords;
+out vec3 v_normal;
 
 void main() {
-  vec4 pos = u_transform * vec4(a_position, 0.0, 1.0);
+  vec4 pos = u_viewProjection * u_world * vec4(a_position, 1.0);
   // flip y coordinate because readPixels() will invert the image again
   gl_Position = vec4(pos.x, -pos.y, pos.z, pos.w);
   v_texCoords = a_texCoords;
+  v_normal = (transpose(inverse(u_world)) * vec4(a_normal, 0)).xyz;
 }
     `,
     fragment: `\
@@ -32,13 +37,23 @@ void main() {
 precision highp float;
 
 in vec2 v_texCoords;
+in vec3 v_normal;
 
 uniform sampler2D u_image;
+uniform bool u_directionalLighting;
+uniform vec3 u_lightDirection;
 
 out vec4 outColor;
 
 void main() {
   outColor = texture(u_image, v_texCoords);
+
+  if (u_directionalLighting) {
+    outColor.rgb *= dot(normalize(v_normal), u_lightDirection);
+    if (!gl_FrontFacing) {
+      outColor.rgb *= -1.0;
+    }
+  }
 }
     `,
   },
@@ -102,6 +117,8 @@ export function setUniforms(
       }
     } else if (typeof value === "number") {
       gl.uniform1f(location, value);
+    } else if (typeof value === "boolean") {
+      gl.uniform1i(location, value ? 1 : 0);
     }
   }
 }

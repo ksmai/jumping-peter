@@ -7,12 +7,13 @@ export interface Geometry {
   readonly drawCount: number;
 }
 
+// a_position.xyz, a_texCoords.xy, a_normal.xyz
 // prettier-ignore
 type Quad = Readonly<[
-  number, number, number, number,
-  number, number, number, number,
-  number, number, number, number,
-  number, number, number, number,
+  number, number, number, number, number, number, number, number,
+  number, number, number, number, number, number, number, number,
+  number, number, number, number, number, number, number, number,
+  number, number, number, number, number, number, number, number,
 ]>;
 
 function createQuad(gl: WebGL2RenderingContext, quad: Quad): Geometry {
@@ -34,10 +35,10 @@ function createQuad(gl: WebGL2RenderingContext, quad: Quad): Geometry {
   gl.enableVertexAttribArray(ATTRIB_LOCATIONS.a_position);
   gl.vertexAttribPointer(
     ATTRIB_LOCATIONS.a_position,
-    2,
+    3,
     gl.FLOAT,
     false,
-    4 * 4,
+    8 * 4,
     0,
   );
 
@@ -47,8 +48,18 @@ function createQuad(gl: WebGL2RenderingContext, quad: Quad): Geometry {
     2,
     gl.FLOAT,
     false,
-    4 * 4,
-    2 * 4,
+    8 * 4,
+    3 * 4,
+  );
+
+  gl.enableVertexAttribArray(ATTRIB_LOCATIONS.a_normal);
+  gl.vertexAttribPointer(
+    ATTRIB_LOCATIONS.a_normal,
+    3,
+    gl.FLOAT,
+    false,
+    8 * 4,
+    5 * 4,
   );
 
   gl.bindVertexArray(null);
@@ -61,50 +72,49 @@ function createQuad(gl: WebGL2RenderingContext, quad: Quad): Geometry {
   };
 }
 
-// a_position.xy, a_texCoords.xy
 // prettier-ignore
 const quads = {
   full: [
-    -1, -1, 0, 1,
-    +1, -1, 1, 1,
-    -1, +1, 0, 0,
-    +1, +1, 1, 0,
+    -1, -1, 0, 0, 1, 0, 0, 1,
+    +1, -1, 0, 1, 1, 0, 0, 1,
+    -1, +1, 0, 0, 0, 0, 0, 1,
+    +1, +1, 0, 1, 0, 0, 0, 1,
   ],
   sudoku: [
-    -3, -3, -1,  2,
-    +3, -3,  2,  2,
-    -3, +3, -1, -1,
-    +3, +3,  2, -1,
+    -3, -3, 0, -1,  2, 0, 0, 1,
+    +3, -3, 0,  2,  2, 0, 0, 1,
+    -3, +3, 0, -1, -1, 0, 0, 1,
+    +3, +3, 0,  2, -1, 0, 0, 1,
   ],
   tower: [
-    -1, -3, 0,  2,
-    +1, -3, 1,  2,
-    -1, +3, 0, -1,
-    +1, +3, 1, -1,
+    -1, -3, 0, 0,  2, 0, 0, 1,
+    +1, -3, 0, 1,  2, 0, 0, 1,
+    -1, +3, 0, 0, -1, 0, 0, 1,
+    +1, +3, 0, 1, -1, 0, 0, 1,
   ],
   topHalf: [
-    -1, 0, 0, 0.5,
-    +1, 0, 1, 0.5,
-    -1, 1, 0, 0,
-    +1, 1, 1, 0,
+    -1, 0, 0, 0, 0.5, 0, 0, 1,
+    +1, 0, 0, 1, 0.5, 0, 0, 1,
+    -1, 1, 0, 0, 0,   0, 0, 1,
+    +1, 1, 0, 1, 0,   0, 0, 1,
   ],
   bottomHalf: [
-    -1, -1, 0, 1,
-    +1, -1, 1, 1,
-    -1,  0, 0, 0.5,
-    +1,  0, 1, 0.5,
+    -1, -1, 0, 0, 1,   0, 0, 1,
+    +1, -1, 0, 1, 1,   0, 0, 1,
+    -1,  0, 0, 0, 0.5, 0, 0, 1,
+    +1,  0, 0, 1, 0.5, 0, 0, 1,
   ],
   leftHalf: [
-    -1, -1, 0,   1,
-     0, -1, 0.5, 1,
-    -1, +1, 0,   0,
-     0, +1, 0.5, 0,
+    -1, -1, 0, 0,   1, 0, 0, 1,
+     0, -1, 0, 0.5, 1, 0, 0, 1,
+    -1, +1, 0, 0,   0, 0, 0, 1,
+     0, +1, 0, 0.5, 0, 0, 0, 1,
   ],
   rightHalf: [
-    0, -1, 0.5, 1,
-    1, -1, 1,   1,
-    0, +1, 0.5, 0,
-    1, +1, 1,   0,
+    0, -1, 0, 0.5, 1, 0, 0, 1,
+    1, -1, 0, 1,   1, 0, 0, 1,
+    0, +1, 0, 0.5, 0, 0, 0, 1,
+    1, +1, 0, 1,   0, 0, 0, 1,
   ],
 } as const;
 

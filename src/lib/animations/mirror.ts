@@ -1,5 +1,5 @@
-import * as transform from "./transform";
-import * as utils from "./utils";
+import * as transform from "../graphics/transform";
+import * as utils from "../graphics/utils";
 import type { MappedOptions } from "./options";
 import { createToggle } from "./options";
 import type { Sprite } from "../graphics/renderer";
@@ -41,7 +41,7 @@ export function createSprites(
     }
     transform.translate2d(mat, offset, 0);
     return {
-      u_transform: mat,
+      u_world: mat,
     };
   };
 
@@ -55,7 +55,7 @@ export function createSprites(
     }
     transform.translate2d(mat, offset, 0);
     return {
-      u_transform: mat,
+      u_world: mat,
     };
   };
 

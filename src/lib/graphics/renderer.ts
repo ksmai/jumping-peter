@@ -2,12 +2,15 @@ import type { Program } from "./program";
 import { setUniforms } from "./program";
 import type { SingleTexture } from "./texture";
 import type { Geometry } from "./geometry";
+import * as transform from "./transform";
 
 export interface Sprite {
   program: Program;
   geometry: Geometry;
   getUniforms(t: number): Record<string, unknown>;
 }
+
+const identity = transform.identity();
 
 export function render(
   gl: WebGL2RenderingContext,
@@ -40,6 +43,9 @@ export function render(
     }
     const uniforms = {
       u_image: texture.unit,
+      u_world: identity,
+      u_viewProjection: identity,
+      u_directionalLighting: false,
       ...sprite.getUniforms(t),
     };
     setUniforms(gl, sprite.program, uniforms);

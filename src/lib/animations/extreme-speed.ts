@@ -1,5 +1,5 @@
-import * as transform from "./transform";
-import * as utils from "./utils";
+import * as transform from "../graphics/transform";
+import * as utils from "../graphics/utils";
 import { createDirection } from "./options";
 import type { MappedOptions } from "./options";
 import type { Sprite } from "../graphics/renderer";
@@ -43,7 +43,7 @@ export function createSprites(
     const translateY = utils.interpolate(0, maxOffsetY, t);
     transform.translate2d(mat, translateX, translateY);
     return {
-      u_transform: mat,
+      u_world: mat,
     };
   };
 

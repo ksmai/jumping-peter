@@ -1,4 +1,4 @@
-import * as transform from "./transform";
+import * as transform from "../graphics/transform";
 import { createPercentage } from "./options";
 import type { MappedOptions } from "./options";
 import type { Sprite } from "../graphics/renderer";
@@ -56,7 +56,7 @@ export function createSprites(
     }
 
     return {
-      u_transform: mat,
+      u_world: mat,
     };
   };
 

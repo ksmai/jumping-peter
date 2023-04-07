@@ -1,5 +1,5 @@
-import * as transform from "./transform";
-import * as utils from "./utils";
+import * as transform from "../graphics/transform";
+import * as utils from "../graphics/utils";
 import { createScale, createToggle } from "./options";
 import type { MappedOptions } from "./options";
 import type { Sprite } from "../graphics/renderer";
@@ -65,7 +65,7 @@ export function createSprites(
     const scale = utils.interpolate(initialScale, 1, p);
     transform.scale2d(mat, scale, scale);
     return {
-      u_transform: mat,
+      u_world: mat,
     };
   };
 
@@ -76,7 +76,7 @@ export function createSprites(
     const offsetY = utils.interpolate(0, firstHalf.endY, p);
     transform.translate2d(mat, offsetX, offsetY);
     return {
-      u_transform: mat,
+      u_world: mat,
     };
   };
 
@@ -87,7 +87,7 @@ export function createSprites(
     const offsetY = utils.interpolate(0, secondHalf.endY, p);
     transform.translate2d(mat, offsetX, offsetY);
     return {
-      u_transform: mat,
+      u_world: mat,
     };
   };
 

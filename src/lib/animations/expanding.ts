@@ -1,5 +1,5 @@
-import * as transform from "./transform";
-import * as utils from "./utils";
+import * as transform from "../graphics/transform";
+import * as utils from "../graphics/utils";
 import { createToggle, createScale } from "./options";
 import type { MappedOptions } from "./options";
 import type { Sprite } from "../graphics/renderer";
@@ -46,7 +46,7 @@ export function createSprites(
     const mat = transform.identity();
     transform.scale2d(mat, scale, scale);
     return {
-      u_transform: mat,
+      u_world: mat,
     };
   };
 

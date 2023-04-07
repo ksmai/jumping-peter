@@ -1,5 +1,5 @@
-import * as transform from "./transform";
-import * as utils from "./utils";
+import * as transform from "../graphics/transform";
+import * as utils from "../graphics/utils";
 import { createAngle, createToggle, createCoordinate } from "./options";
 import type { MappedOptions } from "./options";
 import type { Sprite } from "../graphics/renderer";
@@ -58,7 +58,7 @@ export function createSprites(
     transform.rotate2d(mat, angle);
     transform.translate2d(mat, originX, originY);
     return {
-      u_transform: mat,
+      u_world: mat,
     };
   };
 

@@ -4,8 +4,8 @@ import {
   createPercentage,
   createToggle,
 } from "./options";
-import * as transform from "./transform";
-import * as utils from "./utils";
+import * as transform from "../graphics/transform";
+import * as utils from "../graphics/utils";
 import type { MappedOptions } from "./options";
 import type { Sprite } from "../graphics/renderer";
 import type { ProgramFactory } from "../graphics/program";
@@ -71,15 +71,20 @@ export function createSprites(
     const t2 = alternates ? Math.min(t, 1 - t) * 2 : t;
     const p = ease(t2);
     const angle = utils.interpolate(0, 360, p);
-    const mat = transform.identity();
-    transform.translate2d(mat, -originX, -originY);
-    transform.rotate3d(mat, angle, axis);
-    transform.translate2d(mat, originX, originY);
-    transform.view(mat, [0, 0, 5], [0, 0, 0]);
-    transform.perspective(mat, -0.2, 0.2, -0.2, 0.2, 1, 9);
+    const world = transform.identity();
+    transform.translate2d(world, -originX, -originY);
+    transform.rotate3d(world, angle, axis);
+    transform.translate2d(world, originX, originY);
+
+    const viewProjection = transform.identity();
+    transform.view(viewProjection, [0, 0, 5], [0, 0, 0]);
+    transform.perspective(viewProjection, -0.2, 0.2, -0.2, 0.2, 1, 9);
 
     return {
-      u_transform: mat,
+      u_world: world,
+      u_viewProjection: viewProjection,
+      u_directionalLighting: true,
+      u_lightDirection: [0, 0, -1],
     };
   };
 

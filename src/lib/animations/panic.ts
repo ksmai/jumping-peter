@@ -1,6 +1,6 @@
 import { createPercentage } from "./options";
-import * as transform from "./transform";
-import * as utils from "./utils";
+import * as transform from "../graphics/transform";
+import * as utils from "../graphics/utils";
 import type { MappedOptions } from "./options";
 import type { Sprite } from "../graphics/renderer";
 import type { ProgramFactory } from "../graphics/program";
@@ -43,7 +43,7 @@ export function createSprites(
     const mat = transform.identity();
     transform.translate2d(mat, offsetX, offsetY);
     return {
-      u_transform: mat,
+      u_world: mat,
     };
   };
 
