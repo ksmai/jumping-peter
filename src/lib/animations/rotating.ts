@@ -60,7 +60,7 @@ export function createSprites(
   geometryFactory: GeometryFactory,
   options: MappedOptions<typeof editOptions>,
 ): Sprite[] {
-  const program = programFactory.createProgram("default");
+  const program = programFactory.createProgram("2d");
   const geometry = geometryFactory.createGeometry("full");
 
   const { axisX, axisY, axisZ, originX, originY, easing, alternates } = options;

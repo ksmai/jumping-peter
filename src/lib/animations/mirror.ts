@@ -25,7 +25,7 @@ export function createSprites(
   geometryFactory: GeometryFactory,
   options: MappedOptions<typeof editOptions>,
 ): Sprite[] {
-  const program = programFactory.createProgram("default");
+  const program = programFactory.createProgram("2d");
   const { rightHalf } = options;
   const geometry = geometryFactory.createGeometry(
     rightHalf ? "rightHalf" : "leftHalf",
