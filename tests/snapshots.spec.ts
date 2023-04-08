@@ -1,7 +1,18 @@
 import { expect, test } from "@playwright/test";
 import { promises as fs } from "fs";
 
-const animationNames = ["jumping"];
+const animationNames = [
+  "jumping",
+  "extreme-speed",
+  "spinning",
+  "excited",
+  "expanding",
+  "tower",
+  "repeated",
+  "mirror",
+  "panic",
+  "rotating",
+];
 
 for (const animationName of animationNames) {
   test(animationName, testAnimationSnapshot(animationName));
@@ -18,7 +29,7 @@ function testAnimationSnapshot(
     const download = await downloadPromise;
     const path = await download.path();
     expect(path).toBeTruthy();
-    const content = await fs.readFile(path!);
-    expect(content).toMatchSnapshot();
+    const content = await fs.readFile(path || "");
+    expect(content).toMatchSnapshot(`${animationName}.gif`);
   };
 }
