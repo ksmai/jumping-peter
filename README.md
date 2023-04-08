@@ -24,6 +24,7 @@ Although `OffscreenCanvas` is useful to generate the GIF in a worker thread, it 
 2. Register the animation in `src/lib/animations/index.ts`
 3. Using the default options, generate a demo GIF file and save it as `static/demo-{name}.gif`
 4. Update `README.md` to demonstrate the new animation
+5. Update `tests/snapshots.spec.ts` and generate a snapshot for the new animation
 
 ## Supported animations
 
