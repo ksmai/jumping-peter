@@ -65,7 +65,7 @@ export function createSprites(
     const scale = utils.interpolate(initialScale, 1, p);
     transform.scale2d(mat, scale, scale);
     return {
-      u_world: mat,
+      u_model: mat,
     };
   };
 
@@ -76,7 +76,7 @@ export function createSprites(
     const offsetY = utils.interpolate(0, firstHalf.endY, p);
     transform.translate2d(mat, offsetX, offsetY);
     return {
-      u_world: mat,
+      u_model: mat,
     };
   };
 
@@ -87,7 +87,7 @@ export function createSprites(
     const offsetY = utils.interpolate(0, secondHalf.endY, p);
     transform.translate2d(mat, offsetX, offsetY);
     return {
-      u_world: mat,
+      u_model: mat,
     };
   };
 

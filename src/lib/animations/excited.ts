@@ -76,7 +76,7 @@ export function createSprites(
     transform.scale2d(mat, t > 0.5 ? -1 : 1, 1);
 
     return {
-      u_world: mat,
+      u_model: mat,
     };
   };
 

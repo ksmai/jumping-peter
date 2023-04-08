@@ -46,7 +46,7 @@ export function createSprites(
     const mat = transform.identity();
     transform.scale2d(mat, scale, scale);
     return {
-      u_world: mat,
+      u_model: mat,
     };
   };
 

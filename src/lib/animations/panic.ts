@@ -43,7 +43,7 @@ export function createSprites(
     const mat = transform.identity();
     transform.translate2d(mat, offsetX, offsetY);
     return {
-      u_world: mat,
+      u_model: mat,
     };
   };
 

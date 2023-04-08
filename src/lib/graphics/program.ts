@@ -18,18 +18,22 @@ layout(location = ${ATTRIB_LOCATIONS.a_position}) in vec3 a_position;
 layout(location = ${ATTRIB_LOCATIONS.a_texCoords}) in vec2 a_texCoords;
 layout(location = ${ATTRIB_LOCATIONS.a_normal}) in vec3 a_normal;
 
-uniform mat4 u_world;
-uniform mat4 u_viewProjection;
+uniform mat4 u_model;
+uniform mat4 u_view;
+uniform mat4 u_projection;
 
 out vec2 v_texCoords;
 out vec3 v_normal;
+out vec3 v_position;
 
 void main() {
-  vec4 pos = u_viewProjection * u_world * vec4(a_position, 1.0);
+  mat4 modelView = u_view * u_model;
+  v_position = vec3(modelView * vec4(a_position, 1.0));
+  gl_Position = u_projection * vec4(v_position, 1.0);
   // flip y coordinate because readPixels() will invert the image again
-  gl_Position = vec4(pos.x, -pos.y, pos.z, pos.w);
+  gl_Position.y *= -1.0;
   v_texCoords = a_texCoords;
-  v_normal = (transpose(inverse(u_world)) * vec4(a_normal, 0)).xyz;
+  v_normal = (transpose(inverse(modelView)) * vec4(a_normal, 0)).xyz;
 }
     `,
     fragment: `\
@@ -38,24 +42,92 @@ precision highp float;
 
 in vec2 v_texCoords;
 in vec3 v_normal;
+in vec3 v_position;
 
-uniform sampler2D u_image;
-uniform bool u_directionalLighting;
-uniform vec3 u_lightDirection;
+struct Material {
+  sampler2D diffuse;
+  vec3 specular;
+  float shininess;
+};
+
+struct DirectionalLight {
+  vec3 ambient;
+  vec3 diffuse;
+  vec3 specular;
+  vec3 direction;
+};
+
+struct PointLight {
+  vec3 ambient;
+  vec3 diffuse;
+  vec3 specular;
+  vec3 position;
+  float attenuation1;
+  float attenuation2;
+};
+
+struct SpotLight {
+  vec3 ambient;
+  vec3 diffuse;
+  vec3 specular;
+  vec3 position;
+  vec3 direction;
+  float innerCos;
+  float outerCos;
+  float attenuation1;
+  float attenuation2;
+};
+
+uniform Material u_material;
+uniform DirectionalLight u_directionalLight;
+uniform PointLight u_pointLight;
+uniform SpotLight u_spotLight;
 
 out vec4 outColor;
 
 void main() {
-  outColor = texture(u_image, v_texCoords);
+  vec3 texel = texture(u_material.diffuse, v_texCoords).xyz;
+  vec3 color = vec3(0.0, 0.0, 0.0);
+  vec3 normal = normalize(v_normal);
+  vec3 fragToCamera = normalize(-v_position);
 
-  if (u_directionalLighting) {
-    outColor.rgb *= dot(normalize(v_normal), u_lightDirection);
+  color += u_directionalLight.ambient * texel;
 
-    // since y is flipped in the vertex shader, front face becomes back face
-    if (!gl_FrontFacing) {
-      outColor.rgb *= -1.0;
-    }
-  }
+  vec3 directionalDir = normalize(-u_directionalLight.direction);
+  float directionalDiff = max(dot(directionalDir, normal), 0.0);
+  color += u_directionalLight.diffuse * texel * directionalDiff;
+
+  vec3 directionalHalf = normalize(directionalDir + fragToCamera);
+  float directionalSpec = pow(max(dot(directionalHalf, normal), 0.0), u_material.shininess);
+  color += u_directionalLight.specular * u_material.specular * directionalSpec;
+
+  float pointDist = length(u_pointLight.position - v_position);
+  float pointAtten = 1.0 / (1.0 + u_pointLight.attenuation1 * pointDist + u_pointLight.attenuation2 * pointDist * pointDist);
+  color += u_pointLight.ambient * texel * pointAtten;
+
+  vec3 pointDir = normalize(u_pointLight.position - v_position);
+  float pointDiff = max(dot(pointDir, normal), 0.0);
+  color += u_pointLight.diffuse * texel * pointDiff * pointAtten;
+
+  vec3 pointHalf = normalize(pointDir + fragToCamera);
+  float pointSpec = pow(max(dot(pointHalf, normal), 0.0), u_material.shininess);
+  color += u_pointLight.specular * u_material.specular * pointSpec * pointAtten;
+
+  float spotDist = length(u_spotLight.position - v_position);
+  float spotAtten = 1.0 / (1.0 + u_spotLight.attenuation1 * spotDist + u_spotLight.attenuation2 * spotDist * spotDist);
+  vec3 spotDir = normalize(u_spotLight.position - v_position);
+  float spotCos = dot(normalize(-u_spotLight.direction), spotDir);
+  float spotIntensity = smoothstep(u_spotLight.outerCos, u_spotLight.innerCos, spotCos);
+  color += u_spotLight.ambient * texel * spotAtten * spotIntensity;
+
+  float spotDiff = max(dot(spotDir, normal), 0.0);
+  color += u_spotLight.diffuse * texel * spotDiff * spotAtten * spotIntensity;
+
+  vec3 spotHalf = normalize(spotDir + fragToCamera);
+  float spotSpec = pow(max(dot(spotHalf, normal), 0.0), u_material.shininess);
+  color += u_spotLight.specular * u_material.specular * spotSpec * spotAtten * spotIntensity;
+
+  outColor = vec4(color, 1.0);
 }
     `,
   },

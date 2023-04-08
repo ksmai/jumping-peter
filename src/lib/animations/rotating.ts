@@ -81,7 +81,7 @@ export function createSprites(
     transform.perspective(viewProjection, -0.2, 0.2, -0.2, 0.2, 1, 9);
 
     return {
-      u_world: world,
+      u_model: world,
       u_viewProjection: viewProjection,
       u_directionalLighting: true,
       u_lightDirection: [0, 0, -1],

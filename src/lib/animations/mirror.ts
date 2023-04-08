@@ -41,7 +41,7 @@ export function createSprites(
     }
     transform.translate2d(mat, offset, 0);
     return {
-      u_world: mat,
+      u_model: mat,
     };
   };
 
@@ -55,7 +55,7 @@ export function createSprites(
     }
     transform.translate2d(mat, offset, 0);
     return {
-      u_world: mat,
+      u_model: mat,
     };
   };
 

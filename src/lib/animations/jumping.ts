@@ -56,7 +56,7 @@ export function createSprites(
     }
 
     return {
-      u_world: mat,
+      u_model: mat,
     };
   };
 

@@ -58,7 +58,7 @@ export function createSprites(
     transform.rotate2d(mat, angle);
     transform.translate2d(mat, originX, originY);
     return {
-      u_world: mat,
+      u_model: mat,
     };
   };
 

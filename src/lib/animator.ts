@@ -1,5 +1,5 @@
 import { GIFEncoder } from "./antimatter15-jsgif";
-import type { Sprite } from "./graphics/renderer";
+import type { Sprite, Lighting } from "./graphics/renderer";
 import { SingleTexture } from "./graphics/texture";
 import { render } from "./graphics/renderer";
 import { ProgramFactory } from "./graphics/program";
@@ -148,12 +148,46 @@ export class Animator {
       1,
     ];
 
+    // TODO pass it from outside
+    const lighting: Lighting = {
+      material: {
+        diffuse: this.texture,
+        specular: [0, 0, 0],
+        shininess: 1,
+      },
+      directional: {
+        ambient: [1, 1, 1],
+        diffuse: [0, 0, 0],
+        specular: [0, 0, 0],
+        direction: [0, -1, 0],
+      },
+      point: {
+        ambient: [0, 0, 0],
+        diffuse: [0, 0, 0],
+        specular: [0, 0, 0],
+        position: [0, -1, 0],
+        attenuation1: 1,
+        attenuation2: 1,
+      },
+      spot: {
+        ambient: [0, 0, 0],
+        diffuse: [0, 0, 0],
+        specular: [0, 0, 0],
+        position: [0, -1, 0],
+        direction: [0, -1, 0],
+        innerDegrees: 10,
+        outerDegrees: 20,
+        attenuation1: 1,
+        attenuation2: 1,
+      },
+    };
+
     if (type === "frame") {
       render(
         this.gl,
         frame / request.animation.frameOptions.totalFrames,
         sprites,
-        this.texture,
+        lighting,
         clearColor,
       );
       resolve();
@@ -166,7 +200,7 @@ export class Animator {
         this.gl,
         frame / request.animation.frameOptions.totalFrames,
         sprites,
-        this.texture,
+        lighting,
         clearColor,
       );
       callback(frame);
