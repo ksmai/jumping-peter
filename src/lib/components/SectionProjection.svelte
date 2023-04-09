@@ -9,7 +9,7 @@
   <Toggle
     label="perspective"
     value={$projection.perspective}
-    on:input={(e) =>
+    on:change={(e) =>
       projection.change({
         perspective: e.detail.value,
       })}
