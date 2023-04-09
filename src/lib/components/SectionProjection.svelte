@@ -19,7 +19,7 @@
     label="left"
     min={-10}
     max={10}
-    step={0.1}
+    step={0.01}
     value={$projection.left}
     on:input={(e) =>
       projection.change({
@@ -31,7 +31,7 @@
     label="right"
     min={-10}
     max={10}
-    step={0.1}
+    step={0.01}
     value={$projection.right}
     on:input={(e) =>
       projection.change({
@@ -43,7 +43,7 @@
     label="bottom"
     min={-10}
     max={10}
-    step={0.1}
+    step={0.01}
     value={$projection.bottom}
     on:input={(e) =>
       projection.change({
@@ -55,7 +55,7 @@
     label="top"
     min={-10}
     max={10}
-    step={0.1}
+    step={0.01}
     value={$projection.top}
     on:input={(e) =>
       projection.change({
@@ -65,9 +65,9 @@
 
   <Slider
     label="near"
-    min={0.1}
+    min={0.01}
     max={10}
-    step={0.1}
+    step={0.01}
     value={$projection.near}
     on:input={(e) =>
       projection.change({
@@ -77,9 +77,9 @@
 
   <Slider
     label="far"
-    min={0.1}
+    min={0.01}
     max={10}
-    step={0.1}
+    step={0.01}
     value={$projection.far}
     on:input={(e) =>
       projection.change({

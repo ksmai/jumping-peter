@@ -18,7 +18,7 @@
   label={`${label}X`}
   min={-10}
   max={10}
-  step={0.1}
+  step={0.01}
   value={value[0]}
   on:input={(e) => onInput(0, e.detail.value)}
 />
@@ -27,7 +27,7 @@
   label={`${label}Y`}
   min={-10}
   max={10}
-  step={0.1}
+  step={0.01}
   value={value[1]}
   on:input={(e) => onInput(1, e.detail.value)}
 />
@@ -36,7 +36,7 @@
   label={`${label}Z`}
   min={-10}
   max={10}
-  step={0.1}
+  step={0.01}
   value={value[2]}
   on:input={(e) => onInput(2, e.detail.value)}
 />
