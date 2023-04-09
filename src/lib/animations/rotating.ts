@@ -17,7 +17,7 @@ export const defaultOptions = {
   ...defaults,
   output: {
     ...defaults.output,
-    delayMs: 70,
+    delayMs: 40,
     totalFrames: 25,
   },
   camera: {
