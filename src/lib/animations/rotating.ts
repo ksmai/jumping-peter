@@ -18,8 +18,8 @@ export const defaultOptions = {
   ...defaults,
   output: {
     ...defaults.output,
-    delayMs: 50,
-    totalFrames: 20,
+    delayMs: 60,
+    totalFrames: 35,
   },
   camera: {
     position: [0, 0, 5],
@@ -34,6 +34,16 @@ export const defaultOptions = {
     top: 0.2,
     near: 1,
     far: 9,
+  },
+  material: {
+    specular: [1, 1, 1],
+    shininess: 100,
+  },
+  directionalLight: {
+    ambient: [0.6, 0.6, 0.6],
+    diffuse: [1, 1, 1],
+    specular: [1, 1, 1],
+    direction: [-1, -1, -5],
   },
 } as const;
 
