@@ -60,7 +60,9 @@ export function makeEaseInOutPower(power: number): (t: number) => number {
     t < 0.5 ? p * Math.pow(t, power) : 1 - Math.pow(2 * (1 - t), power) / 2;
 }
 
-export const easeInOutCubic = makeEaseOutPower(3);
+export const easeInOutCubic = makeEaseInOutPower(3);
+
+export const easeOutQuad = makeEaseOutPower(2);
 
 export function easeOutBack(t: number): number {
   const c1 = 1.70158;

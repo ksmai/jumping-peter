@@ -12,6 +12,7 @@ const animationNames = [
   "mirror",
   "panic",
   "rotating",
+  "party",
 ];
 
 for (const animationName of animationNames) {
