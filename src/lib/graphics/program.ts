@@ -117,10 +117,10 @@ void main() {
     u_directionalLight.specular,
     -u_directionalLight.direction + v_position,
     u_directionalLight.direction,
-    -0.999,
-    -1.0,
-    0.0,
-    0.0
+    // disable intensity
+    -2.0, -3.0,
+    // disable attenuation
+    0.0, 0.0
   ), normal, fragToCamera, texel);
 
   color += computeLight(SpotLight(
@@ -129,8 +129,8 @@ void main() {
     u_pointLight.specular,
     u_pointLight.position,
     -u_pointLight.position + v_position,
-    -0.999,
-    -1.0,
+    // disable intensity
+    -2.0, -3.0,
     u_pointLight.attenuation1,
     u_pointLight.attenuation2
   ), normal, fragToCamera, texel);
