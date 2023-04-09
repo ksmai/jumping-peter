@@ -80,7 +80,7 @@
     label="attenuation1"
     min={0}
     max={10}
-    step={0.1}
+    step={0.01}
     value={$spotLight.attenuation1}
     on:input={(e) =>
       spotLight.change({
@@ -92,7 +92,7 @@
     label="attenuation2"
     min={0}
     max={10}
-    step={0.1}
+    step={0.01}
     value={$spotLight.attenuation2}
     on:input={(e) =>
       spotLight.change({

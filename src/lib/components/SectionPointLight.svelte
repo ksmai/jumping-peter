@@ -47,7 +47,7 @@
     label="attenuation1"
     min={0}
     max={10}
-    step={0.1}
+    step={0.01}
     value={$pointLight.attenuation1}
     on:input={(e) =>
       pointLight.change({
@@ -59,7 +59,7 @@
     label="attenuation2"
     min={0}
     max={10}
-    step={0.1}
+    step={0.01}
     value={$pointLight.attenuation2}
     on:input={(e) =>
       pointLight.change({
