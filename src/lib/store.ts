@@ -116,44 +116,44 @@ function createStore<
 
 export const image = createStore("image");
 export const output = createStore("output");
+export const camera = createStore("camera");
+export const projection = createStore("projection");
 export const material = createStore("material");
 export const directionalLight = createStore("directionalLight");
 export const pointLight = createStore("pointLight");
 export const spotLight = createStore("spotLight");
-export const camera = createStore("camera");
-export const projection = createStore("projection");
 
 export const animationRequest = derived(
   [
     image,
     output,
+    camera,
+    projection,
     material,
     directionalLight,
     pointLight,
     spotLight,
-    camera,
-    projection,
     animations,
   ],
   ([
     image,
     output,
+    camera,
+    projection,
     material,
     directionalLight,
     pointLight,
     spotLight,
-    camera,
-    projection,
     animations,
   ]) => ({
     image,
     output,
+    camera,
+    projection,
     material,
     directionalLight,
     pointLight,
     spotLight,
-    camera,
-    projection,
     animation: animations.current,
   }),
 );

@@ -6,6 +6,7 @@ import { render } from "./graphics/renderer";
 import { ProgramFactory, setUniforms } from "./graphics/program";
 import { GeometryFactory } from "./graphics/geometry";
 import * as transform from "./graphics/transform";
+import * as utils from "./graphics/utils";
 import { createSprites, ANIMATIONS } from "./animations";
 
 type Vec3 = readonly [number, number, number];
@@ -20,6 +21,22 @@ export interface OutputOptions {
   readonly clear: Vec3;
   readonly delayMs: number;
   readonly totalFrames: number;
+}
+
+export interface Camera {
+  readonly position: Vec3;
+  readonly lookAt: Vec3;
+  readonly up: Vec3;
+}
+
+export interface Projection {
+  readonly perspective: boolean;
+  readonly left: number;
+  readonly right: number;
+  readonly bottom: number;
+  readonly top: number;
+  readonly near: number;
+  readonly far: number;
 }
 
 export interface Material {
@@ -55,31 +72,15 @@ export interface SpotLight {
   readonly attenuation2: number;
 }
 
-export interface Camera {
-  readonly position: Vec3;
-  readonly lookAt: Vec3;
-  readonly up: Vec3;
-}
-
-export interface Projection {
-  readonly perspective: boolean;
-  readonly left: number;
-  readonly right: number;
-  readonly bottom: number;
-  readonly top: number;
-  readonly near: number;
-  readonly far: number;
-}
-
 export interface AnimationRequest {
   readonly image: ImageOptions;
   readonly output: OutputOptions;
+  readonly camera: Camera;
+  readonly projection: Projection;
   readonly material: Material;
   readonly directionalLight: DirectionalLight;
   readonly pointLight: PointLight;
   readonly spotLight: SpotLight;
-  readonly camera: Camera;
-  readonly projection: Projection;
   readonly animation: (typeof ANIMATIONS)[number];
 }
 
@@ -264,8 +265,12 @@ export class Animator {
         "u_spotLight.specular": spotLight.specular,
         "u_spotLight.position": spotLight.position,
         "u_spotLight.direction": spotLight.direction,
-        "u_spotLight.innerCos": Math.cos(spotLight.innerDegrees),
-        "u_spotLight.outerCos": Math.cos(spotLight.outerDegrees),
+        "u_spotLight.innerCos": Math.cos(
+          utils.toRadian(spotLight.innerDegrees),
+        ),
+        "u_spotLight.outerCos": Math.cos(
+          utils.toRadian(spotLight.outerDegrees),
+        ),
         "u_spotLight.attenuation1": spotLight.attenuation1,
         "u_spotLight.attenuation2": spotLight.attenuation2,
       };

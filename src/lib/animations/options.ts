@@ -196,7 +196,7 @@ export const defaults = {
     diffuse: [0, 0, 0],
     specular: [0, 0, 0],
     position: [0, 0, 0],
-    direction: [0, 0, 1],
+    direction: [0, 0, -1],
     innerDegrees: 90,
     outerDegrees: 180,
     attenuation1: 0,
