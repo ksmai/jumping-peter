@@ -1,16 +1,20 @@
+import { createPercentage, createAngle, defaults } from "./options";
+import type { MappedOptions } from "./options";
 import * as transform from "../graphics/transform";
 import * as utils from "../graphics/utils";
-import { createPercentage, createAngle } from "./options";
-import type { MappedOptions } from "./options";
 import type { Sprite } from "../graphics/renderer";
 import type { ProgramFactory } from "../graphics/program";
 import type { GeometryFactory } from "../graphics/geometry";
 
 export const name = "tower" as const;
 
-export const frameOptions = {
-  delayMs: 40,
-  totalFrames: 20,
+export const defaultOptions = {
+  ...defaults,
+  output: {
+    ...defaults.output,
+    delayMs: 40,
+    totalFrames: 20,
+  },
 };
 
 export const editOptions = [

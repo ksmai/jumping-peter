@@ -3,6 +3,7 @@ import {
   createEasing,
   createPercentage,
   createToggle,
+  defaults,
 } from "./options";
 import * as transform from "../graphics/transform";
 import * as utils from "../graphics/utils";
@@ -13,10 +14,28 @@ import type { GeometryFactory } from "../graphics/geometry";
 
 export const name = "rotating" as const;
 
-export const frameOptions = {
-  delayMs: 50,
-  totalFrames: 20,
-};
+export const defaultOptions = {
+  ...defaults,
+  output: {
+    ...defaults.output,
+    delayMs: 50,
+    totalFrames: 20,
+  },
+  camera: {
+    position: [0, 0, 5],
+    lookAt: [0, 0, -1],
+    up: [0, 1, 0],
+  },
+  projection: {
+    perspective: true,
+    left: -0.2,
+    right: 0.2,
+    bottom: -0.2,
+    top: 0.2,
+    near: 1,
+    far: 9,
+  },
+} as const;
 
 export const editOptions = [
   createPercentage({
@@ -71,20 +90,13 @@ export function createSprites(
     const t2 = alternates ? Math.min(t, 1 - t) * 2 : t;
     const p = ease(t2);
     const angle = utils.interpolate(0, 360, p);
-    const world = transform.identity();
-    transform.translate2d(world, -originX, -originY);
-    transform.rotate3d(world, angle, axis);
-    transform.translate2d(world, originX, originY);
-
-    const viewProjection = transform.identity();
-    transform.view(viewProjection, [0, 0, 5], [0, 0, 0]);
-    transform.perspective(viewProjection, -0.2, 0.2, -0.2, 0.2, 1, 9);
+    const mat = transform.identity();
+    transform.translate2d(mat, -originX, -originY);
+    transform.rotate3d(mat, angle, axis);
+    transform.translate2d(mat, originX, originY);
 
     return {
-      u_model: world,
-      u_viewProjection: viewProjection,
-      u_directionalLighting: true,
-      u_lightDirection: [0, 0, -1],
+      u_model: mat,
     };
   };
 

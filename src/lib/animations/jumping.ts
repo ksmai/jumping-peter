@@ -1,5 +1,5 @@
 import * as transform from "../graphics/transform";
-import { createPercentage } from "./options";
+import { createPercentage, defaults } from "./options";
 import type { MappedOptions } from "./options";
 import type { Sprite } from "../graphics/renderer";
 import type { ProgramFactory } from "../graphics/program";
@@ -7,9 +7,13 @@ import type { GeometryFactory } from "../graphics/geometry";
 
 export const name = "jumping" as const;
 
-export const frameOptions = {
-  delayMs: 50,
-  totalFrames: 20,
+export const defaultOptions = {
+  ...defaults,
+  output: {
+    ...defaults.output,
+    delayMs: 50,
+    totalFrames: 20,
+  },
 };
 
 export const editOptions = [

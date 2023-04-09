@@ -14,11 +14,6 @@ import * as Mirror from "./mirror";
 import * as Panic from "./panic";
 import * as Rotating from "./rotating";
 
-export interface FrameOptions {
-  readonly delayMs: number;
-  readonly totalFrames: number;
-}
-
 export const ANIMATIONS = [
   Jumping,
   ExtremeSpeed,

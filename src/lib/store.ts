@@ -1,10 +1,7 @@
-import { get, writable } from "svelte/store";
+import { derived, get, writable } from "svelte/store";
 
-import { base } from "$app/paths";
 import { ANIMATIONS } from "$lib/animations";
-import type { FrameOptions } from "$lib/animations";
 import { Animator } from "$lib/animator";
-import type { ImageOptions } from "$lib/animator";
 
 type Animation = (typeof ANIMATIONS)[number];
 
@@ -33,26 +30,6 @@ export const animations = (function () {
     });
   };
 
-  function changeFrameOptions(updates: Partial<FrameOptions>) {
-    update(({ animations, current }) => {
-      const nextFrameOptions: FrameOptions = {
-        ...current.frameOptions,
-        ...updates,
-      };
-      const next: Animation = {
-        ...current,
-        frameOptions: nextFrameOptions,
-      };
-
-      return {
-        animations: animations.map((animation) =>
-          animation === current ? next : animation,
-        ),
-        current: next,
-      };
-    });
-  }
-
   function changeEditOptions<
     T extends Animation,
     U extends T["editOptions"][number],
@@ -74,44 +51,112 @@ export const animations = (function () {
     });
   }
 
-  return {
-    subscribe,
-    changeCurrentAnimation,
-    changeFrameOptions,
-    changeEditOptions,
-  };
-})();
+  function resetEditOptions<T extends Animation>() {
+    update(({ animations, current }) => {
+      const original = ANIMATIONS.find(
+        (animation) => animation.name === current.name,
+      ) as T;
 
-export const imageOptions = (function () {
-  const defaultUrl = `${base}/favicon.png`;
-
-  const { subscribe, update } = writable<ImageOptions>({
-    width: 64,
-    height: 64,
-    url: defaultUrl,
-    clearRed: 1,
-    clearBlue: 1,
-    clearGreen: 1,
-  });
-
-  function change(updates: Partial<Omit<ImageOptions, "url">>) {
-    update((options) => ({ ...options, ...updates }));
-  }
-
-  function changeImage(file: File) {
-    update((options) => {
-      if (options.url !== defaultUrl) {
-        URL.revokeObjectURL(options.url);
-      }
       return {
-        ...options,
-        url: URL.createObjectURL(file),
+        animations: animations.map((animation) =>
+          animation === current ? original : animation,
+        ),
+        current: original,
       };
     });
   }
 
-  return { subscribe, change, changeImage };
+  return {
+    subscribe,
+    changeCurrentAnimation,
+    changeEditOptions,
+    resetEditOptions,
+  };
 })();
+
+function createStore<
+  K extends keyof (typeof ANIMATIONS)[number]["defaultOptions"],
+  T extends (typeof ANIMATIONS)[number]["defaultOptions"][K],
+>(
+  key: K,
+): {
+  subscribe: ReturnType<typeof writable<T>>["subscribe"];
+  change: (updates: Partial<T>) => void;
+  reset: () => void;
+} {
+  let isDefault = true;
+
+  const { subscribe, update } = writable<T>(undefined, (set) => {
+    return animations.subscribe(({ current }) => {
+      if (isDefault) {
+        set(current.defaultOptions[key] as T);
+      }
+    });
+  });
+
+  function change(updates: Partial<T>) {
+    update((options) => {
+      isDefault = false;
+      return {
+        ...options,
+        ...updates,
+      };
+    });
+  }
+
+  function reset() {
+    update(() => {
+      isDefault = true;
+      return get(animations).current.defaultOptions[key] as T;
+    });
+  }
+
+  return { subscribe, change, reset };
+}
+
+export const image = createStore("image");
+export const output = createStore("output");
+export const material = createStore("material");
+export const directionalLight = createStore("directionalLight");
+export const pointLight = createStore("pointLight");
+export const spotLight = createStore("spotLight");
+export const camera = createStore("camera");
+export const projection = createStore("projection");
+
+export const animationRequest = derived(
+  [
+    image,
+    output,
+    material,
+    directionalLight,
+    pointLight,
+    spotLight,
+    camera,
+    projection,
+    animations,
+  ],
+  ([
+    image,
+    output,
+    material,
+    directionalLight,
+    pointLight,
+    spotLight,
+    camera,
+    projection,
+    animations,
+  ]) => ({
+    image,
+    output,
+    material,
+    directionalLight,
+    pointLight,
+    spotLight,
+    camera,
+    projection,
+    animation: animations.current,
+  }),
+);
 
 interface AnimatorWrapper {
   animator: Animator | null;
@@ -150,12 +195,8 @@ export const animator = (function () {
     update((state) => ({ ...state, running: true, frame: 0 }));
 
     return animator
-      .animate(
-        {
-          image: get(imageOptions),
-          animation: get(animations).current,
-        },
-        (frame) => update((state) => ({ ...state, frame })),
+      .animate(get(animationRequest), (frame) =>
+        update((state) => ({ ...state, frame })),
       )
       .finally(() => {
         update((state) => ({ ...state, running: false }));
@@ -178,25 +219,17 @@ export const animator = (function () {
       nextFrame = requestedFrame;
     }
 
-    const currentAnimation = get(animations).current;
+    const request = get(animationRequest);
 
-    if (nextFrame >= currentAnimation.frameOptions.totalFrames) {
-      nextFrame = currentAnimation.frameOptions.totalFrames - 1;
+    if (nextFrame >= request.output.totalFrames) {
+      nextFrame = request.output.totalFrames - 1;
     }
 
     update((state) => ({ ...state, frame: nextFrame, running: true }));
 
-    return animator
-      .renderFrame(
-        {
-          image: get(imageOptions),
-          animation: currentAnimation,
-        },
-        nextFrame,
-      )
-      .finally(() => {
-        update((state) => ({ ...state, running: false }));
-      });
+    return animator.renderFrame(request, nextFrame).finally(() => {
+      update((state) => ({ ...state, running: false }));
+    });
   }
 
   return { subscribe, changeCanvas, animate, renderFrame };

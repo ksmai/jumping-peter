@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { imageOptions, animations } from "$lib/store";
+  import { image, output } from "$lib/store";
   import Slider from "$lib/components/Slider.svelte";
 
   let className = "";
@@ -11,7 +11,7 @@
     if (!file) {
       return;
     }
-    imageOptions.changeImage(file);
+    image.change({ url: URL.createObjectURL(file) });
   }
 </script>
 
@@ -27,7 +27,7 @@
     />
 
     <div class="image__container">
-      <img class="image__preview" src={$imageOptions.url} alt="source" />
+      <img class="image__preview" src={$image.url} alt="source" />
     </div>
   </label>
 
@@ -36,8 +36,8 @@
     min={1}
     max={1024}
     step={1}
-    value={$imageOptions.width}
-    on:input={(e) => imageOptions.change({ width: e.detail.value })}
+    value={$output.width}
+    on:input={(e) => output.change({ width: e.detail.value })}
   />
 
   <Slider
@@ -45,35 +45,44 @@
     min={1}
     max={1024}
     step={1}
-    value={$imageOptions.height}
-    on:input={(e) => imageOptions.change({ height: e.detail.value })}
+    value={$output.height}
+    on:input={(e) => output.change({ height: e.detail.value })}
   />
 
   <Slider
-    label="clearRed"
+    label="clearR"
     min={0}
     max={1}
     step={0.01}
-    value={$imageOptions.clearRed}
-    on:input={(e) => imageOptions.change({ clearRed: e.detail.value })}
+    value={$output.clear[0]}
+    on:input={(e) =>
+      output.change({
+        clear: [e.detail.value, $output.clear[1], $output.clear[2]],
+      })}
   />
 
   <Slider
-    label="clearGreen"
+    label="clearG"
     min={0}
     max={1}
     step={0.01}
-    value={$imageOptions.clearGreen}
-    on:input={(e) => imageOptions.change({ clearGreen: e.detail.value })}
+    value={$output.clear[1]}
+    on:input={(e) =>
+      output.change({
+        clear: [$output.clear[0], e.detail.value, $output.clear[2]],
+      })}
   />
 
   <Slider
-    label="clearBlue"
+    label="clearB"
     min={0}
     max={1}
     step={0.01}
-    value={$imageOptions.clearBlue}
-    on:input={(e) => imageOptions.change({ clearBlue: e.detail.value })}
+    value={$output.clear[2]}
+    on:input={(e) =>
+      output.change({
+        clear: [$output.clear[0], $output.clear[1], e.detail.value],
+      })}
   />
 
   <Slider
@@ -81,8 +90,8 @@
     min={20}
     max={1000}
     step={10}
-    value={$animations.current.frameOptions.delayMs}
-    on:input={(e) => animations.changeFrameOptions({ delayMs: e.detail.value })}
+    value={$output.delayMs}
+    on:input={(e) => output.change({ delayMs: e.detail.value })}
   />
 
   <Slider
@@ -90,9 +99,8 @@
     min={1}
     max={1000}
     step={1}
-    value={$animations.current.frameOptions.totalFrames}
-    on:input={(e) =>
-      animations.changeFrameOptions({ totalFrames: e.detail.value })}
+    value={$output.totalFrames}
+    on:input={(e) => output.change({ totalFrames: e.detail.value })}
   />
 </aside>
 

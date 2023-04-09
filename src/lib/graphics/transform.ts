@@ -7,7 +7,7 @@ export type Transform = [
   number, number, number, number,
 ];
 
-export type Vec3 = [number, number, number];
+export type Vec3 = readonly [number, number, number];
 
 export function identity(): Transform {
   // prettier-ignore
@@ -80,17 +80,18 @@ export function rotate3d(
 }
 
 // https://www.songho.ca/opengl/gl_camera.html
-export function view(mat: Transform, camera: Vec3, target: Vec3): void {
+export function view(
+  mat: Transform,
+  camera: Vec3,
+  lookAt: Vec3,
+  up: Vec3,
+): void {
   translate3d(mat, -camera[0], -camera[1], -camera[2]);
 
-  const z: Vec3 = [
-    camera[0] - target[0],
-    camera[1] - target[1],
-    camera[2] - target[2],
-  ];
+  const z: Vec3 = [-lookAt[0], -lookAt[1], -lookAt[2]];
   normalize(z);
 
-  const x: Vec3 = cross([0, 1, 0], z);
+  const x: Vec3 = cross(up, z);
   normalize(x);
 
   const y: Vec3 = cross(z, x);
@@ -126,6 +127,25 @@ export function perspective(
   multLeft(mat, matrix);
 }
 
+export function orthographic(
+  mat: Transform,
+  l: number,
+  r: number,
+  b: number,
+  t: number,
+  n: number,
+  f: number,
+): void {
+  // prettier-ignore
+  const matrix: Transform = [
+    2 / (r - l), 0, 0, 0,
+    0, 2 / (t - b), 0, 0,
+    0, 0, -2 / (f - n), 0,
+    -(r + l) / (r - l), -(t + b) / (t - b), -(f + n) / (f - n), 1,
+  ];
+  multLeft(mat, matrix);
+}
+
 function multLeft(dest: Transform, left: Transform): void {
   const right = dest.slice();
   for (let c = 0; c <= 3; ++c) {
@@ -139,13 +159,13 @@ function multLeft(dest: Transform, left: Transform): void {
   }
 }
 
-function normalize(vec: Vec3): void {
+function normalize(vec: Vec3): Vec3 {
   const norm = Math.sqrt(vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2]);
-  if (norm !== 0) {
-    vec[0] /= norm;
-    vec[1] /= norm;
-    vec[2] /= norm;
+  if (norm === 0) {
+    return vec;
   }
+
+  return [vec[0] / norm, vec[1] / norm, vec[2] / norm];
 }
 
 function cross(v: Vec3, u: Vec3): Vec3 {

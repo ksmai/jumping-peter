@@ -1,6 +1,6 @@
 import * as transform from "../graphics/transform";
 import * as utils from "../graphics/utils";
-import { createScale, createToggle } from "./options";
+import { createScale, createToggle, defaults } from "./options";
 import type { MappedOptions } from "./options";
 import type { Sprite } from "../graphics/renderer";
 import type { ProgramFactory } from "../graphics/program";
@@ -8,9 +8,13 @@ import type { GeometryFactory } from "../graphics/geometry";
 
 export const name = "repeated" as const;
 
-export const frameOptions = {
-  delayMs: 60,
-  totalFrames: 15,
+export const defaultOptions = {
+  ...defaults,
+  output: {
+    ...defaults.output,
+    delayMs: 60,
+    totalFrames: 15,
+  },
 };
 
 export const editOptions = [

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { browser } from "$app/environment";
-  import { animator, imageOptions, animations } from "$lib/store";
+  import { animator, output, animationRequest } from "$lib/store";
   import Slider from "$lib/components/Slider.svelte";
   import Toggle from "$lib/components/Toggle.svelte";
   import type { AnimationResultGifSuccess } from "$lib/animator";
@@ -29,8 +29,7 @@
   }
 
   $: {
-    $imageOptions;
-    $animations;
+    $animationRequest;
 
     if (browser) {
       if (debugMode) {
@@ -76,11 +75,11 @@
         <div class="preview__loading">
           <p>Generating...</p>
           <p>
-            [{$animator.frame} / {$animations.current.frameOptions.totalFrames}]
+            [{$animator.frame} / {$output.totalFrames}]
           </p>
           <progress
             class="preview__progress"
-            max={$animations.current.frameOptions.totalFrames}
+            max={$output.totalFrames}
             value={$animator.frame}
           />
         </div>
@@ -110,7 +109,7 @@
 
     <Slider
       min={0}
-      max={$animations.current.frameOptions.totalFrames - 1}
+      max={$output.totalFrames - 1}
       step={1}
       value={$animator.frame}
       on:input={onInput}

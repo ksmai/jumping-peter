@@ -2,6 +2,7 @@ import {
   createAngle,
   createPositiveInteger,
   createTwoWayPercentage,
+  defaults,
 } from "./options";
 import * as transform from "../graphics/transform";
 import * as utils from "../graphics/utils";
@@ -12,9 +13,13 @@ import type { GeometryFactory } from "../graphics/geometry";
 
 export const name = "excited" as const;
 
-export const frameOptions = {
-  delayMs: 50,
-  totalFrames: 25,
+export const defaultOptions = {
+  ...defaults,
+  output: {
+    ...defaults.output,
+    delayMs: 50,
+    totalFrames: 25,
+  },
 };
 
 export const editOptions = [

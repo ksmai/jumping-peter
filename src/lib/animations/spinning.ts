@@ -1,6 +1,11 @@
 import * as transform from "../graphics/transform";
 import * as utils from "../graphics/utils";
-import { createAngle, createToggle, createCoordinate } from "./options";
+import {
+  createAngle,
+  createToggle,
+  createCoordinate,
+  defaults,
+} from "./options";
 import type { MappedOptions } from "./options";
 import type { Sprite } from "../graphics/renderer";
 import type { ProgramFactory } from "../graphics/program";
@@ -8,9 +13,13 @@ import type { GeometryFactory } from "../graphics/geometry";
 
 export const name = "spinning" as const;
 
-export const frameOptions = {
-  delayMs: 50,
-  totalFrames: 15,
+export const defaultOptions = {
+  ...defaults,
+  output: {
+    ...defaults.output,
+    delayMs: 50,
+    totalFrames: 15,
+  },
 };
 
 export const editOptions = [

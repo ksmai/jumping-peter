@@ -1,22 +1,85 @@
+import uniq from "lodash/uniq";
 import { GIFEncoder } from "./antimatter15-jsgif";
-import type { Sprite, Lighting } from "./graphics/renderer";
+import type { Sprite } from "./graphics/renderer";
 import { SingleTexture } from "./graphics/texture";
 import { render } from "./graphics/renderer";
-import { ProgramFactory } from "./graphics/program";
+import { ProgramFactory, setUniforms } from "./graphics/program";
 import { GeometryFactory } from "./graphics/geometry";
+import * as transform from "./graphics/transform";
 import { createSprites, ANIMATIONS } from "./animations";
 
+type Vec3 = readonly [number, number, number];
+
 export interface ImageOptions {
+  readonly url: string;
+}
+
+export interface OutputOptions {
   readonly width: number;
   readonly height: number;
-  readonly url: string;
-  readonly clearRed: number;
-  readonly clearGreen: number;
-  readonly clearBlue: number;
+  readonly clear: Vec3;
+  readonly delayMs: number;
+  readonly totalFrames: number;
+}
+
+export interface Material {
+  readonly specular: Vec3;
+  readonly shininess: number;
+}
+
+export interface DirectionalLight {
+  readonly ambient: Vec3;
+  readonly diffuse: Vec3;
+  readonly specular: Vec3;
+  readonly direction: Vec3;
+}
+
+export interface PointLight {
+  readonly ambient: Vec3;
+  readonly diffuse: Vec3;
+  readonly specular: Vec3;
+  readonly position: Vec3;
+  readonly attenuation1: number;
+  readonly attenuation2: number;
+}
+
+export interface SpotLight {
+  readonly ambient: Vec3;
+  readonly diffuse: Vec3;
+  readonly specular: Vec3;
+  readonly position: Vec3;
+  readonly direction: Vec3;
+  readonly innerDegrees: number;
+  readonly outerDegrees: number;
+  readonly attenuation1: number;
+  readonly attenuation2: number;
+}
+
+export interface Camera {
+  readonly position: Vec3;
+  readonly lookAt: Vec3;
+  readonly up: Vec3;
+}
+
+export interface Projection {
+  readonly perspective: boolean;
+  readonly left: number;
+  readonly right: number;
+  readonly bottom: number;
+  readonly top: number;
+  readonly near: number;
+  readonly far: number;
 }
 
 export interface AnimationRequest {
   readonly image: ImageOptions;
+  readonly output: OutputOptions;
+  readonly material: Material;
+  readonly directionalLight: DirectionalLight;
+  readonly pointLight: PointLight;
+  readonly spotLight: SpotLight;
+  readonly camera: Camera;
+  readonly projection: Projection;
   readonly animation: (typeof ANIMATIONS)[number];
 }
 
@@ -72,8 +135,8 @@ export class Animator {
     return new Promise((resolve, reject) => {
       const encoder = new GIFEncoder();
       encoder.setRepeat(0);
-      encoder.setDelay(request.animation.frameOptions.delayMs);
-      encoder.setSize(request.image.width, request.image.height);
+      encoder.setDelay(request.output.delayMs);
+      encoder.setSize(request.output.width, request.output.height);
 
       const started = encoder.start();
       if (!started) {
@@ -135,74 +198,92 @@ export class Animator {
     }
 
     const { type, request, resolve, sprites, frame } = this.queue[0];
+    const {
+      image,
+      output,
+      camera,
+      projection,
+      material,
+      directionalLight,
+      pointLight,
+      spotLight,
+    } = request;
     if (type === "frame" || (type === "gif" && this.queue[0].frame === 0)) {
-      await this.texture.loadImage(request.image.url);
-      this.canvas.width = request.image.width;
-      this.canvas.height = request.image.height;
+      await this.texture.loadImage(image.url);
+      const { width, height, clear } = output;
+      this.canvas.width = width;
+      this.canvas.height = height;
+      this.gl.viewport(0, 0, width, height);
+      this.gl.clearColor(...clear, 1);
+      this.gl.activeTexture(this.gl.TEXTURE0 + this.texture.unit);
+      this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture.texture);
+
+      const u_view = transform.identity();
+      transform.view(u_view, camera.position, camera.lookAt, camera.up);
+
+      const u_projection = transform.identity();
+      if (projection.perspective) {
+        transform.perspective(
+          u_projection,
+          projection.left,
+          projection.right,
+          projection.bottom,
+          projection.top,
+          projection.near,
+          projection.far,
+        );
+      } else {
+        transform.orthographic(
+          u_projection,
+          projection.left,
+          projection.right,
+          projection.bottom,
+          projection.top,
+          projection.near,
+          projection.far,
+        );
+      }
+
+      const uniforms = {
+        u_view,
+        u_projection,
+        "u_material.specular": material.specular,
+        "u_material.shininess": material.shininess,
+        "u_directionalLight.ambient": directionalLight.ambient,
+        "u_directionalLight.diffuse": directionalLight.diffuse,
+        "u_directionalLight.specular": directionalLight.specular,
+        "u_directionalLight.direction": directionalLight.direction,
+        "u_pointLight.ambient": pointLight.ambient,
+        "u_pointLight.diffuse": pointLight.diffuse,
+        "u_pointLight.specular": pointLight.specular,
+        "u_pointLight.position": pointLight.position,
+        "u_pointLight.attenuation1": pointLight.attenuation1,
+        "u_pointLight.attenuation2": pointLight.attenuation2,
+        "u_spotLight.ambient": spotLight.ambient,
+        "u_spotLight.diffuse": spotLight.diffuse,
+        "u_spotLight.specular": spotLight.specular,
+        "u_spotLight.position": spotLight.position,
+        "u_spotLight.direction": spotLight.direction,
+        "u_spotLight.innerCos": Math.cos(spotLight.innerDegrees),
+        "u_spotLight.outerCos": Math.cos(spotLight.outerDegrees),
+        "u_spotLight.attenuation1": spotLight.attenuation1,
+        "u_spotLight.attenuation2": spotLight.attenuation2,
+      };
+
+      for (const program of uniq(sprites.map((s) => s.program))) {
+        this.gl.useProgram(program.program);
+        setUniforms(this.gl, program, uniforms);
+      }
     }
 
-    const clearColor: [number, number, number, number] = [
-      request.image.clearRed,
-      request.image.clearGreen,
-      request.image.clearBlue,
-      1,
-    ];
-
-    // TODO pass it from outside
-    const lighting: Lighting = {
-      material: {
-        diffuse: this.texture,
-        specular: [0, 0, 0],
-        shininess: 1,
-      },
-      directional: {
-        ambient: [1, 1, 1],
-        diffuse: [0, 0, 0],
-        specular: [0, 0, 0],
-        direction: [0, -1, 0],
-      },
-      point: {
-        ambient: [0, 0, 0],
-        diffuse: [0, 0, 0],
-        specular: [0, 0, 0],
-        position: [0, -1, 0],
-        attenuation1: 1,
-        attenuation2: 1,
-      },
-      spot: {
-        ambient: [0, 0, 0],
-        diffuse: [0, 0, 0],
-        specular: [0, 0, 0],
-        position: [0, -1, 0],
-        direction: [0, -1, 0],
-        innerDegrees: 10,
-        outerDegrees: 20,
-        attenuation1: 1,
-        attenuation2: 1,
-      },
-    };
+    render(this.gl, frame / request.output.totalFrames, sprites);
 
     if (type === "frame") {
-      render(
-        this.gl,
-        frame / request.animation.frameOptions.totalFrames,
-        sprites,
-        lighting,
-        clearColor,
-      );
       resolve();
       this.queue.shift();
       this.animationFrame = null;
     } else {
-      const { encoder, sprites, callback } = this.queue[0];
-
-      render(
-        this.gl,
-        frame / request.animation.frameOptions.totalFrames,
-        sprites,
-        lighting,
-        clearColor,
-      );
+      const { encoder, callback } = this.queue[0];
       callback(frame);
 
       const pixels = new Uint8ClampedArray(
@@ -221,7 +302,7 @@ export class Animator {
       encoder.addFrame(pixels, true);
       encoder.setTransparent(0xffffff);
 
-      if (frame === request.animation.frameOptions.totalFrames - 1) {
+      if (frame === output.totalFrames - 1) {
         encoder.finish();
         const gif = encoder.stream().getData();
         const dataUri = "data:image/gif;base64," + window.btoa(gif);

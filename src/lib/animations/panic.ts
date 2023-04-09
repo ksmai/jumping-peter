@@ -1,16 +1,20 @@
-import { createPercentage } from "./options";
+import { createPercentage, defaults } from "./options";
+import type { MappedOptions } from "./options";
 import * as transform from "../graphics/transform";
 import * as utils from "../graphics/utils";
-import type { MappedOptions } from "./options";
 import type { Sprite } from "../graphics/renderer";
 import type { ProgramFactory } from "../graphics/program";
 import type { GeometryFactory } from "../graphics/geometry";
 
 export const name = "panic" as const;
 
-export const frameOptions = {
-  delayMs: 30,
-  totalFrames: 16,
+export const defaultOptions = {
+  ...defaults,
+  output: {
+    ...defaults.output,
+    delayMs: 30,
+    totalFrames: 16,
+  },
 };
 
 export const editOptions = [

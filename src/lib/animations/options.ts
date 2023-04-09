@@ -1,3 +1,5 @@
+import { base } from "$app/paths";
+
 interface Slider<Name extends string> {
   readonly type: "slider";
   readonly name: Name;
@@ -159,3 +161,59 @@ export function getValues<T extends readonly EditOption[]>(
     return result;
   }, {} as MappedOptions<T>);
 }
+
+export const defaults = {
+  image: {
+    url: `${base}/favicon.png`,
+  } as { url: string },
+  output: {
+    width: 64,
+    height: 64,
+    clear: [1, 1, 1],
+    delayMs: 50,
+    totalFrames: 20,
+  },
+  material: {
+    specular: [0, 0, 0],
+    shininess: 32,
+  },
+  directionalLight: {
+    ambient: [1, 1, 1],
+    diffuse: [0, 0, 0],
+    specular: [0, 0, 0],
+    direction: [0, -1, 0],
+  },
+  pointLight: {
+    ambient: [0, 0, 0],
+    diffuse: [0, 0, 0],
+    specular: [0, 0, 0],
+    position: [0, 0, 0],
+    attenuation1: 0,
+    attenuation2: 0,
+  },
+  spotLight: {
+    ambient: [0, 0, 0],
+    diffuse: [0, 0, 0],
+    specular: [0, 0, 0],
+    position: [0, 0, 0],
+    direction: [0, 0, 1],
+    innerDegrees: 90,
+    outerDegrees: 180,
+    attenuation1: 0,
+    attenuation2: 0,
+  },
+  camera: {
+    position: [0, 0, 5],
+    lookAt: [0, 0, -1],
+    up: [0, 1, 0],
+  },
+  projection: {
+    perspective: false,
+    left: -1,
+    right: 1,
+    bottom: -1,
+    top: 1,
+    near: 0.1,
+    far: 10,
+  },
+} as const;
