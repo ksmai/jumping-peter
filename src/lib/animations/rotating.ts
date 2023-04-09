@@ -1,7 +1,6 @@
 import {
   createCoordinate,
   createEasing,
-  createPercentage,
   createToggle,
   defaults,
 } from "./options";
@@ -48,17 +47,17 @@ export const defaultOptions = {
 } as const;
 
 export const editOptions = [
-  createPercentage({
+  createCoordinate({
     name: "axisX",
     value: 0,
   }),
 
-  createPercentage({
+  createCoordinate({
     name: "axisY",
     value: 1,
   }),
 
-  createPercentage({
+  createCoordinate({
     name: "axisZ",
     value: 0,
   }),

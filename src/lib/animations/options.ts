@@ -64,6 +64,30 @@ export function createTwoWayPercentage<Name extends string>(
   };
 }
 
+export function createOffset<Name extends string>(
+  options: CreateSlider<Name>,
+): Slider<Name> {
+  return {
+    ...options,
+    type: "slider",
+    min: 0,
+    max: 2,
+    step: 0.01,
+  };
+}
+
+export function createTwoWayOffset<Name extends string>(
+  options: CreateSlider<Name>,
+): Slider<Name> {
+  return {
+    ...options,
+    type: "slider",
+    min: -2,
+    max: 2,
+    step: 0.01,
+  };
+}
+
 // 1 = original size
 // > 1 = larger
 // < 1 = smaller
@@ -73,9 +97,9 @@ export function createScale<Name extends string>(
   return {
     ...options,
     type: "slider",
-    min: 0.1,
-    max: 5,
-    step: 0.1,
+    min: 0.01,
+    max: 10,
+    step: 0.01,
   };
 }
 

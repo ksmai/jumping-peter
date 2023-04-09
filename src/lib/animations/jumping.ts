@@ -1,5 +1,5 @@
 import * as transform from "../graphics/transform";
-import { createPercentage, defaults } from "./options";
+import { createOffset, createPercentage, defaults } from "./options";
 import type { MappedOptions } from "./options";
 import type { Sprite } from "../graphics/renderer";
 import type { ProgramFactory } from "../graphics/program";
@@ -17,9 +17,9 @@ export const defaultOptions = {
 };
 
 export const editOptions = [
-  createPercentage({
+  createOffset({
     name: "maxOffset",
-    value: 0.6,
+    value: 1.2,
   }),
 
   createPercentage({
@@ -48,7 +48,7 @@ export function createSprites(
     const mat = transform.identity();
     const airTime = cycleT / (1 - compressTime);
     if (airTime < 1) {
-      const offset = (1 - airTime * airTime) * maxOffset * 2;
+      const offset = (1 - airTime * airTime) * maxOffset;
       transform.translate2d(mat, 0, offset);
     } else {
       const groundTime = (1 - cycleT) / compressTime;

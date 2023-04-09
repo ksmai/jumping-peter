@@ -1,4 +1,4 @@
-import { createPercentage, defaults } from "./options";
+import { createOffset, defaults } from "./options";
 import type { MappedOptions } from "./options";
 import * as transform from "../graphics/transform";
 import * as utils from "../graphics/utils";
@@ -18,12 +18,12 @@ export const defaultOptions = {
 };
 
 export const editOptions = [
-  createPercentage({
+  createOffset({
     name: "maxOffsetX",
     value: 0.15,
   }),
 
-  createPercentage({
+  createOffset({
     name: "maxOffsetY",
     value: 0.15,
   }),

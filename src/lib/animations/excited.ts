@@ -1,7 +1,7 @@
 import {
   createAngle,
   createPositiveInteger,
-  createTwoWayPercentage,
+  createTwoWayOffset,
   defaults,
 } from "./options";
 import * as transform from "../graphics/transform";
@@ -28,14 +28,14 @@ export const editOptions = [
     value: 15,
   }),
 
-  createTwoWayPercentage({
+  createTwoWayOffset({
     name: "startOffset",
-    value: -0.1,
+    value: -0.2,
   }),
 
-  createTwoWayPercentage({
+  createTwoWayOffset({
     name: "endOffset",
-    value: 0.1,
+    value: 0.2,
   }),
 
   createPositiveInteger({
@@ -52,10 +52,7 @@ export function createSprites(
   const program = programFactory.createProgram("default");
   const geometry = geometryFactory.createGeometry("full");
 
-  const { angle, cycles } = options;
-  let { startOffset, endOffset } = options;
-  startOffset *= 2;
-  endOffset *= 2;
+  const { angle, cycles, startOffset, endOffset } = options;
 
   const radians = utils.toRadian(angle);
   const cos = Math.cos(radians);
