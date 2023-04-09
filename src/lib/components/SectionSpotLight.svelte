@@ -79,7 +79,7 @@
   <Slider
     label="attenuation1"
     min={0}
-    max={100}
+    max={10}
     step={0.1}
     value={$spotLight.attenuation1}
     on:input={(e) =>
@@ -91,7 +91,7 @@
   <Slider
     label="attenuation2"
     min={0}
-    max={100}
+    max={10}
     step={0.1}
     value={$spotLight.attenuation2}
     on:input={(e) =>
