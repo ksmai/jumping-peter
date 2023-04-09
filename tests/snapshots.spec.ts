@@ -13,6 +13,7 @@ const animationNames = [
   "panic",
   "rotating",
   "party",
+  "parrot",
 ];
 
 for (const animationName of animationNames) {

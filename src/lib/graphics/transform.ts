@@ -34,6 +34,22 @@ export function translate2d(mat: Transform, x: number, y: number): void {
   translate3d(mat, x, y, 0);
 }
 
+export function sheer2d(mat: Transform, x: number, y: number): void {
+  const a = mat[0];
+  const b = mat[4];
+  const c = mat[8];
+  const d = mat[12];
+
+  mat[0] += x * mat[1];
+  mat[4] += x * mat[5];
+  mat[8] += x * mat[9];
+  mat[12] += x * mat[13];
+  mat[1] += y * a;
+  mat[5] += y * b;
+  mat[9] += y * c;
+  mat[13] += y * d;
+}
+
 export function translate3d(
   mat: Transform,
   x: number,
