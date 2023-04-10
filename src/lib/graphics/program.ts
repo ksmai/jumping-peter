@@ -172,7 +172,7 @@ void main() {
     `,
   },
 
-  kernal: {
+  kernel: {
     vertex: vertexShaderForQuad,
     fragment: `\
 #version 300 es
@@ -180,7 +180,7 @@ precision highp float;
 
 in vec2 v_texCoords;
 uniform sampler2D u_image;
-uniform mat3 u_kernal;
+uniform mat3 u_kernel;
 
 out vec4 outColor;
 
@@ -193,15 +193,15 @@ vec3 getColor(vec2 offset) {
 void main() {
   vec3 color = vec3(0.0, 0.0, 0.0);
 
-  color += u_kernal[0][0] * getColor(vec2(-1.0,  1.0));
-  color += u_kernal[0][1] * getColor(vec2(-1.0,  0.0));
-  color += u_kernal[0][2] * getColor(vec2(-1.0, -1.0));
-  color += u_kernal[1][0] * getColor(vec2( 0.0,  1.0));
-  color += u_kernal[1][1] * getColor(vec2( 0.0,  0.0));
-  color += u_kernal[1][2] * getColor(vec2( 0.0, -1.0));
-  color += u_kernal[2][0] * getColor(vec2( 1.0,  1.0));
-  color += u_kernal[2][1] * getColor(vec2( 1.0,  0.0));
-  color += u_kernal[2][2] * getColor(vec2( 1.0, -1.0));
+  color += u_kernel[0][0] * getColor(vec2(-1.0,  1.0));
+  color += u_kernel[0][1] * getColor(vec2(-1.0,  0.0));
+  color += u_kernel[0][2] * getColor(vec2(-1.0, -1.0));
+  color += u_kernel[1][0] * getColor(vec2( 0.0,  1.0));
+  color += u_kernel[1][1] * getColor(vec2( 0.0,  0.0));
+  color += u_kernel[1][2] * getColor(vec2( 0.0, -1.0));
+  color += u_kernel[2][0] * getColor(vec2( 1.0,  1.0));
+  color += u_kernel[2][1] * getColor(vec2( 1.0,  0.0));
+  color += u_kernel[2][2] * getColor(vec2( 1.0, -1.0));
 
   outColor = vec4(color, 1.0);
 }
@@ -216,8 +216,8 @@ precision highp float;
 
 in vec2 v_texCoords;
 uniform sampler2D u_image;
-uniform mat3 u_kernal1;
-uniform mat3 u_kernal2;
+uniform mat3 u_kernel1;
+uniform mat3 u_kernel2;
 
 out vec4 outColor;
 
@@ -229,26 +229,26 @@ vec3 getColor(vec2 offset) {
 
 void main() {
   vec3 color1 = vec3(0.0, 0.0, 0.0);
-  color1 += u_kernal1[0][0] * getColor(vec2(-1.0,  1.0));
-  color1 += u_kernal1[0][1] * getColor(vec2(-1.0,  0.0));
-  color1 += u_kernal1[0][2] * getColor(vec2(-1.0, -1.0));
-  color1 += u_kernal1[1][0] * getColor(vec2( 0.0,  1.0));
-  color1 += u_kernal1[1][1] * getColor(vec2( 0.0,  0.0));
-  color1 += u_kernal1[1][2] * getColor(vec2( 0.0, -1.0));
-  color1 += u_kernal1[2][0] * getColor(vec2( 1.0,  1.0));
-  color1 += u_kernal1[2][1] * getColor(vec2( 1.0,  0.0));
-  color1 += u_kernal1[2][2] * getColor(vec2( 1.0, -1.0));
+  color1 += u_kernel1[0][0] * getColor(vec2(-1.0,  1.0));
+  color1 += u_kernel1[0][1] * getColor(vec2(-1.0,  0.0));
+  color1 += u_kernel1[0][2] * getColor(vec2(-1.0, -1.0));
+  color1 += u_kernel1[1][0] * getColor(vec2( 0.0,  1.0));
+  color1 += u_kernel1[1][1] * getColor(vec2( 0.0,  0.0));
+  color1 += u_kernel1[1][2] * getColor(vec2( 0.0, -1.0));
+  color1 += u_kernel1[2][0] * getColor(vec2( 1.0,  1.0));
+  color1 += u_kernel1[2][1] * getColor(vec2( 1.0,  0.0));
+  color1 += u_kernel1[2][2] * getColor(vec2( 1.0, -1.0));
 
   vec3 color2 = vec3(0.0, 0.0, 0.0);
-  color2 += u_kernal2[0][0] * getColor(vec2(-1.0,  1.0));
-  color2 += u_kernal2[0][1] * getColor(vec2(-1.0,  0.0));
-  color2 += u_kernal2[0][2] * getColor(vec2(-1.0, -1.0));
-  color2 += u_kernal2[1][0] * getColor(vec2( 0.0,  1.0));
-  color2 += u_kernal2[1][1] * getColor(vec2( 0.0,  0.0));
-  color2 += u_kernal2[1][2] * getColor(vec2( 0.0, -1.0));
-  color2 += u_kernal2[2][0] * getColor(vec2( 1.0,  1.0));
-  color2 += u_kernal2[2][1] * getColor(vec2( 1.0,  0.0));
-  color2 += u_kernal2[2][2] * getColor(vec2( 1.0, -1.0));
+  color2 += u_kernel2[0][0] * getColor(vec2(-1.0,  1.0));
+  color2 += u_kernel2[0][1] * getColor(vec2(-1.0,  0.0));
+  color2 += u_kernel2[0][2] * getColor(vec2(-1.0, -1.0));
+  color2 += u_kernel2[1][0] * getColor(vec2( 0.0,  1.0));
+  color2 += u_kernel2[1][1] * getColor(vec2( 0.0,  0.0));
+  color2 += u_kernel2[1][2] * getColor(vec2( 0.0, -1.0));
+  color2 += u_kernel2[2][0] * getColor(vec2( 1.0,  1.0));
+  color2 += u_kernel2[2][1] * getColor(vec2( 1.0,  0.0));
+  color2 += u_kernel2[2][2] * getColor(vec2( 1.0, -1.0));
 
   outColor = vec4(
     length(vec2(color1.r, color2.r)),

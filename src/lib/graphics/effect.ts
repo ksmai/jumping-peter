@@ -45,10 +45,10 @@ const EffectConfig: Record<
     },
   },
   boxBlur: {
-    program: "kernal",
+    program: "kernel",
     uniforms: {
       // prettier-ignore
-      u_kernal: [
+      u_kernel: [
         1/9, 1/9, 1/9,
         1/9, 1/9, 1/9,
         1/9, 1/9, 1/9,
@@ -56,10 +56,10 @@ const EffectConfig: Record<
     },
   },
   guassian: {
-    program: "kernal",
+    program: "kernel",
     uniforms: {
       // prettier-ignore
-      u_kernal: [
+      u_kernel: [
         1/16, 2/16, 1/16,
         2/16, 4/16, 2/16,
         1/16, 2/16, 1/16,
@@ -67,10 +67,10 @@ const EffectConfig: Record<
     },
   },
   sharpen1: {
-    program: "kernal",
+    program: "kernel",
     uniforms: {
       // prettier-ignore
-      u_kernal: [
+      u_kernel: [
         -0.0023, -0.0432, -0.0023,
         -0.0432,  1.1820, -0.0432,
         -0.0023, -0.0432, -0.0023,
@@ -78,10 +78,10 @@ const EffectConfig: Record<
     },
   },
   sharpen2: {
-    program: "kernal",
+    program: "kernel",
     uniforms: {
       // prettier-ignore
-      u_kernal: [
+      u_kernel: [
         -1/9, -1/9, -1/9,
         -1/9, 17/9, -1/9,
         -1/9, -1/9, -1/9,
@@ -89,10 +89,10 @@ const EffectConfig: Record<
     },
   },
   emboss: {
-    program: "kernal",
+    program: "kernel",
     uniforms: {
       // prettier-ignore
-      u_kernal: [
+      u_kernel: [
         -2, -1, 0,
         -1,  1, 1,
          0,  1, 2,
@@ -100,10 +100,10 @@ const EffectConfig: Record<
     },
   },
   laplacian1: {
-    program: "kernal",
+    program: "kernel",
     uniforms: {
       // prettier-ignore
-      u_kernal: [
+      u_kernel: [
          0,  -1,  0,
         -1,   4, -1,
          0,  -1,  0,
@@ -111,10 +111,10 @@ const EffectConfig: Record<
     },
   },
   laplacian2: {
-    program: "kernal",
+    program: "kernel",
     uniforms: {
       // prettier-ignore
-      u_kernal: [
+      u_kernel: [
         -1, -1, -1,
         -1,  8, -1,
         -1, -1, -1,
@@ -125,13 +125,13 @@ const EffectConfig: Record<
     program: "gradient2",
     uniforms: {
       // prettier-ignore
-      u_kernal1: [
+      u_kernel1: [
          1, 0, -1,
          2, 0, -2,
          1, 0, -1,
       ],
       // prettier-ignore
-      u_kernal2: [
+      u_kernel2: [
          1,  2,  1,
          0,  0,  0,
         -1, -2, -1,
@@ -142,13 +142,13 @@ const EffectConfig: Record<
     program: "gradient2",
     uniforms: {
       // prettier-ignore
-      u_kernal1: [
+      u_kernel1: [
         1, 0, -1,
         1, 0, -1,
         1, 0, -1,
       ],
       // prettier-ignore
-      u_kernal2: [
+      u_kernel2: [
          1,  1,  1,
          0,  0,  0,
         -1, -1, -1,
@@ -156,10 +156,10 @@ const EffectConfig: Record<
     },
   },
   darken: {
-    program: "kernal",
+    program: "kernel",
     uniforms: {
       // prettier-ignore
-      u_kernal: [
+      u_kernel: [
         0,   0, 0,
         0, 0.5, 0,
         0,   0, 0,
@@ -167,10 +167,10 @@ const EffectConfig: Record<
     },
   },
   lighten: {
-    program: "kernal",
+    program: "kernel",
     uniforms: {
       // prettier-ignore
-      u_kernal: [
+      u_kernel: [
         0, 0, 0,
         0, 2, 0,
         0, 0, 0,
