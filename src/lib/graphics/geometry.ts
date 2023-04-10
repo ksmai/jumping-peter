@@ -116,6 +116,13 @@ const quads = {
     0, +1, 0, 0.5, 0, 0, 0, 1,
     1, +1, 0, 1,   0, 0, 0, 1,
   ],
+  // this is basically same as full but with y-axis flipped again because it is primarily used for post-processing where it will be run a varying number of times and no transformations are needed
+  quad: [
+    -1, -1, 0, 0, 0, 0, 0, 1,
+    +1, -1, 0, 1, 0, 0, 0, 1,
+    -1, +1, 0, 0, 1, 0, 0, 1,
+    +1, +1, 0, 1, 1, 0, 0, 1,
+  ],
 } as const;
 
 type GeometryType = keyof typeof quads;

@@ -9,6 +9,20 @@ export interface Program {
   readonly uniformLocations: Record<string, WebGLUniformLocation | null>;
 }
 
+const vertexShaderForQuad = `\
+#version 300 es
+
+layout(location = ${ATTRIB_LOCATIONS.a_position}) in vec2 a_position;
+layout(location = ${ATTRIB_LOCATIONS.a_texCoords}) in vec2 a_texCoords;
+
+out vec2 v_texCoords;
+
+void main() {
+  gl_Position = vec4(a_position, 0.0, 1.0);
+  v_texCoords = a_texCoords;
+}
+`;
+
 const SHADER_PAIRS = {
   default: {
     vertex: `\
@@ -141,6 +155,22 @@ void main() {
 }
     `,
   },
+  invert: {
+    vertex: vertexShaderForQuad,
+    fragment: `\
+#version 300 es
+precision highp float;
+
+in vec2 v_texCoords;
+uniform sampler2D u_image;
+
+out vec4 outColor;
+
+void main() {
+  outColor = vec4(1.0 - texture(u_image, v_texCoords).rgb, 1.0);
+}
+    `,
+  },
 } as const;
 
 type ShaderType = keyof typeof SHADER_PAIRS;
@@ -185,7 +215,10 @@ export function setUniforms(
       );
     }
     const location = program.uniformLocations[name];
-    if (name === "u_image" && typeof value === "number") {
+    if (
+      ["u_image", "u_material.diffuse"].includes(name) &&
+      typeof value === "number"
+    ) {
       gl.uniform1i(location, value);
     } else if (Array.isArray(value)) {
       if (value.length === 2) {

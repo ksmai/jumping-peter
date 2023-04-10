@@ -1,10 +1,11 @@
 import uniq from "lodash/uniq";
 import { GIFEncoder } from "./antimatter15-jsgif";
 import type { Sprite } from "./graphics/renderer";
-import { SingleTexture } from "./graphics/texture";
+import { SingleTexture, RenderTexture } from "./graphics/texture";
 import { render } from "./graphics/renderer";
 import { ProgramFactory, setUniforms } from "./graphics/program";
 import { GeometryFactory } from "./graphics/geometry";
+import type { Geometry } from "./graphics/geometry";
 import * as transform from "./graphics/transform";
 import * as utils from "./graphics/utils";
 import { createSprites, ANIMATIONS } from "./animations";
@@ -115,6 +116,8 @@ export class Animator {
   private readonly programFactory: ProgramFactory;
   private readonly geometryFactory: GeometryFactory;
   private readonly texture: SingleTexture;
+  private readonly renderTextures: [RenderTexture, RenderTexture];
+  private readonly quad: Geometry;
   private readonly queue: QueueItem[] = [];
   private animationFrame: number | null = null;
 
@@ -127,6 +130,11 @@ export class Animator {
     this.programFactory = new ProgramFactory(this.gl);
     this.geometryFactory = new GeometryFactory(this.gl);
     this.texture = new SingleTexture(this.gl);
+    this.renderTextures = [
+      new RenderTexture(this.gl, 1),
+      new RenderTexture(this.gl, 2),
+    ];
+    this.quad = this.geometryFactory.createGeometry("quad");
   }
 
   animate(
@@ -212,6 +220,7 @@ export class Animator {
     if (type === "frame" || (type === "gif" && this.queue[0].frame === 0)) {
       await this.texture.loadImage(image.url);
       const { width, height, clear } = output;
+      this.renderTextures.forEach((t) => t.setSize(width, height));
       this.canvas.width = width;
       this.canvas.height = height;
       this.gl.viewport(0, 0, width, height);
@@ -248,6 +257,7 @@ export class Animator {
       const uniforms = {
         u_view,
         u_projection,
+        "u_material.diffuse": this.texture.unit,
         "u_material.specular": material.specular,
         "u_material.shininess": material.shininess,
         "u_directionalLight.ambient": directionalLight.ambient,
@@ -281,7 +291,11 @@ export class Animator {
       }
     }
 
-    render(this.gl, frame / request.output.totalFrames, sprites);
+    render(this.gl, frame / request.output.totalFrames, sprites, {
+      renderTextures: this.renderTextures,
+      quad: this.quad,
+      effects: [],
+    });
 
     if (type === "frame") {
       resolve();
@@ -325,6 +339,7 @@ export class Animator {
     this.programFactory.destroy();
     this.geometryFactory.destroy();
     this.texture.destroy();
+    this.renderTextures.forEach((t) => t.destroy());
     if (this.animationFrame !== null) {
       window.cancelAnimationFrame(this.animationFrame);
     }
