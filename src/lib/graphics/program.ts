@@ -250,14 +250,11 @@ void main() {
   color2 += u_kernal2[2][1] * getColor(vec2( 1.0,  0.0));
   color2 += u_kernal2[2][2] * getColor(vec2( 1.0, -1.0));
 
-  vec3 weights = vec3(0.2126, 0.7152, 0.0722);
-  color1 *= weights;
-  color2 *= weights;
-  float x = color1.r + color1.g + color1.b;
-  float y = color2.r + color2.g + color2.b;
-  float result = length(vec2(x, y));
-
-  outColor = vec4(result, result, result, 1.0);
+  outColor = vec4(
+    length(vec2(color1.r, color2.r)),
+    length(vec2(color1.g, color2.g)),
+    length(vec2(color1.b, color2.b)),
+    1.0);
 }
     `,
   },
