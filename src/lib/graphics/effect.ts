@@ -4,12 +4,9 @@ import type { Effect } from "./renderer";
 export const EFFECTS = [
   "grayscale",
   "boxBlur",
-  "guassian1",
-  "guassian2",
-  "guassian3",
+  "guassian",
   "sharpen1",
   "sharpen2",
-  "sharpen3",
   "emboss",
   "laplacian1",
   "laplacian2",
@@ -58,7 +55,7 @@ const EffectConfig: Record<
       ],
     },
   },
-  guassian1: {
+  guassian: {
     program: "kernal",
     uniforms: {
       // prettier-ignore
@@ -69,36 +66,14 @@ const EffectConfig: Record<
       ],
     },
   },
-  guassian2: {
-    program: "kernal",
-    uniforms: {
-      // prettier-ignore
-      u_kernal: [
-          0, 0.2, 0,
-        0.2, 0.2, 0.2,
-          0, 0.2, 0,
-      ],
-    },
-  },
-  guassian3: {
-    program: "kernal",
-    uniforms: {
-      // prettier-ignore
-      u_kernal: [
-        0.045, 0.122, 0.045,
-        0.122, 0.332, 0.122,
-        0.045, 0.122, 0.045,
-      ],
-    },
-  },
   sharpen1: {
     program: "kernal",
     uniforms: {
       // prettier-ignore
       u_kernal: [
-         0, -1,  0,
-        -1,  5, -1,
-         0, -1,  0,
+        -0.0023, -0.0432, -0.0023,
+        -0.0432,  1.1820, -0.0432,
+        -0.0023, -0.0432, -0.0023,
       ],
     },
   },
@@ -107,20 +82,9 @@ const EffectConfig: Record<
     uniforms: {
       // prettier-ignore
       u_kernal: [
-        -1, -1, -1,
-        -1,  9, -1,
-        -1, -1, -1,
-      ],
-    },
-  },
-  sharpen3: {
-    program: "kernal",
-    uniforms: {
-      // prettier-ignore
-      u_kernal: [
-        -0.125, -0.125, -0.125,
-        -0.125,      2, -0.125,
-        -0.125, -0.125, -0.125,
+        -1/9, -1/9, -1/9,
+        -1/9, 17/9, -1/9,
+        -1/9, -1/9, -1/9,
       ],
     },
   },
@@ -162,15 +126,15 @@ const EffectConfig: Record<
     uniforms: {
       // prettier-ignore
       u_kernal1: [
-         3, 0,  -3,
-        10, 0, -10,
-         3, 0,  -3,
+         1, 0, -1,
+         2, 0, -2,
+         1, 0, -1,
       ],
       // prettier-ignore
       u_kernal2: [
-         3,  10,  3,
-         0,   0,  0,
-        -3, -10, -3,
+         1,  2,  1,
+         0,  0,  0,
+        -1, -2, -1,
       ],
     },
   },
