@@ -208,7 +208,7 @@ void main() {
     `,
   },
 
-  twoKernalsEdgeDetect: {
+  gradient2: {
     vertex: vertexShaderForQuad,
     fragment: `\
 #version 300 es
@@ -258,25 +258,6 @@ void main() {
 }
     `,
   },
-  grayscale: {
-    vertex: vertexShaderForQuad,
-    fragment: `\
-#version 300 es
-precision highp float;
-
-in vec2 v_texCoords;
-uniform sampler2D u_image;
-uniform vec3 u_weights;
-
-out vec4 outColor;
-
-void main() {
-  vec3 weighted = u_weights * texture(u_image, v_texCoords).rgb;
-  float average = weighted.x + weighted.y + weighted.z;
-  outColor = vec4(average, average, average, 1.0);
-}
-    `,
-  },
 
   contrast: {
     vertex: vertexShaderForQuad,
@@ -297,7 +278,7 @@ void main() {
     `,
   },
 
-  channels: {
+  mix: {
     vertex: vertexShaderForQuad,
     fragment: `\
 #version 300 es
@@ -305,12 +286,12 @@ precision highp float;
 
 in vec2 v_texCoords;
 uniform sampler2D u_image;
-uniform mat3 u_factors;
+uniform mat3 u_weights;
 
 out vec4 outColor;
 
 void main() {
-  outColor = vec4(u_factors * texture(u_image, v_texCoords).rgb, 1.0);
+  outColor = vec4(u_weights * texture(u_image, v_texCoords).rgb, 1.0);
 }
     `,
   },

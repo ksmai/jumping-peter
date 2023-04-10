@@ -2,7 +2,7 @@ import type { ProgramFactory, ProgramType } from "./program";
 import type { Effect } from "./renderer";
 
 export const EFFECTS = [
-  "graysacle",
+  "grayscale",
   "boxBlur",
   "guassian1",
   "guassian2",
@@ -15,17 +15,18 @@ export const EFFECTS = [
   "laplacian2",
   "sobel",
   "prewitt",
-  "edgeDetect2",
-  "edgeDetect4",
-  "edgeDetect5",
-  "edgeDetect6",
-  "edgeDetect7",
   "darken",
   "lighten",
   "highContrast",
   "invert",
-  "swap1",
-  "swap2",
+  "grb",
+  "rbg",
+  "bgr",
+  "gbr",
+  "brg",
+  "0gb",
+  "r0b",
+  "rg0",
   "vignette",
 ] as const;
 
@@ -35,10 +36,15 @@ const EffectConfig: Record<
   EffectType,
   { program: ProgramType; uniforms: Record<string, unknown> }
 > = {
-  graysacle: {
-    program: "grayscale",
+  grayscale: {
+    program: "mix",
     uniforms: {
-      u_weights: [0.2126, 0.7152, 0.0722],
+      // prettier-ignore
+      u_weights: [
+        0.2126, 0.2126, 0.2126,
+        0.7152, 0.7152, 0.7152,
+        0.0722, 0.0722, 0.0722,
+      ],
     },
   },
   boxBlur: {
@@ -151,63 +157,8 @@ const EffectConfig: Record<
       ],
     },
   },
-  edgeDetect2: {
-    program: "kernal",
-    uniforms: {
-      // prettier-ignore
-      u_kernal: [
-        -0.125, -0.125, -0.125,
-        -0.125,      1, -0.125,
-        -0.125, -0.125, -0.125,
-      ],
-    },
-  },
-  edgeDetect4: {
-    program: "kernal",
-    uniforms: {
-      // prettier-ignore
-      u_kernal: [
-        -5, 0, 0,
-         0, 0, 0,
-         0, 0, 5,
-      ],
-    },
-  },
-  edgeDetect5: {
-    program: "kernal",
-    uniforms: {
-      // prettier-ignore
-      u_kernal: [
-        -1, -1, -1,
-         0,  0,  0,
-         1,  1,  1,
-      ],
-    },
-  },
-  edgeDetect6: {
-    program: "kernal",
-    uniforms: {
-      // prettier-ignore
-      u_kernal: [
-        -1, -1, -1,
-         2,  2,  2,
-        -1, -1, -1,
-      ],
-    },
-  },
-  edgeDetect7: {
-    program: "kernal",
-    uniforms: {
-      // prettier-ignore
-      u_kernal: [
-        -5, -5, -5,
-        -5, 39, -5,
-        -5, -5, -5,
-      ],
-    },
-  },
   sobel: {
-    program: "twoKernalsEdgeDetect",
+    program: "gradient2",
     uniforms: {
       // prettier-ignore
       u_kernal1: [
@@ -224,7 +175,7 @@ const EffectConfig: Record<
     },
   },
   prewitt: {
-    program: "twoKernalsEdgeDetect",
+    program: "gradient2",
     uniforms: {
       // prettier-ignore
       u_kernal1: [
@@ -272,25 +223,91 @@ const EffectConfig: Record<
     program: "invert",
     uniforms: {},
   },
-  swap1: {
-    program: "channels",
+  grb: {
+    program: "mix",
     uniforms: {
       // prettier-ignore
-      u_factors: [
+      u_weights: [
+        0, 1, 0,
+        1, 0, 0,
+        0, 0, 1,
+      ],
+    },
+  },
+  rbg: {
+    program: "mix",
+    uniforms: {
+      // prettier-ignore
+      u_weights: [
+        1, 0, 0,
+        0, 0, 1,
+        0, 1, 0,
+      ],
+    },
+  },
+  bgr: {
+    program: "mix",
+    uniforms: {
+      // prettier-ignore
+      u_weights: [
+        0, 0, 1,
+        0, 1, 0,
+        1, 0, 0,
+      ],
+    },
+  },
+  gbr: {
+    program: "mix",
+    uniforms: {
+      // prettier-ignore
+      u_weights: [
         0, 0, 1,
         1, 0, 0,
         0, 1, 0,
       ],
     },
   },
-  swap2: {
-    program: "channels",
+  brg: {
+    program: "mix",
     uniforms: {
       // prettier-ignore
-      u_factors: [
+      u_weights: [
         0, 1, 0,
         0, 0, 1,
         1, 0, 0,
+      ],
+    },
+  },
+  "0gb": {
+    program: "mix",
+    uniforms: {
+      // prettier-ignore
+      u_weights: [
+        0, 0, 0,
+        0, 1, 0,
+        0, 0, 1,
+      ],
+    },
+  },
+  r0b: {
+    program: "mix",
+    uniforms: {
+      // prettier-ignore
+      u_weights: [
+        1, 0, 0,
+        0, 0, 0,
+        0, 0, 1,
+      ],
+    },
+  },
+  rg0: {
+    program: "mix",
+    uniforms: {
+      // prettier-ignore
+      u_weights: [
+        1, 0, 0,
+        0, 1, 0,
+        0, 0, 0,
       ],
     },
   },
