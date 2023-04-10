@@ -2,29 +2,26 @@ import type { ProgramFactory, ProgramType } from "./program";
 import type { Effect } from "./renderer";
 
 export const EFFECTS = [
+  "graysacle",
   "boxBlur",
-  "guassianBlur1",
-  "guassianBlur2",
-  "guassianBlur3",
+  "guassian1",
+  "guassian2",
+  "guassian3",
   "sharpen1",
   "sharpen2",
   "sharpen3",
   "emboss",
-  "edgeDetect1",
+  "laplacian1",
+  "laplacian2",
+  "sobel",
+  "prewitt",
   "edgeDetect2",
-  "edgeDetect3",
   "edgeDetect4",
   "edgeDetect5",
   "edgeDetect6",
   "edgeDetect7",
-  "sobelHorizontal",
-  "sobelVertical",
-  "previtHorizontal",
-  "previtVertical",
   "darken",
   "lighten",
-  "graysacle1",
-  "graysacle2",
   "highContrast",
   "invert",
   "swap1",
@@ -38,6 +35,12 @@ const EffectConfig: Record<
   EffectType,
   { program: ProgramType; uniforms: Record<string, unknown> }
 > = {
+  graysacle: {
+    program: "grayscale",
+    uniforms: {
+      u_weights: [0.2126, 0.7152, 0.0722],
+    },
+  },
   boxBlur: {
     program: "kernal",
     uniforms: {
@@ -49,7 +52,7 @@ const EffectConfig: Record<
       ],
     },
   },
-  guassianBlur1: {
+  guassian1: {
     program: "kernal",
     uniforms: {
       // prettier-ignore
@@ -60,7 +63,7 @@ const EffectConfig: Record<
       ],
     },
   },
-  guassianBlur2: {
+  guassian2: {
     program: "kernal",
     uniforms: {
       // prettier-ignore
@@ -71,7 +74,7 @@ const EffectConfig: Record<
       ],
     },
   },
-  guassianBlur3: {
+  guassian3: {
     program: "kernal",
     uniforms: {
       // prettier-ignore
@@ -126,14 +129,25 @@ const EffectConfig: Record<
       ],
     },
   },
-  edgeDetect1: {
+  laplacian1: {
     program: "kernal",
     uniforms: {
       // prettier-ignore
       u_kernal: [
-        0,  1, 0,
-        1, -4, 1,
-        0,  1, 0,
+         0,  -1,  0,
+        -1,   4, -1,
+         0,  -1,  0,
+      ],
+    },
+  },
+  laplacian2: {
+    program: "kernal",
+    uniforms: {
+      // prettier-ignore
+      u_kernal: [
+        -1, -1, -1,
+        -1,  8, -1,
+        -1, -1, -1,
       ],
     },
   },
@@ -145,17 +159,6 @@ const EffectConfig: Record<
         -0.125, -0.125, -0.125,
         -0.125,      1, -0.125,
         -0.125, -0.125, -0.125,
-      ],
-    },
-  },
-  edgeDetect3: {
-    program: "kernal",
-    uniforms: {
-      // prettier-ignore
-      u_kernal: [
-        -1, -1, -1,
-        -1,  8, -1,
-        -1, -1, -1,
       ],
     },
   },
@@ -203,47 +206,37 @@ const EffectConfig: Record<
       ],
     },
   },
-  sobelHorizontal: {
-    program: "kernal",
+  sobel: {
+    program: "twoKernalsEdgeDetect",
     uniforms: {
       // prettier-ignore
-      u_kernal: [
-         1,  2,  1,
-         0,  0,  0,
-        -1, -2, -1,
+      u_kernal1: [
+         3, 0,  -3,
+        10, 0, -10,
+         3, 0,  -3,
+      ],
+      // prettier-ignore
+      u_kernal2: [
+         3,  10,  3,
+         0,   0,  0,
+        -3, -10, -3,
       ],
     },
   },
-  sobelVertical: {
-    program: "kernal",
+  prewitt: {
+    program: "twoKernalsEdgeDetect",
     uniforms: {
       // prettier-ignore
-      u_kernal: [
+      u_kernal1: [
         1, 0, -1,
-        2, 0, -2,
+        1, 0, -1,
         1, 0, -1,
       ],
-    },
-  },
-  previtHorizontal: {
-    program: "kernal",
-    uniforms: {
       // prettier-ignore
-      u_kernal: [
+      u_kernal2: [
          1,  1,  1,
          0,  0,  0,
         -1, -1, -1,
-      ],
-    },
-  },
-  previtVertical: {
-    program: "kernal",
-    uniforms: {
-      // prettier-ignore
-      u_kernal: [
-        1, 0, -1,
-        1, 0, -1,
-        1, 0, -1,
       ],
     },
   },
@@ -267,18 +260,6 @@ const EffectConfig: Record<
         0, 2, 0,
         0, 0, 0,
       ],
-    },
-  },
-  graysacle1: {
-    program: "grayscale",
-    uniforms: {
-      u_weights: [1 / 3, 1 / 3, 1 / 3],
-    },
-  },
-  graysacle2: {
-    program: "grayscale",
-    uniforms: {
-      u_weights: [0.2126, 0.7152, 0.0722],
     },
   },
   highContrast: {

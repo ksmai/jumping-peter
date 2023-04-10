@@ -208,6 +208,59 @@ void main() {
     `,
   },
 
+  twoKernalsEdgeDetect: {
+    vertex: vertexShaderForQuad,
+    fragment: `\
+#version 300 es
+precision highp float;
+
+in vec2 v_texCoords;
+uniform sampler2D u_image;
+uniform mat3 u_kernal1;
+uniform mat3 u_kernal2;
+
+out vec4 outColor;
+
+vec3 getColor(vec2 offset) {
+  vec2 coords = v_texCoords + offset / vec2(textureSize(u_image, 0));
+  float inRange = float(coords.x >= 0.0 && coords.x <= 1.0 && coords.y >= 0.0 && coords.y <= 1.0);
+  return texture(u_image, coords).rgb * inRange;
+}
+
+void main() {
+  vec3 color1 = vec3(0.0, 0.0, 0.0);
+  color1 += u_kernal1[0][0] * getColor(vec2(-1.0,  1.0));
+  color1 += u_kernal1[0][1] * getColor(vec2(-1.0,  0.0));
+  color1 += u_kernal1[0][2] * getColor(vec2(-1.0, -1.0));
+  color1 += u_kernal1[1][0] * getColor(vec2( 0.0,  1.0));
+  color1 += u_kernal1[1][1] * getColor(vec2( 0.0,  0.0));
+  color1 += u_kernal1[1][2] * getColor(vec2( 0.0, -1.0));
+  color1 += u_kernal1[2][0] * getColor(vec2( 1.0,  1.0));
+  color1 += u_kernal1[2][1] * getColor(vec2( 1.0,  0.0));
+  color1 += u_kernal1[2][2] * getColor(vec2( 1.0, -1.0));
+
+  vec3 color2 = vec3(0.0, 0.0, 0.0);
+  color2 += u_kernal2[0][0] * getColor(vec2(-1.0,  1.0));
+  color2 += u_kernal2[0][1] * getColor(vec2(-1.0,  0.0));
+  color2 += u_kernal2[0][2] * getColor(vec2(-1.0, -1.0));
+  color2 += u_kernal2[1][0] * getColor(vec2( 0.0,  1.0));
+  color2 += u_kernal2[1][1] * getColor(vec2( 0.0,  0.0));
+  color2 += u_kernal2[1][2] * getColor(vec2( 0.0, -1.0));
+  color2 += u_kernal2[2][0] * getColor(vec2( 1.0,  1.0));
+  color2 += u_kernal2[2][1] * getColor(vec2( 1.0,  0.0));
+  color2 += u_kernal2[2][2] * getColor(vec2( 1.0, -1.0));
+
+  vec3 weights = vec3(0.2126, 0.7152, 0.0722);
+  color1 *= weights;
+  color2 *= weights;
+  float x = color1.r + color1.g + color1.b;
+  float y = color2.r + color2.g + color2.b;
+  float result = length(vec2(x, y));
+
+  outColor = vec4(result, result, result, 1.0);
+}
+    `,
+  },
   grayscale: {
     vertex: vertexShaderForQuad,
     fragment: `\
