@@ -27,6 +27,8 @@ export const EFFECTS = [
   "graysacle2",
   "highContrast",
   "invert",
+  "swap1",
+  "swap2",
 ] as const;
 
 export type EffectType = (typeof EFFECTS)[number];
@@ -287,6 +289,28 @@ const EffectConfig: Record<
   invert: {
     program: "invert",
     uniforms: {},
+  },
+  swap1: {
+    program: "channels",
+    uniforms: {
+      // prettier-ignore
+      u_factors: [
+        0, 0, 1,
+        1, 0, 0,
+        0, 1, 0,
+      ],
+    },
+  },
+  swap2: {
+    program: "channels",
+    uniforms: {
+      // prettier-ignore
+      u_factors: [
+        0, 1, 0,
+        0, 0, 1,
+        1, 0, 0,
+      ],
+    },
   },
 } as const;
 
