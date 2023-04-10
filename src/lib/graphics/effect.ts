@@ -29,6 +29,7 @@ export const EFFECTS = [
   "invert",
   "swap1",
   "swap2",
+  "vignette",
 ] as const;
 
 export type EffectType = (typeof EFFECTS)[number];
@@ -310,6 +311,13 @@ const EffectConfig: Record<
         0, 0, 1,
         1, 0, 0,
       ],
+    },
+  },
+  vignette: {
+    program: "vignette",
+    uniforms: {
+      u_inner: 0.4,
+      u_outer: 0.6,
     },
   },
 } as const;
