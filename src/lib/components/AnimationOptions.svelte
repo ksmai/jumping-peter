@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { animations } from "$lib/store";
+  import { animations, effects } from "$lib/store";
   import Slider from "$lib/components/Slider.svelte";
   import Toggle from "$lib/components/Toggle.svelte";
   import Section from "$lib/components/Section.svelte";
@@ -33,6 +33,16 @@
       {/if}
     {/each}
   </Section>
+
+  <Section title="Post-processing effects" on:reset={effects.reset}>
+    {#each $effects as effect}
+      <Toggle
+        label={effect.type}
+        value={effect.enabled}
+        on:change={(e) => effects.change(effect.type, e.detail.value)}
+      />
+    {/each}
+  </Section>
 </aside>
 
 <style lang="scss">
@@ -40,7 +50,7 @@
     display: grid;
     grid-template-columns: 1fr;
     grid-auto-rows: max-content;
-    row-gap: 32px;
+    row-gap: 48px;
     padding: 16px;
   }
 </style>

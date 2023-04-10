@@ -23,7 +23,7 @@ void main() {
 }
 `;
 
-const SHADER_PAIRS = {
+const PROGRAMS = {
   default: {
     vertex: `\
 #version 300 es
@@ -173,21 +173,21 @@ void main() {
   },
 } as const;
 
-type ShaderType = keyof typeof SHADER_PAIRS;
+export type ProgramType = keyof typeof PROGRAMS;
 
 export class ProgramFactory {
-  private readonly programs: Partial<Record<ShaderType, Program>> = {};
+  private readonly programs: Partial<Record<ProgramType, Program>> = {};
 
   constructor(private readonly gl: WebGL2RenderingContext) {}
 
-  createProgram(type: ShaderType): Program {
+  createProgram(type: ProgramType): Program {
     let result = this.programs[type];
     if (!result) {
       result = this.programs[type] = {
         program: linkProgram(
           this.gl,
-          SHADER_PAIRS[type].vertex,
-          SHADER_PAIRS[type].fragment,
+          PROGRAMS[type].vertex,
+          PROGRAMS[type].fragment,
         ),
         uniformLocations: {},
       };

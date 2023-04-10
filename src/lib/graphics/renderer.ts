@@ -17,7 +17,7 @@ export interface PostProcess {
 
 export interface Effect {
   program: Program;
-  uniforms?: Record<string, unknown> | null | undefined;
+  uniforms: Record<string, unknown>;
 }
 
 export function render(

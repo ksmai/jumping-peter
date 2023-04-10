@@ -1,6 +1,6 @@
 import uniq from "lodash/uniq";
 import { GIFEncoder } from "./antimatter15-jsgif";
-import type { Sprite } from "./graphics/renderer";
+import type { Effect, Sprite } from "./graphics/renderer";
 import { SingleTexture, RenderTexture } from "./graphics/texture";
 import { render } from "./graphics/renderer";
 import { ProgramFactory, setUniforms } from "./graphics/program";
@@ -9,6 +9,8 @@ import type { Geometry } from "./graphics/geometry";
 import * as transform from "./graphics/transform";
 import * as utils from "./graphics/utils";
 import { createSprites, ANIMATIONS } from "./animations";
+import { createEffects } from "./graphics/effect";
+import type { EffectType } from "./graphics/effect";
 
 type Vec3 = readonly [number, number, number];
 
@@ -73,6 +75,11 @@ export interface SpotLight {
   readonly attenuation2: number;
 }
 
+export interface EffectOption {
+  readonly enabled: boolean;
+  readonly type: EffectType;
+}
+
 export interface AnimationRequest {
   readonly image: ImageOptions;
   readonly output: OutputOptions;
@@ -82,6 +89,7 @@ export interface AnimationRequest {
   readonly directionalLight: DirectionalLight;
   readonly pointLight: PointLight;
   readonly spotLight: SpotLight;
+  readonly effects: EffectOption[];
   readonly animation: (typeof ANIMATIONS)[number];
 }
 
@@ -96,6 +104,7 @@ interface QueueItemGif {
   readonly reject: (e: Error) => void;
   frame: number;
   readonly sprites: Sprite[];
+  readonly effects: Effect[];
   readonly callback: (frame: number) => void;
   readonly encoder: GIFEncoder;
 }
@@ -107,6 +116,7 @@ interface QueueItemFrame {
   readonly reject: (e: Error) => void;
   readonly frame: number;
   readonly sprites: Sprite[];
+  readonly effects: Effect[];
 }
 
 type QueueItem = QueueItemGif | QueueItemFrame;
@@ -164,6 +174,10 @@ export class Animator {
           this.geometryFactory,
           request.animation,
         ),
+        effects: createEffects(
+          this.programFactory,
+          request.effects.filter((e) => e.enabled).map((e) => e.type),
+        ),
         callback,
         encoder,
       });
@@ -186,6 +200,10 @@ export class Animator {
           this.geometryFactory,
           request.animation,
         ),
+        effects: createEffects(
+          this.programFactory,
+          request.effects.filter((e) => e.enabled).map((e) => e.type),
+        ),
       });
       if (this.animationFrame === null) {
         this.animationFrame = requestAnimationFrame(() => this.processLoop());
@@ -206,7 +224,7 @@ export class Animator {
       this.queue.splice(0, this.queue.length - 1);
     }
 
-    const { type, request, resolve, sprites, frame } = this.queue[0];
+    const { type, request, resolve, sprites, effects, frame } = this.queue[0];
     const {
       image,
       output,
@@ -294,7 +312,7 @@ export class Animator {
     render(this.gl, frame / request.output.totalFrames, sprites, {
       renderTextures: this.renderTextures,
       quad: this.quad,
-      effects: [],
+      effects,
     });
 
     if (type === "frame") {

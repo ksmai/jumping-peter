@@ -2,6 +2,9 @@ import { derived, get, writable } from "svelte/store";
 
 import { ANIMATIONS } from "$lib/animations";
 import { Animator } from "$lib/animator";
+import type { EffectOption } from "$lib/animator";
+import { EFFECTS } from "$lib/graphics/effect";
+import type { EffectType } from "$lib/graphics/effect";
 
 type Animation = (typeof ANIMATIONS)[number];
 
@@ -74,6 +77,32 @@ export const animations = (function () {
   };
 })();
 
+export const effects = (function () {
+  const { subscribe, update } = writable<EffectOption[]>(
+    EFFECTS.map((type) => ({ type, enabled: false })),
+  );
+
+  function change<T extends EffectType>(type: T, enabled: boolean) {
+    update((effects) => {
+      return effects.map((effect) =>
+        effect.type === type ? { type, enabled } : effect,
+      );
+    });
+  }
+
+  function reset() {
+    update((effects) => {
+      return effects.map((effect) => ({ ...effect, enabled: false }));
+    });
+  }
+
+  return {
+    subscribe,
+    change,
+    reset,
+  };
+})();
+
 function createStore<
   K extends keyof (typeof ANIMATIONS)[number]["defaultOptions"],
   T extends (typeof ANIMATIONS)[number]["defaultOptions"][K],
@@ -134,6 +163,7 @@ export const animationRequest = derived(
     pointLight,
     spotLight,
     animations,
+    effects,
   ],
   ([
     image,
@@ -145,6 +175,7 @@ export const animationRequest = derived(
     pointLight,
     spotLight,
     animations,
+    effects,
   ]) => ({
     image,
     output,
@@ -155,6 +186,7 @@ export const animationRequest = derived(
     pointLight,
     spotLight,
     animation: animations.current,
+    effects,
   }),
 );
 
