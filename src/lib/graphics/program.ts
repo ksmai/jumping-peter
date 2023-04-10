@@ -171,6 +171,81 @@ void main() {
 }
     `,
   },
+
+  kernal: {
+    vertex: vertexShaderForQuad,
+    fragment: `\
+#version 300 es
+precision highp float;
+
+in vec2 v_texCoords;
+uniform sampler2D u_image;
+uniform mat3 u_kernal;
+
+out vec4 outColor;
+
+vec3 getColor(vec2 offset) {
+  vec2 coords = v_texCoords + offset / vec2(textureSize(u_image, 0));
+  float inRange = float(coords.x >= 0.0 && coords.x <= 1.0 && coords.y >= 0.0 && coords.y <= 1.0);
+  return texture(u_image, coords).rgb * inRange;
+}
+
+void main() {
+  vec3 color = vec3(0.0, 0.0, 0.0);
+
+  color += u_kernal[0][0] * getColor(vec2(-1.0,  1.0));
+  color += u_kernal[0][1] * getColor(vec2(-1.0,  0.0));
+  color += u_kernal[0][2] * getColor(vec2(-1.0, -1.0));
+  color += u_kernal[1][0] * getColor(vec2( 0.0,  1.0));
+  color += u_kernal[1][1] * getColor(vec2( 0.0,  0.0));
+  color += u_kernal[1][2] * getColor(vec2( 0.0, -1.0));
+  color += u_kernal[2][0] * getColor(vec2( 1.0,  1.0));
+  color += u_kernal[2][1] * getColor(vec2( 1.0,  0.0));
+  color += u_kernal[2][2] * getColor(vec2( 1.0, -1.0));
+
+  outColor = vec4(color, 1.0);
+}
+    `,
+  },
+
+  grayscale: {
+    vertex: vertexShaderForQuad,
+    fragment: `\
+#version 300 es
+precision highp float;
+
+in vec2 v_texCoords;
+uniform sampler2D u_image;
+uniform vec3 u_weights;
+
+out vec4 outColor;
+
+void main() {
+  vec3 weighted = u_weights * texture(u_image, v_texCoords).rgb;
+  float average = weighted.x + weighted.y + weighted.z;
+  outColor = vec4(average, average, average, 1.0);
+}
+    `,
+  },
+
+  contrast: {
+    vertex: vertexShaderForQuad,
+    fragment: `\
+#version 300 es
+precision highp float;
+
+in vec2 v_texCoords;
+uniform sampler2D u_image;
+uniform float u_contrast;
+
+out vec4 outColor;
+
+void main() {
+  outColor = vec4(texture(u_image, v_texCoords).rgb, 1.0);
+  outColor.rgb = (outColor.rgb - 0.5) * u_contrast + 0.5;
+}
+    `,
+  },
 } as const;
 
 export type ProgramType = keyof typeof PROGRAMS;

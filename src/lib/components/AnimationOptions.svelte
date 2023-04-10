@@ -47,10 +47,13 @@
 
 <style lang="scss">
   .container {
+    padding: 16px;
+    overflow-y: auto;
+
     display: grid;
     grid-template-columns: 1fr;
     grid-auto-rows: max-content;
-    row-gap: 48px;
-    padding: 16px;
+    gap: 48px;
+    justify-items: stretch;
   }
 </style>
