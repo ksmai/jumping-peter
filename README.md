@@ -76,6 +76,10 @@ Although `OffscreenCanvas` is useful to generate the GIF in a worker thread, it 
 
 ![parrot](/static/demo-parrot.gif)
 
+### wiggling
+
+![wiggling](/static/demo-wiggling.gif)
+
 ## Development
 
 ```bash

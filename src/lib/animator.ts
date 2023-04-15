@@ -243,6 +243,8 @@ export class Animator {
       this.canvas.height = height;
       this.gl.viewport(0, 0, width, height);
       this.gl.clearColor(...clear, 1);
+      this.gl.enable(this.gl.BLEND);
+      this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
       this.gl.activeTexture(this.gl.TEXTURE0 + this.texture.unit);
       this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture.texture);
 

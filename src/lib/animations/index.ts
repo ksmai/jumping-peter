@@ -15,6 +15,7 @@ import * as Panic from "./panic";
 import * as Rotating from "./rotating";
 import * as Party from "./party";
 import * as Parrot from "./parrot";
+import * as Wiggling from "./wiggling";
 
 export const ANIMATIONS = [
   Jumping,
@@ -29,6 +30,7 @@ export const ANIMATIONS = [
   Rotating,
   Party,
   Parrot,
+  Wiggling,
 ];
 
 export function createSprites(
@@ -66,6 +68,8 @@ export function createSprites(
       return Party.createSprites(programFactory, geometryFactory, options);
     case "parrot":
       return Parrot.createSprites(programFactory, geometryFactory, options);
+    case "wiggling":
+      return Wiggling.createSprites(programFactory, geometryFactory, options);
     default:
       ((animation: never) => {
         throw new Error(`Unknown animation: ${JSON.stringify(animation)}`);
