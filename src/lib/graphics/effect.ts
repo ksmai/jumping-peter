@@ -17,6 +17,7 @@ export const EFFECTS = [
   "darken",
   "lighten",
   "highContrast",
+  "bloom",
   "invert",
   "grb",
   "rbg",
@@ -247,6 +248,12 @@ const EffectConfig: Record<
     program: "contrast",
     uniforms: {
       u_contrast: 2,
+    },
+  },
+  bloom: {
+    program: "bloom",
+    uniforms: {
+      u_luminance: 0.6,
     },
   },
   invert: {
