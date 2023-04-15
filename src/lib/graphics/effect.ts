@@ -11,8 +11,9 @@ export const EFFECTS = [
   "emboss",
   "laplacian1",
   "laplacian2",
-  "sobel",
   "prewitt",
+  "sobel",
+  "kirsch",
   "darken",
   "lighten",
   "highContrast",
@@ -133,23 +134,6 @@ const EffectConfig: Record<
       ],
     },
   },
-  sobel: {
-    program: "gradient2",
-    uniforms: {
-      // prettier-ignore
-      u_kernel1: [
-         1, 0, -1,
-         2, 0, -2,
-         1, 0, -1,
-      ],
-      // prettier-ignore
-      u_kernel2: [
-         1,  2,  1,
-         0,  0,  0,
-        -1, -2, -1,
-      ],
-    },
-  },
   prewitt: {
     program: "gradient2",
     uniforms: {
@@ -167,14 +151,84 @@ const EffectConfig: Record<
       ],
     },
   },
+  sobel: {
+    program: "gradient2",
+    uniforms: {
+      // prettier-ignore
+      u_kernel1: [
+         1, 0, -1,
+         2, 0, -2,
+         1, 0, -1,
+      ],
+      // prettier-ignore
+      u_kernel2: [
+         1,  2,  1,
+         0,  0,  0,
+        -1, -2, -1,
+      ],
+    },
+  },
+  kirsch: {
+    program: "gradient8",
+    uniforms: {
+      // prettier-ignore
+      "u_kernel[0]": [
+        5, 5, 5,
+        -3, 0, -3,
+        -3, -3, -3,
+      ],
+      // prettier-ignore
+      "u_kernel[1]": [
+        -3, 5, 5,
+        -3, 0, 5,
+        -3, -3, -3,
+      ],
+      // prettier-ignore
+      "u_kernel[2]": [
+        -3, -3, 5,
+        -3, 0, 5,
+        -3, -3, 5,
+      ],
+      // prettier-ignore
+      "u_kernel[3]": [
+        -3, -3, -3,
+        -3, 0, 5,
+        -3, 5, 5,
+      ],
+      // prettier-ignore
+      "u_kernel[4]": [
+        -3, -3, -3,
+        -3, 0, -3,
+        5, 5, 5,
+      ],
+      // prettier-ignore
+      "u_kernel[5]": [
+        -3, -3, -3,
+        5, 0, -3,
+        5, 5, -3,
+      ],
+      // prettier-ignore
+      "u_kernel[6]": [
+        5, -3, -3,
+        5, 0, -3,
+        5, -3, -3,
+      ],
+      // prettier-ignore
+      "u_kernel[7]": [
+        5, 5, -3,
+        5, 0, -3,
+        -3, -3, -3,
+      ],
+    },
+  },
   darken: {
-    program: "kernel",
+    program: "mix",
     uniforms: {
       // prettier-ignore
       u_kernel: [
-        0,   0, 0,
-        0, 0.5, 0,
-        0,   0, 0,
+        0.5,   0,   0,
+          0, 0.5,   0,
+          0,   0, 0.5,
       ],
     },
   },
@@ -183,9 +237,9 @@ const EffectConfig: Record<
     uniforms: {
       // prettier-ignore
       u_kernel: [
-        0, 0, 0,
+        2, 0, 0,
         0, 2, 0,
-        0, 0, 0,
+        0, 0, 2,
       ],
     },
   },
