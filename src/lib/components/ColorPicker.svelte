@@ -1,42 +1,54 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import Slider from "$lib/components/Slider.svelte";
+
+  type Color = readonly [number, number, number];
 
   export let label = "";
-  export let value: readonly [number, number, number] = [1, 1, 1];
+  export let value: Color = [1, 1, 1];
+
+  function toHex(x: number): string {
+    return Math.floor(x * 255)
+      .toString(16)
+      .padStart(2, "0");
+  }
+
+  function toInputValue(color: Color): string {
+    return `#${color.map(toHex).join("")}`;
+  }
+
+  function toNumber(hex: string): number {
+    return parseInt(hex, 16) / 255;
+  }
+
+  function fromInputValue(value: string): Color {
+    return [
+      toNumber(value.slice(1, 3)),
+      toNumber(value.slice(3, 5)),
+      toNumber(value.slice(5, 7)),
+    ];
+  }
+
+  $: inputValue = toInputValue(value);
 
   const dispatch = createEventDispatcher();
 
-  function onInput(index: 0 | 1 | 2, next: number) {
-    const newValue = [...value];
-    newValue[index] = next;
-    dispatch("input", { value: newValue });
+  function onChange(event: Event) {
+    const target = event.target as HTMLInputElement;
+    value = fromInputValue(target.value);
+    dispatch("input", { value });
   }
 </script>
 
-<Slider
-  label={`${label}R`}
-  min={0}
-  max={1}
-  step={0.01}
-  value={value[0]}
-  on:input={(e) => onInput(0, e.detail.value)}
-/>
+<label class="color-picker"
+  >{label}
+  <input type="color" on:change={onChange} value={inputValue} />
+</label>
 
-<Slider
-  label={`${label}G`}
-  min={0}
-  max={1}
-  step={0.01}
-  value={value[1]}
-  on:input={(e) => onInput(1, e.detail.value)}
-/>
-
-<Slider
-  label={`${label}B`}
-  min={0}
-  max={1}
-  step={0.01}
-  value={value[2]}
-  on:input={(e) => onInput(2, e.detail.value)}
-/>
+<style lang="scss">
+  .color-picker {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+  }
+</style>
