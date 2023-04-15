@@ -56,7 +56,7 @@
     @media (min-width: 64rem) {
       width: 100vw;
       height: 100vh;
-      grid-template-rows: auto 1fr 10rem;
+      grid-template-rows: auto 1fr 12rem;
       grid-template-columns: 9rem 2fr 6fr 2fr 9rem;
       grid-template-areas:
         "header         header         header     header            header"
