@@ -3,6 +3,7 @@ import type { Effect } from "./renderer";
 
 export const EFFECTS = [
   "grayscale",
+  "sepia",
   "boxBlur",
   "guassian",
   "sharpen1",
@@ -41,6 +42,17 @@ const EffectConfig: Record<
         0.2126, 0.2126, 0.2126,
         0.7152, 0.7152, 0.7152,
         0.0722, 0.0722, 0.0722,
+      ],
+    },
+  },
+  sepia: {
+    program: "mix",
+    uniforms: {
+      // prettier-ignore
+      u_weights: [
+        0.393, 0.349, 0.272,
+        0.769, 0.686, 0.534,
+        0.189, 0.168, 0.131,
       ],
     },
   },
