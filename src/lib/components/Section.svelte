@@ -6,16 +6,24 @@
   export let expanded = true;
 
   const dispatch = createEventDispatcher();
+
+  function toggleExpanded() {
+    expanded = !expanded;
+  }
 </script>
 
 <section class="section">
   <header class="section__header">
-    <button
-      class="section__expand"
-      type="button"
-      on:click={() => (expanded = !expanded)}>[{expanded ? "-" : "+"}]</button
+    <button class="section__expand" type="button" on:click={toggleExpanded}
+      >[{expanded ? "-" : "+"}]</button
     >
-    <h2 class="section__heading">{title}</h2>
+    <h2
+      class="section__heading"
+      on:click={toggleExpanded}
+      on:keypress={toggleExpanded}
+    >
+      {title}
+    </h2>
     <button
       class="section__reset"
       type="button"
@@ -58,6 +66,7 @@
       font-weight: bold;
       text-transform: uppercase;
       flex: 1 1 auto;
+      cursor: pointer;
     }
 
     &__reset {
