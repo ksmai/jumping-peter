@@ -5,7 +5,7 @@
   import Slider from "$lib/components/Slider.svelte";
 </script>
 
-<Section title="Output" on:reset={output.reset}>
+<Section title="Output" on:reset={output.reset} expanded={true}>
   <Slider
     label="width"
     min={1}

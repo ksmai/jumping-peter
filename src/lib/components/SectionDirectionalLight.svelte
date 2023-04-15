@@ -5,7 +5,11 @@
   import VectorPicker from "$lib/components/VectorPicker.svelte";
 </script>
 
-<Section title="Directional light" on:reset={directionalLight.reset}>
+<Section
+  title="Directional light"
+  on:reset={directionalLight.reset}
+  expanded={false}
+>
   <ColorPicker
     label="ambient"
     value={$directionalLight.ambient}

@@ -12,6 +12,7 @@
   <Section
     title={$animations.current.name}
     on:reset={animations.resetEditOptions}
+    expanded={true}
   >
     {#each $animations.current.editOptions as option}
       {#if option.type === "slider"}
@@ -34,7 +35,7 @@
     {/each}
   </Section>
 
-  <Section title="Post-processing effects" on:reset={effects.reset}>
+  <Section title="Effects" on:reset={effects.reset} expanded={false}>
     {#each $effects as effect}
       <Toggle
         label={effect.type}

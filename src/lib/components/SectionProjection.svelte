@@ -5,7 +5,7 @@
   import Section from "$lib/components/Section.svelte";
 </script>
 
-<Section title="Projection" on:reset={projection.reset}>
+<Section title="Projection" on:reset={projection.reset} expanded={false}>
   <Toggle
     label="perspective"
     value={$projection.perspective}

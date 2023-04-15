@@ -12,7 +12,7 @@
   }
 </script>
 
-<Section title="Image" on:reset={image.reset}>
+<Section title="Image" on:reset={image.reset} expanded={true}>
   <label class="image">
     <input
       class="image__input"

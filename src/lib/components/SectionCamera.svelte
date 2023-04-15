@@ -4,7 +4,7 @@
   import VectorPicker from "$lib/components/VectorPicker.svelte";
 </script>
 
-<Section title="Camera" on:reset={camera.reset}>
+<Section title="Camera" on:reset={camera.reset} expanded={false}>
   <VectorPicker
     label="position"
     value={$camera.position}

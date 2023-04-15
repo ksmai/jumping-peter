@@ -5,7 +5,7 @@
   import Slider from "$lib/components/Slider.svelte";
 </script>
 
-<Section title="Material" on:reset={material.reset}>
+<Section title="Material" on:reset={material.reset} expanded={false}>
   <ColorPicker
     label="specular"
     value={$material.specular}

@@ -1,13 +1,20 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
+  import { fade } from "svelte/transition";
 
   export let title = "";
+  export let expanded = true;
 
   const dispatch = createEventDispatcher();
 </script>
 
 <section class="section">
   <header class="section__header">
+    <button
+      class="section__expand"
+      type="button"
+      on:click={() => (expanded = !expanded)}>[{expanded ? "-" : "+"}]</button
+    >
     <h2 class="section__heading">{title}</h2>
     <button
       class="section__reset"
@@ -16,9 +23,11 @@
     >
   </header>
 
-  <div class="section__content">
-    <slot />
-  </div>
+  {#if expanded}
+    <div class="section__content" transition:fade={{ duration: 250 }}>
+      <slot />
+    </div>
+  {/if}
 </section>
 
 <style lang="scss">
@@ -31,14 +40,24 @@
     &__header {
       display: flex;
       align-items: baseline;
-      justify-content: space-between;
       border-bottom: 1px solid #fff;
       padding-bottom: 5px;
+    }
+
+    &__expand {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: inherit;
+      font-family: monospace;
+      margin-right: 8px;
+      font-size: 1.1rem;
     }
 
     &__heading {
       font-weight: bold;
       text-transform: uppercase;
+      flex: 1 1 auto;
     }
 
     &__reset {

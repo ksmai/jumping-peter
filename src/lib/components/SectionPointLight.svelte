@@ -6,7 +6,7 @@
   import Slider from "$lib/components/Slider.svelte";
 </script>
 
-<Section title="Point light" on:reset={pointLight.reset}>
+<Section title="Point light" on:reset={pointLight.reset} expanded={false}>
   <ColorPicker
     label="ambient"
     value={$pointLight.ambient}
