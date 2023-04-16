@@ -50,13 +50,4 @@
     value={$output.quality}
     on:input={(e) => output.change({ quality: e.detail.value })}
   />
-
-  <ColorPicker
-    label="clear"
-    value={$output.clear}
-    on:input={(e) =>
-      output.change({
-        clear: e.detail.value,
-      })}
-  />
 </Section>

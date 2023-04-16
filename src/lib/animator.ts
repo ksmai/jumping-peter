@@ -22,7 +22,6 @@ export interface ImageOptions {
 export interface OutputOptions {
   readonly width: number;
   readonly height: number;
-  readonly clear: Vec3;
   readonly delayMs: number;
   readonly quality: number;
   readonly totalFrames: number;
@@ -313,12 +312,12 @@ export class Animator {
       if (current !== this.current) {
         return;
       }
-      const { width, height, clear } = output;
+      const { width, height } = output;
       this.renderTextures.forEach((t) => t.setSize(width, height));
       this.canvas.width = width;
       this.canvas.height = height;
       this.gl.viewport(0, 0, width, height);
-      this.gl.clearColor(...clear, 1);
+      this.gl.clearColor(0, 0, 0, 0);
       this.gl.enable(this.gl.BLEND);
       this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
       this.gl.activeTexture(this.gl.TEXTURE0 + this.texture.unit);

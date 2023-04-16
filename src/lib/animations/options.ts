@@ -193,7 +193,6 @@ export const defaults = {
   output: {
     width: 64,
     height: 64,
-    clear: [1, 1, 1],
     delayMs: 50,
     totalFrames: 20,
     quality: 21,
