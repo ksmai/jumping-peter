@@ -227,8 +227,8 @@ export const animator = (function () {
     update((state) => ({ ...state, running: true, frame: 0 }));
 
     return animator
-      .animate(get(animationRequest), (frame) =>
-        update((state) => ({ ...state, frame })),
+      .animate(get(animationRequest), () =>
+        update((state) => ({ ...state, frame: state.frame + 1 })),
       )
       .finally(() => {
         update((state) => ({ ...state, running: false }));

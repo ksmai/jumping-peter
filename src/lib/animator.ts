@@ -1,14 +1,5 @@
 import uniq from "lodash/uniq";
 
-// this is done manually because "sideEffects: false" has been wrongly set on the generated package.json before wasm-pack v0.11.
-// It has already been fixed in v0.11, but the latest version might not be available in all environments. When it is more readily available, we can remove all the lines below except the actual import for GifEncoder. See this issue for details: https://github.com/rustwasm/wasm-pack/pull/1224
-import * as wasm from "gif-encoder/gif_encoder_bg.wasm";
-// eslint-disable-next-line
-// @ts-ignore
-import { __wbg_set_wasm } from "gif-encoder/gif_encoder_bg.js";
-__wbg_set_wasm(wasm);
-import { GifEncoder } from "gif-encoder";
-
 import type { Effect, Sprite } from "./graphics/renderer";
 import { SingleTexture, RenderTexture } from "./graphics/texture";
 import { render } from "./graphics/renderer";
@@ -20,6 +11,7 @@ import * as utils from "./graphics/utils";
 import { createSprites, ANIMATIONS } from "./animations";
 import { createEffects } from "./graphics/effect";
 import type { EffectType } from "./graphics/effect";
+import type { Request, Response } from "./gif-encoder-worker";
 
 type Vec3 = readonly [number, number, number];
 
@@ -107,7 +99,7 @@ export interface AnimationResultGifSuccess {
   readonly dataUri: string;
 }
 
-interface QueueItemGif {
+interface ItemGif {
   readonly type: "gif";
   readonly request: AnimationRequest;
   readonly resolve: (result: AnimationResultGifSuccess) => void;
@@ -116,10 +108,11 @@ interface QueueItemGif {
   readonly sprites: Sprite[];
   readonly effects: Effect[];
   readonly callback: (frame: number) => void;
-  readonly encoder: GifEncoder;
+  readonly worker: Worker;
+  workerReady: boolean;
 }
 
-interface QueueItemFrame {
+interface ItemFrame {
   readonly type: "frame";
   readonly request: AnimationRequest;
   readonly resolve: () => void;
@@ -129,7 +122,7 @@ interface QueueItemFrame {
   readonly effects: Effect[];
 }
 
-type QueueItem = QueueItemGif | QueueItemFrame;
+type Item = ItemGif | ItemFrame;
 
 export class Animator {
   private readonly gl: WebGL2RenderingContext;
@@ -138,7 +131,7 @@ export class Animator {
   private readonly texture: SingleTexture;
   private readonly renderTextures: [RenderTexture, RenderTexture];
   private readonly quad: Geometry;
-  private readonly queue: QueueItem[] = [];
+  private current: Item | null = null;
   private animationFrame: number | null = null;
 
   constructor(public readonly canvas: HTMLCanvasElement) {
@@ -159,13 +152,14 @@ export class Animator {
 
   animate(
     request: AnimationRequest,
-    callback: (frame: number) => void,
+    callback: () => void,
   ): Promise<AnimationResultGifSuccess> {
     return new Promise((resolve, reject) => {
-      const { width, height, delayMs, quality } = request.output;
-      const encoder = GifEncoder.new(width, height, delayMs, quality);
-
-      this.queue.push({
+      const worker = new Worker(
+        new URL("$lib/gif-encoder-worker", import.meta.url),
+        { type: "module", name: "gif-encoder" },
+      );
+      const item: ItemGif = {
         type: "gif",
         request,
         resolve,
@@ -181,17 +175,58 @@ export class Animator {
           request.effects.filter((e) => e.enabled).map((e) => e.type),
         ),
         callback,
-        encoder,
-      });
-      if (this.animationFrame === null) {
-        this.animationFrame = requestAnimationFrame(() => this.processLoop());
-      }
+        worker,
+        workerReady: false,
+      };
+
+      const { width, height, delayMs, quality } = request.output;
+
+      worker.onmessage = (e) => {
+        const data = e.data as Response;
+
+        let request: Request;
+
+        switch (data.type) {
+          case "Ready":
+            item.workerReady = true;
+            request = {
+              type: "Init",
+              width,
+              height,
+              delayMs,
+              quality,
+            };
+            worker.postMessage(request);
+            break;
+          case "FrameAdded":
+            callback();
+            break;
+          case "Success":
+            this.resolve(data.dataUri);
+            break;
+          case "Failure":
+            this.reject(data.error);
+            break;
+          default:
+            ((_: never) => {
+              this.reject(
+                `Cannot handle worker message: ${JSON.stringify(data)}`,
+              );
+            })(data);
+        }
+      };
+
+      worker.onerror = (e) => {
+        this.reject(e.message);
+      };
+
+      this.setCurrent(item);
     });
   }
 
   renderFrame(request: AnimationRequest, frame: number): Promise<void> {
     return new Promise((resolve, reject) => {
-      this.queue.push({
+      const item: ItemFrame = {
         type: "frame",
         request,
         resolve,
@@ -206,28 +241,53 @@ export class Animator {
           this.programFactory,
           request.effects.filter((e) => e.enabled).map((e) => e.type),
         ),
-      });
-      if (this.animationFrame === null) {
-        this.animationFrame = requestAnimationFrame(() => this.processLoop());
-      }
+      };
+      this.setCurrent(item);
     });
   }
 
+  private setCurrent(item: Item): void {
+    this.reject("Request cancelled");
+    this.current = item;
+    this.requestNextFrame();
+  }
+
+  private resolve(dataUri: string): void {
+    if (this.current) {
+      this.current.resolve({ dataUri });
+      if (this.current.type === "gif") {
+        const { worker } = this.current;
+        worker.onmessage = null;
+        worker.onerror = null;
+        worker.terminate();
+      }
+      this.current = null;
+    }
+  }
+
+  private reject(message: string): void {
+    if (this.current) {
+      this.current.reject(new Error(message));
+      if (this.current.type === "gif") {
+        const { worker } = this.current;
+        worker.onmessage = null;
+        worker.onerror = null;
+        worker.terminate();
+      }
+      this.current = null;
+    }
+  }
+
   private async processLoop(): Promise<void> {
-    if (this.queue.length === 0) {
-      this.animationFrame = null;
+    this.animationFrame = null;
+
+    if (!this.current) {
       return;
     }
 
-    if (this.queue.length > 1) {
-      for (let i = 0; i < this.queue.length - 1; ++i) {
-        this.queue[i].reject(new Error("Request cancelled"));
-      }
-      this.queue.splice(0, this.queue.length - 1);
-    }
+    const current = this.current;
 
-    const { type, request, resolve, reject, sprites, effects, frame } =
-      this.queue[0];
+    const { type, request, resolve, sprites, effects, frame } = current;
     const {
       image,
       output,
@@ -238,8 +298,21 @@ export class Animator {
       pointLight,
       spotLight,
     } = request;
-    if (type === "frame" || (type === "gif" && this.queue[0].frame === 0)) {
+
+    if (frame >= output.totalFrames) {
+      return;
+    }
+
+    if (type === "gif" && !current.workerReady) {
+      this.requestNextFrame();
+      return;
+    }
+
+    if (type === "frame" || (type === "gif" && current.frame === 0)) {
       await this.texture.loadImage(image.url);
+      if (current !== this.current) {
+        return;
+      }
       const { width, height, clear } = output;
       this.renderTextures.forEach((t) => t.setSize(width, height));
       this.canvas.width = width;
@@ -322,12 +395,7 @@ export class Animator {
 
     if (type === "frame") {
       resolve();
-      this.queue.shift();
-      this.animationFrame = null;
     } else {
-      const { encoder, callback } = this.queue[0];
-      callback(frame);
-
       const pixels = new Uint8ClampedArray(
         this.gl.drawingBufferWidth * this.gl.drawingBufferHeight * 4,
       );
@@ -341,34 +409,25 @@ export class Animator {
         this.gl.UNSIGNED_BYTE,
         pixels,
       );
-      encoder.add_frame(new Uint8Array(pixels.buffer));
+
+      const { worker } = current;
+
+      const request: Request = { type: "AddFrame", buffer: pixels.buffer };
+      worker.postMessage(request, [pixels.buffer]);
 
       if (frame === output.totalFrames - 1) {
-        const bytes = encoder.get_result();
-        const reader = new FileReader();
-        reader.onload = () => {
-          reader.onload = null;
-          reader.onerror = null;
-          if (!reader.result) {
-            reject(new Error("Failed to read the bytes"));
-            return;
-          }
-          const result = reader.result as string;
-          const dataUri = "data:image/gif;base64," + result.split(",", 2)[1];
-          resolve({ dataUri });
-        };
-        reader.onerror = () => {
-          reader.onload = null;
-          reader.onerror = null;
-          reject(new Error("Failed to read the bytes"));
-        };
-        reader.readAsDataURL(new Blob([bytes]));
-        this.queue.shift();
-        this.animationFrame = null;
+        const request: Request = { type: "GetResult" };
+        worker.postMessage(request);
       } else {
-        this.queue[0].frame += 1;
-        this.animationFrame = requestAnimationFrame(() => this.processLoop());
+        this.requestNextFrame();
       }
+      current.frame += 1;
+    }
+  }
+
+  private requestNextFrame(): void {
+    if (!this.animationFrame) {
+      this.animationFrame = requestAnimationFrame(() => this.processLoop());
     }
   }
 
@@ -377,6 +436,7 @@ export class Animator {
     this.geometryFactory.destroy();
     this.texture.destroy();
     this.renderTextures.forEach((t) => t.destroy());
+    this.reject("Destroyed");
     if (this.animationFrame !== null) {
       window.cancelAnimationFrame(this.animationFrame);
     }
