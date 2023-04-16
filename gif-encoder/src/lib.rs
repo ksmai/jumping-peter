@@ -71,7 +71,10 @@ impl GifEncoder {
         Ok(())
     }
 
-    pub fn get_result(&self) -> Vec<u8> {
-        self.writer.buffer.borrow().clone()
+    pub fn get_result(self) -> ImageResult<Vec<u8>> {
+        std::mem::drop(self.encoder);
+        Ok(Rc::try_unwrap(self.writer.buffer)
+            .map_err(|_| "Failed to get result")?
+            .into_inner())
     }
 }
