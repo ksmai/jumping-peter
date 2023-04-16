@@ -5,6 +5,7 @@ import topLevelAwait from "vite-plugin-top-level-await";
 
 export default defineConfig({
   plugins: [sveltekit(), wasm(), topLevelAwait()],
+  worker: { plugins: [wasm(), topLevelAwait()] },
   server: {
     fs: {
       allow: ["./gif-encoder/pkg"],

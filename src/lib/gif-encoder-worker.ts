@@ -1,10 +1,4 @@
-// this is done manually because "sideEffects: false" has been wrongly set on the generated package.json before wasm-pack v0.11.
-// It has already been fixed in v0.11, but the latest version might not be available in all environments. When it is more readily available, we can remove all the lines below except the actual import for GifEncoder. See this issue for details: https://github.com/rustwasm/wasm-pack/pull/1224
-import * as wasm from "gif-encoder/gif_encoder_bg.wasm";
-// eslint-disable-next-line
-// @ts-ignore
-import { __wbg_set_wasm } from "gif-encoder/gif_encoder_bg.js";
-__wbg_set_wasm(wasm);
+import "./shim";
 import { GifEncoder } from "gif-encoder";
 
 let encoder: GifEncoder | null = null;
