@@ -46,9 +46,7 @@ vec3 kernalMultiply(mat3 kernel, sampler2D image, vec2 texCoords) {
   return result;
 }`;
 
-const PROGRAMS = {
-  default: {
-    vertex: `\
+const defaultVertexShader = `\
 #version 300 es
 
 layout(location = ${ATTRIB_LOCATIONS.a_position}) in vec3 a_position;
@@ -71,12 +69,9 @@ void main() {
   gl_Position.y *= -1.0;
   v_texCoords = a_texCoords;
   v_normal = (transpose(inverse(modelView)) * vec4(a_normal, 0)).xyz;
-}
-    `,
-    fragment: `\
-#version 300 es
-precision highp float;
+}`;
 
+const lightingDeclarations = `\
 in vec2 v_texCoords;
 in vec3 v_normal;
 in vec3 v_position;
@@ -120,13 +115,7 @@ uniform DirectionalLight u_directionalLight;
 uniform PointLight u_pointLight;
 uniform SpotLight u_spotLight;
 
-uniform float u_time;
-uniform float u_amplitude;
-uniform float u_frequency;
-
-out vec4 outColor;
-
-vec3 computeLight(SpotLight light, vec3 normal, vec3 fragToCamera, vec3 texel) {
+vec3 computeSpotLight(SpotLight light, vec3 normal, vec3 fragToCamera, vec3 texel) {
   float dist = length(light.position - v_position);
   float attenuation = 1.0 / (1.0 + light.attenuation1 * dist + light.attenuation2 * dist * dist);
   vec3 dir = normalize(light.position - v_position);
@@ -145,44 +134,93 @@ vec3 computeLight(SpotLight light, vec3 normal, vec3 fragToCamera, vec3 texel) {
   return ambient + diffuse + specular;
 }
 
-void main() {
-  vec2 texCoords = v_texCoords + vec2(sin((v_texCoords.y * u_frequency + u_time) * radians(360.0)) * u_amplitude, 0.0);
-  vec3 texel = texture(u_material.diffuse, texCoords).xyz;
-  vec3 color = vec3(0.0, 0.0, 0.0);
-  // front facing is actually the back face since we flipped y-axis in the vertex shader
-  vec3 normal = normalize(v_normal) * (1.0 - 2.0 * float(gl_FrontFacing));
-  vec3 fragToCamera = normalize(-v_position);
-
-  color += computeLight(SpotLight(
-    u_directionalLight.ambient,
-    u_directionalLight.diffuse,
-    u_directionalLight.specular,
-    -u_directionalLight.direction + v_position,
-    u_directionalLight.direction,
+vec3 computeDirectionalLight(DirectionalLight directionalLight, vec3 normal, vec3 fragToCamera, vec3 texel) {
+  return computeSpotLight(SpotLight(
+    directionalLight.ambient,
+    directionalLight.diffuse,
+    directionalLight.specular,
+    -directionalLight.direction + v_position,
+    directionalLight.direction,
     // disable intensity
     -2.0, -3.0,
     // disable attenuation
     0.0, 0.0
   ), normal, fragToCamera, texel);
+}
 
-  color += computeLight(SpotLight(
-    u_pointLight.ambient,
-    u_pointLight.diffuse,
-    u_pointLight.specular,
-    u_pointLight.position,
-    -u_pointLight.position + v_position,
+vec3 computePointLight(PointLight pointLight, vec3 normal, vec3 fragToCamera, vec3 texel) {
+  return computeSpotLight(SpotLight(
+    pointLight.ambient,
+    pointLight.diffuse,
+    pointLight.specular,
+    pointLight.position,
+    -pointLight.position + v_position,
     // disable intensity
     -2.0, -3.0,
-    u_pointLight.attenuation1,
-    u_pointLight.attenuation2
+    pointLight.attenuation1,
+    pointLight.attenuation2
   ), normal, fragToCamera, texel);
+}
+`;
 
-  color += computeLight(u_spotLight, normal, fragToCamera, texel);
+const PROGRAMS = {
+  default: {
+    vertex: defaultVertexShader,
+    fragment: `\
+#version 300 es
+precision highp float;
 
-  outColor = vec4(color, float(texCoords.x >= 0.0 && texCoords.x <= 1.0 || u_amplitude < 0.000001));
+${lightingDeclarations}
+
+out vec4 outColor;
+
+void main() {
+  vec3 texel = texture(u_material.diffuse, v_texCoords).xyz;
+  // front facing is actually the back face since we flipped y-axis in the vertex shader
+  vec3 normal = normalize(v_normal) * (1.0 - 2.0 * float(gl_FrontFacing));
+  vec3 fragToCamera = normalize(-v_position);
+
+  vec3 color = vec3(0.0);
+  color += computeDirectionalLight(u_directionalLight, normal, fragToCamera, texel);
+  color += computePointLight(u_pointLight, normal, fragToCamera, texel);
+  color += computeSpotLight(u_spotLight, normal, fragToCamera, texel);
+
+  outColor = vec4(color, 1.0);
 }
     `,
   },
+
+  wiggling: {
+    vertex: defaultVertexShader,
+    fragment: `\
+#version 300 es
+precision highp float;
+
+${lightingDeclarations}
+
+uniform float u_time;
+uniform float u_amplitude;
+uniform float u_frequency;
+
+out vec4 outColor;
+
+void main() {
+  vec2 texCoords = v_texCoords + vec2(sin((v_texCoords.y * u_frequency + u_time) * radians(360.0)) * u_amplitude, 0.0);
+  vec3 texel = texture(u_material.diffuse, texCoords).xyz;
+  // front facing is actually the back face since we flipped y-axis in the vertex shader
+  vec3 normal = normalize(v_normal) * (1.0 - 2.0 * float(gl_FrontFacing));
+  vec3 fragToCamera = normalize(-v_position);
+
+  vec3 color = vec3(0.0);
+  color += computeDirectionalLight(u_directionalLight, normal, fragToCamera, texel);
+  color += computePointLight(u_pointLight, normal, fragToCamera, texel);
+  color += computeSpotLight(u_spotLight, normal, fragToCamera, texel);
+
+  outColor = vec4(color, float(texCoords.x >= 0.0 && texCoords.x <= 1.0));
+}
+    `,
+  },
+
   invert: {
     vertex: vertexShaderForQuad,
     fragment: `\

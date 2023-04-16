@@ -33,7 +33,7 @@ export function createSprites(
   geometryFactory: GeometryFactory,
   options: MappedOptions<typeof editOptions>,
 ): Sprite[] {
-  const program = programFactory.createProgram("default");
+  const program = programFactory.createProgram("wiggling");
   const geometry = geometryFactory.createGeometry("full");
 
   const { frequency, amplitude } = options;
