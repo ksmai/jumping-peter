@@ -42,6 +42,15 @@
     on:input={(e) => output.change({ totalFrames: e.detail.value })}
   />
 
+  <Slider
+    label="quality"
+    min={1}
+    max={30}
+    step={1}
+    value={$output.quality}
+    on:input={(e) => output.change({ quality: e.detail.value })}
+  />
+
   <ColorPicker
     label="clear"
     value={$output.clear}

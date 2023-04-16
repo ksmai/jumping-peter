@@ -45,9 +45,9 @@ pub type ImageResult<T> = Result<T, &'static str>;
 
 #[wasm_bindgen]
 impl GifEncoder {
-    pub fn new(width: u32, height: u32, delay_ms: u32) -> ImageResult<GifEncoder> {
+    pub fn new(width: u32, height: u32, delay_ms: u32, quality: i32) -> ImageResult<GifEncoder> {
         let writer = MyWriter::new();
-        let mut encoder = gif::GifEncoder::new_with_speed(writer.clone(), 30);
+        let mut encoder = gif::GifEncoder::new_with_speed(writer.clone(), 31 - quality);
         encoder
             .set_repeat(gif::Repeat::Infinite)
             .map_err(|_| "Failed to set repeat")?;

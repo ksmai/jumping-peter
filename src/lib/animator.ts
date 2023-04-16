@@ -23,6 +23,7 @@ export interface OutputOptions {
   readonly height: number;
   readonly clear: Vec3;
   readonly delayMs: number;
+  readonly quality: number;
   readonly totalFrames: number;
 }
 
@@ -152,8 +153,8 @@ export class Animator {
     callback: (frame: number) => void,
   ): Promise<AnimationResultGifSuccess> {
     return new Promise((resolve, reject) => {
-      const { width, height, delayMs } = request.output;
-      const encoder = GifEncoder.new(width, height, delayMs);
+      const { width, height, delayMs, quality } = request.output;
+      const encoder = GifEncoder.new(width, height, delayMs, quality);
 
       this.queue.push({
         type: "gif",

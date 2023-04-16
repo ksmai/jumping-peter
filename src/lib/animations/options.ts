@@ -196,6 +196,7 @@ export const defaults = {
     clear: [1, 1, 1],
     delayMs: 50,
     totalFrames: 20,
+    quality: 21,
   },
   material: {
     specular: [0, 0, 0],
