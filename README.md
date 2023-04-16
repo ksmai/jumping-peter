@@ -6,11 +6,11 @@ Live demo: [https://ksmai.github.io/jumping-peter/](https://ksmai.github.io/jump
 
 ## Architecture
 
-The UI is built with Svelte, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte). Once the user provides the image file and the corresponding options, the animator will start a `requestAnimationFrame` loop on the main thread to render the animation, frame by frame, with WebGL 2. Each frame is added to a GIF encoder, which is eventually used to create the resulting GIF image. The GIF image can then be displayed and downloaded. If debug mode is on, only a single frame will be rendered on the canvas each time, and the canvas itself will be displayed for direct inspection.
+The UI is built with Svelte, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte). Once the user provides the image file and the corresponding options, the animator will start a `requestAnimationFrame` loop on the main thread to render the animation, frame by frame, with WebGL 2. Each frame is then added to a GIF encoder, which is based on the `image` crate for rust and compiled to webassembly. Since GIF encoding can easily take hundreds of milliseconds when the output image dimension is large (e.g. 1024x1024), we run it in a worker thread to disrupting interactivity of the page. When encoding is done, the worker emits a base64-encoded data URI to the main thread, which can then be displayed and downloaded. If debug mode is on, only a single frame will be rendered on the canvas each time, and the canvas itself will be displayed for direct inspection.
 
 ## Browser compatibility
 
-Although `OffscreenCanvas` is useful to generate the GIF in a worker thread, it is not well supported by safari yet. We will keep using the main thread for rendering until it has better support. This means that our rendering speed will be unfortunately limited by the frame rate.
+Although `OffscreenCanvas` is useful to generate the GIF in a worker thread, it is not well supported by safari yet. We will keep using the main thread for rendering until it has better support. This means that our rendering speed will be unfortunately limited by the frame rate. Fortunately, the objects that we render are very simple and can be easily done within a few milliseconds, so we should be able to render at least 60 frames per second. The real bottleneck is in the GIF encoder, which is why we need to use webassembly and run it inside a web worker.
 
 ## How to add new animations?
 
