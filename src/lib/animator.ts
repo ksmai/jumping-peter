@@ -1,5 +1,5 @@
 import uniq from "lodash/uniq";
-import { GIFEncoder } from "./antimatter15-jsgif";
+import { GifEncoder } from "gif-encoder";
 import type { Effect, Sprite } from "./graphics/renderer";
 import { SingleTexture, RenderTexture } from "./graphics/texture";
 import { render } from "./graphics/renderer";
@@ -106,7 +106,7 @@ interface QueueItemGif {
   readonly sprites: Sprite[];
   readonly effects: Effect[];
   readonly callback: (frame: number) => void;
-  readonly encoder: GIFEncoder;
+  readonly encoder: GifEncoder;
 }
 
 interface QueueItemFrame {
@@ -152,16 +152,8 @@ export class Animator {
     callback: (frame: number) => void,
   ): Promise<AnimationResultGifSuccess> {
     return new Promise((resolve, reject) => {
-      const encoder = new GIFEncoder();
-      encoder.setRepeat(0);
-      encoder.setDelay(request.output.delayMs);
-      encoder.setSize(request.output.width, request.output.height);
-
-      const started = encoder.start();
-      if (!started) {
-        reject("Failed to start gif encoder");
-        return;
-      }
+      const { width, height, delayMs } = request.output;
+      const encoder = GifEncoder.new(width, height, delayMs);
 
       this.queue.push({
         type: "gif",
@@ -224,7 +216,8 @@ export class Animator {
       this.queue.splice(0, this.queue.length - 1);
     }
 
-    const { type, request, resolve, sprites, effects, frame } = this.queue[0];
+    const { type, request, resolve, reject, sprites, effects, frame } =
+      this.queue[0];
     const {
       image,
       output,
@@ -338,14 +331,28 @@ export class Animator {
         this.gl.UNSIGNED_BYTE,
         pixels,
       );
-      encoder.addFrame(pixels, true);
-      encoder.setTransparent(0xffffff);
+      encoder.add_frame(new Uint8Array(pixels.buffer));
 
       if (frame === output.totalFrames - 1) {
-        encoder.finish();
-        const gif = encoder.stream().getData();
-        const dataUri = "data:image/gif;base64," + window.btoa(gif);
-        resolve({ dataUri });
+        const bytes = encoder.get_result();
+        const reader = new FileReader();
+        reader.onload = () => {
+          reader.onload = null;
+          reader.onerror = null;
+          if (!reader.result) {
+            reject(new Error("Failed to read the bytes"));
+            return;
+          }
+          const result = reader.result as string;
+          const dataUri = "data:image/gif;base64," + result.split(",", 2)[1];
+          resolve({ dataUri });
+        };
+        reader.onerror = () => {
+          reader.onload = null;
+          reader.onerror = null;
+          reject(new Error("Failed to read the bytes"));
+        };
+        reader.readAsDataURL(new Blob([bytes]));
         this.queue.shift();
         this.animationFrame = null;
       } else {
