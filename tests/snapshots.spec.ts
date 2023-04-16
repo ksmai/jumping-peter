@@ -2,19 +2,19 @@ import { expect, test } from "@playwright/test";
 import { promises as fs } from "fs";
 
 const animationNames = [
-  "jumping",
-  "extreme-speed",
-  "spinning",
-  "excited",
-  "expanding",
-  "tower",
-  "repeated",
-  "mirror",
-  "panic",
-  "rotating",
-  "party",
-  "parrot",
   "wiggling",
+  "parrot",
+  "party",
+  "rotating",
+  "panic",
+  "mirror",
+  "repeated",
+  "tower",
+  "expanding",
+  "excited",
+  "spinning",
+  "extreme-speed",
+  "jumping",
 ];
 
 for (const animationName of animationNames) {
