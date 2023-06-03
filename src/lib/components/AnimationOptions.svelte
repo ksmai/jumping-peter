@@ -35,7 +35,7 @@
     {/each}
   </Section>
 
-  <Section title="Effects" on:reset={effects.reset} expanded={false}>
+  <Section title="Effects" on:reset={effects.reset} expanded={true}>
     {#each $effects as effect}
       <Toggle
         label={effect.type}

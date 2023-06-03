@@ -6,14 +6,10 @@ import { render } from "./graphics/renderer";
 import { ProgramFactory, setUniforms } from "./graphics/program";
 import { GeometryFactory } from "./graphics/geometry";
 import type { Geometry } from "./graphics/geometry";
-import * as transform from "./graphics/transform";
-import * as utils from "./graphics/utils";
 import { createSprites, ANIMATIONS } from "./animations";
 import { createEffects } from "./graphics/effect";
 import type { EffectType } from "./graphics/effect";
 import type { Request, Response } from "./gif-encoder-worker";
-
-type Vec3 = readonly [number, number, number];
 
 export interface ImageOptions {
   readonly url: string;
@@ -27,55 +23,6 @@ export interface OutputOptions {
   readonly totalFrames: number;
 }
 
-export interface Camera {
-  readonly position: Vec3;
-  readonly lookAt: Vec3;
-  readonly up: Vec3;
-}
-
-export interface Projection {
-  readonly perspective: boolean;
-  readonly left: number;
-  readonly right: number;
-  readonly bottom: number;
-  readonly top: number;
-  readonly near: number;
-  readonly far: number;
-}
-
-export interface Material {
-  readonly specular: Vec3;
-  readonly shininess: number;
-}
-
-export interface DirectionalLight {
-  readonly ambient: Vec3;
-  readonly diffuse: Vec3;
-  readonly specular: Vec3;
-  readonly direction: Vec3;
-}
-
-export interface PointLight {
-  readonly ambient: Vec3;
-  readonly diffuse: Vec3;
-  readonly specular: Vec3;
-  readonly position: Vec3;
-  readonly attenuation1: number;
-  readonly attenuation2: number;
-}
-
-export interface SpotLight {
-  readonly ambient: Vec3;
-  readonly diffuse: Vec3;
-  readonly specular: Vec3;
-  readonly position: Vec3;
-  readonly direction: Vec3;
-  readonly innerDegrees: number;
-  readonly outerDegrees: number;
-  readonly attenuation1: number;
-  readonly attenuation2: number;
-}
-
 export interface EffectOption {
   readonly enabled: boolean;
   readonly type: EffectType;
@@ -84,12 +31,6 @@ export interface EffectOption {
 export interface AnimationRequest {
   readonly image: ImageOptions;
   readonly output: OutputOptions;
-  readonly camera: Camera;
-  readonly projection: Projection;
-  readonly material: Material;
-  readonly directionalLight: DirectionalLight;
-  readonly pointLight: PointLight;
-  readonly spotLight: SpotLight;
   readonly effects: EffectOption[];
   readonly animation: (typeof ANIMATIONS)[number];
 }
@@ -287,16 +228,7 @@ export class Animator {
     const current = this.current;
 
     const { type, request, resolve, sprites, effects, frame } = current;
-    const {
-      image,
-      output,
-      camera,
-      projection,
-      material,
-      directionalLight,
-      pointLight,
-      spotLight,
-    } = request;
+    const { image, output } = request;
 
     if (frame >= output.totalFrames) {
       return;
@@ -323,66 +255,9 @@ export class Animator {
       this.gl.activeTexture(this.gl.TEXTURE0 + this.texture.unit);
       this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture.texture);
 
-      const u_view = transform.identity();
-      transform.view(u_view, camera.position, camera.lookAt, camera.up);
-
-      const u_projection = transform.identity();
-      if (projection.perspective) {
-        transform.perspective(
-          u_projection,
-          projection.left,
-          projection.right,
-          projection.bottom,
-          projection.top,
-          projection.near,
-          projection.far,
-        );
-      } else {
-        transform.orthographic(
-          u_projection,
-          projection.left,
-          projection.right,
-          projection.bottom,
-          projection.top,
-          projection.near,
-          projection.far,
-        );
-      }
-
-      const uniforms = {
-        u_view,
-        u_projection,
-        "u_material.diffuse": this.texture.unit,
-        "u_material.specular": material.specular,
-        "u_material.shininess": material.shininess,
-        "u_directionalLight.ambient": directionalLight.ambient,
-        "u_directionalLight.diffuse": directionalLight.diffuse,
-        "u_directionalLight.specular": directionalLight.specular,
-        "u_directionalLight.direction": directionalLight.direction,
-        "u_pointLight.ambient": pointLight.ambient,
-        "u_pointLight.diffuse": pointLight.diffuse,
-        "u_pointLight.specular": pointLight.specular,
-        "u_pointLight.position": pointLight.position,
-        "u_pointLight.attenuation1": pointLight.attenuation1,
-        "u_pointLight.attenuation2": pointLight.attenuation2,
-        "u_spotLight.ambient": spotLight.ambient,
-        "u_spotLight.diffuse": spotLight.diffuse,
-        "u_spotLight.specular": spotLight.specular,
-        "u_spotLight.position": spotLight.position,
-        "u_spotLight.direction": spotLight.direction,
-        "u_spotLight.innerCos": Math.cos(
-          utils.toRadian(spotLight.innerDegrees),
-        ),
-        "u_spotLight.outerCos": Math.cos(
-          utils.toRadian(spotLight.outerDegrees),
-        ),
-        "u_spotLight.attenuation1": spotLight.attenuation1,
-        "u_spotLight.attenuation2": spotLight.attenuation2,
-      };
-
       for (const program of uniq(sprites.map((s) => s.program))) {
         this.gl.useProgram(program.program);
-        setUniforms(this.gl, program, uniforms);
+        setUniforms(this.gl, program, { u_image: this.texture.unit });
       }
     }
 

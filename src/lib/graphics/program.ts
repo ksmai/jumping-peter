@@ -1,413 +1,77 @@
-export const ATTRIB_LOCATIONS = {
-  a_position: 0,
-  a_texCoords: 1,
-  a_normal: 2,
-} as const;
+import quadVertexShader from "$lib/shaders/quad.vertex.glsl?raw";
+import defaultVertexShader from "$lib/shaders/default.vertex.glsl?raw";
+import defaultFragmentShader from "$lib/shaders/default.fragment.glsl?raw";
+import default3dVertexShader from "$lib/shaders/default3d.vertex.glsl?raw";
+import default3dFragmentShader from "$lib/shaders/default3d.fragment.glsl?raw";
+import invertFragmentShader from "$lib/shaders/invert.fragment.glsl?raw";
+import wigglingFragmentShader from "$lib/shaders/wiggling.fragment.glsl?raw";
+import mixFragmentShader from "$lib/shaders/mix.fragment.glsl?raw";
+import vignetteFragmentShader from "$lib/shaders/vignette.fragment.glsl?raw";
+import contrastFragmentShader from "$lib/shaders/contrast.fragment.glsl?raw";
+import kernalFragmentShader from "$lib/shaders/kernal.fragment.glsl?raw";
+import gradient2FragmentShader from "$lib/shaders/gradient2.fragment.glsl?raw";
+import gradient8FragmentShader from "$lib/shaders/gradient8.fragment.glsl?raw";
+import bloomFragmentShader from "$lib/shaders/bloom.fragment.glsl?raw";
 
 export interface Program {
   readonly program: WebGLProgram;
   readonly uniformLocations: Record<string, WebGLUniformLocation | null>;
 }
 
-const vertexShaderForQuad = `\
-#version 300 es
-
-layout(location = ${ATTRIB_LOCATIONS.a_position}) in vec2 a_position;
-layout(location = ${ATTRIB_LOCATIONS.a_texCoords}) in vec2 a_texCoords;
-
-out vec2 v_texCoords;
-
-void main() {
-  gl_Position = vec4(a_position, 0.0, 1.0);
-  v_texCoords = a_texCoords;
-}
-`;
-
-const kernalMultiply = `\
-vec3 getColor(vec2 offset, sampler2D image, vec2 texCoords) {
-  vec2 coords = texCoords + offset / vec2(textureSize(image, 0));
-  float inRange = float(coords.x >= 0.0 && coords.x <= 1.0 && coords.y >= 0.0 && coords.y <= 1.0);
-  return texture(image, coords).rgb * inRange;
-}
-
-vec3 kernalMultiply(mat3 kernel, sampler2D image, vec2 texCoords) {
-  vec3 result = vec3(0.0, 0.0, 0.0);
-
-  result += kernel[0][0] * getColor(vec2(-1.0,  1.0), image, texCoords);
-  result += kernel[0][1] * getColor(vec2(-1.0,  0.0), image, texCoords);
-  result += kernel[0][2] * getColor(vec2(-1.0, -1.0), image, texCoords);
-  result += kernel[1][0] * getColor(vec2( 0.0,  1.0), image, texCoords);
-  result += kernel[1][1] * getColor(vec2( 0.0,  0.0), image, texCoords);
-  result += kernel[1][2] * getColor(vec2( 0.0, -1.0), image, texCoords);
-  result += kernel[2][0] * getColor(vec2( 1.0,  1.0), image, texCoords);
-  result += kernel[2][1] * getColor(vec2( 1.0,  0.0), image, texCoords);
-  result += kernel[2][2] * getColor(vec2( 1.0, -1.0), image, texCoords);
-
-  return result;
-}`;
-
-const defaultVertexShader = `\
-#version 300 es
-
-layout(location = ${ATTRIB_LOCATIONS.a_position}) in vec3 a_position;
-layout(location = ${ATTRIB_LOCATIONS.a_texCoords}) in vec2 a_texCoords;
-layout(location = ${ATTRIB_LOCATIONS.a_normal}) in vec3 a_normal;
-
-uniform mat4 u_model;
-uniform mat4 u_view;
-uniform mat4 u_projection;
-
-out vec2 v_texCoords;
-out vec3 v_normal;
-out vec3 v_position;
-
-void main() {
-  mat4 modelView = u_view * u_model;
-  v_position = vec3(modelView * vec4(a_position, 1.0));
-  gl_Position = u_projection * vec4(v_position, 1.0);
-  // flip y coordinate because readPixels() will invert the image again
-  gl_Position.y *= -1.0;
-  v_texCoords = a_texCoords;
-  v_normal = (transpose(inverse(modelView)) * vec4(a_normal, 0)).xyz;
-}`;
-
-const lightingDeclarations = `\
-in vec2 v_texCoords;
-in vec3 v_normal;
-in vec3 v_position;
-
-struct Material {
-  sampler2D diffuse;
-  vec3 specular;
-  float shininess;
-};
-
-struct DirectionalLight {
-  vec3 ambient;
-  vec3 diffuse;
-  vec3 specular;
-  vec3 direction;
-};
-
-struct PointLight {
-  vec3 ambient;
-  vec3 diffuse;
-  vec3 specular;
-  vec3 position;
-  float attenuation1;
-  float attenuation2;
-};
-
-struct SpotLight {
-  vec3 ambient;
-  vec3 diffuse;
-  vec3 specular;
-  vec3 position;
-  vec3 direction;
-  float innerCos;
-  float outerCos;
-  float attenuation1;
-  float attenuation2;
-};
-
-uniform Material u_material;
-uniform DirectionalLight u_directionalLight;
-uniform PointLight u_pointLight;
-uniform SpotLight u_spotLight;
-
-vec3 computeSpotLight(SpotLight light, vec3 normal, vec3 fragToCamera, vec3 texel) {
-  float dist = length(light.position - v_position);
-  float attenuation = 1.0 / (1.0 + light.attenuation1 * dist + light.attenuation2 * dist * dist);
-  vec3 dir = normalize(light.position - v_position);
-  float angle = dot(normalize(-light.direction), dir);
-  float intensity = smoothstep(light.outerCos, light.innerCos, angle);
-
-  float diff = max(dot(dir, normal), 0.0);
-
-  vec3 halfVec = normalize(dir + fragToCamera);
-  float spec = pow(max(dot(halfVec, normal), 0.0), u_material.shininess);
-
-  vec3 ambient = light.ambient * texel * attenuation * intensity;
-  vec3 diffuse = light.diffuse * texel * diff * attenuation * intensity;
-  vec3 specular = light.specular * u_material.specular * spec * attenuation * intensity;
-
-  return ambient + diffuse + specular;
-}
-
-vec3 computeDirectionalLight(DirectionalLight directionalLight, vec3 normal, vec3 fragToCamera, vec3 texel) {
-  return computeSpotLight(SpotLight(
-    directionalLight.ambient,
-    directionalLight.diffuse,
-    directionalLight.specular,
-    -directionalLight.direction + v_position,
-    directionalLight.direction,
-    // disable intensity
-    -2.0, -3.0,
-    // disable attenuation
-    0.0, 0.0
-  ), normal, fragToCamera, texel);
-}
-
-vec3 computePointLight(PointLight pointLight, vec3 normal, vec3 fragToCamera, vec3 texel) {
-  return computeSpotLight(SpotLight(
-    pointLight.ambient,
-    pointLight.diffuse,
-    pointLight.specular,
-    pointLight.position,
-    -pointLight.position + v_position,
-    // disable intensity
-    -2.0, -3.0,
-    pointLight.attenuation1,
-    pointLight.attenuation2
-  ), normal, fragToCamera, texel);
-}
-`;
-
 const PROGRAMS = {
   default: {
     vertex: defaultVertexShader,
-    fragment: `\
-#version 300 es
-precision highp float;
+    fragment: defaultFragmentShader,
+  },
 
-${lightingDeclarations}
-
-out vec4 outColor;
-
-void main() {
-  vec3 texel = texture(u_material.diffuse, v_texCoords).xyz;
-  // front facing is actually the back face since we flipped y-axis in the vertex shader
-  vec3 normal = normalize(v_normal) * (1.0 - 2.0 * float(gl_FrontFacing));
-  vec3 fragToCamera = normalize(-v_position);
-
-  vec3 color = vec3(0.0);
-  color += computeDirectionalLight(u_directionalLight, normal, fragToCamera, texel);
-  color += computePointLight(u_pointLight, normal, fragToCamera, texel);
-  color += computeSpotLight(u_spotLight, normal, fragToCamera, texel);
-
-  outColor = vec4(color, 1.0);
-}
-    `,
+  default3d: {
+    vertex: default3dVertexShader,
+    fragment: default3dFragmentShader,
   },
 
   wiggling: {
     vertex: defaultVertexShader,
-    fragment: `\
-#version 300 es
-precision highp float;
-
-${lightingDeclarations}
-
-uniform float u_time;
-uniform float u_amplitude;
-uniform float u_frequency;
-
-out vec4 outColor;
-
-void main() {
-  vec2 texCoords = v_texCoords + vec2(sin((v_texCoords.y * u_frequency + u_time) * radians(360.0)) * u_amplitude, 0.0);
-  vec3 texel = texture(u_material.diffuse, texCoords).xyz;
-  // front facing is actually the back face since we flipped y-axis in the vertex shader
-  vec3 normal = normalize(v_normal) * (1.0 - 2.0 * float(gl_FrontFacing));
-  vec3 fragToCamera = normalize(-v_position);
-
-  vec3 color = vec3(0.0);
-  color += computeDirectionalLight(u_directionalLight, normal, fragToCamera, texel);
-  color += computePointLight(u_pointLight, normal, fragToCamera, texel);
-  color += computeSpotLight(u_spotLight, normal, fragToCamera, texel);
-
-  outColor = vec4(color, float(texCoords.x >= 0.0 && texCoords.x <= 1.0));
-}
-    `,
+    fragment: wigglingFragmentShader,
   },
 
   invert: {
-    vertex: vertexShaderForQuad,
-    fragment: `\
-#version 300 es
-precision highp float;
-
-in vec2 v_texCoords;
-uniform sampler2D u_image;
-
-out vec4 outColor;
-
-void main() {
-  outColor = vec4(1.0 - texture(u_image, v_texCoords).rgb, 1.0);
-}
-    `,
+    vertex: quadVertexShader,
+    fragment: invertFragmentShader,
   },
 
   kernel: {
-    vertex: vertexShaderForQuad,
-    fragment: `\
-#version 300 es
-precision highp float;
-
-in vec2 v_texCoords;
-uniform sampler2D u_image;
-uniform mat3 u_kernel;
-
-out vec4 outColor;
-
-${kernalMultiply}
-
-void main() {
-  vec3 color = kernalMultiply(u_kernel, u_image, v_texCoords);
-  outColor = vec4(color, 1.0);
-}
-    `,
+    vertex: quadVertexShader,
+    fragment: kernalFragmentShader,
   },
 
   gradient2: {
-    vertex: vertexShaderForQuad,
-    fragment: `\
-#version 300 es
-precision highp float;
-
-in vec2 v_texCoords;
-uniform sampler2D u_image;
-uniform mat3 u_kernel1;
-uniform mat3 u_kernel2;
-
-out vec4 outColor;
-
-${kernalMultiply}
-
-void main() {
-  vec3 color1 = kernalMultiply(u_kernel1, u_image, v_texCoords);
-  vec3 color2 = kernalMultiply(u_kernel2, u_image, v_texCoords);
-  outColor = vec4(
-    length(vec2(color1.r, color2.r)),
-    length(vec2(color1.g, color2.g)),
-    length(vec2(color1.b, color2.b)),
-    1.0);
-}
-    `,
+    vertex: quadVertexShader,
+    fragment: gradient2FragmentShader,
   },
 
   gradient8: {
-    vertex: vertexShaderForQuad,
-    fragment: `\
-#version 300 es
-precision highp float;
-
-in vec2 v_texCoords;
-uniform sampler2D u_image;
-uniform mat3 u_kernel[8];
-
-out vec4 outColor;
-
-${kernalMultiply}
-
-void main() {
-  vec3 result = vec3(0.0);
-  for (int i = 0; i < 8; ++i) {
-    result = max(result, kernalMultiply(u_kernel[i], u_image, v_texCoords));
-  }
-  outColor = vec4(result, 1.0);
-}
-    `,
+    vertex: quadVertexShader,
+    fragment: gradient8FragmentShader,
   },
 
   contrast: {
-    vertex: vertexShaderForQuad,
-    fragment: `\
-#version 300 es
-precision highp float;
-
-in vec2 v_texCoords;
-uniform sampler2D u_image;
-uniform float u_contrast;
-
-out vec4 outColor;
-
-void main() {
-  outColor = vec4(texture(u_image, v_texCoords).rgb, 1.0);
-  outColor.rgb = (outColor.rgb - 0.5) * u_contrast + 0.5;
-}
-    `,
+    vertex: quadVertexShader,
+    fragment: contrastFragmentShader,
   },
 
   bloom: {
-    vertex: vertexShaderForQuad,
-    fragment: `\
-#version 300 es
-precision highp float;
-
-in vec2 v_texCoords;
-uniform sampler2D u_image;
-uniform float u_luminance;
-
-out vec4 outColor;
-
-${kernalMultiply}
-
-void main() {
-  vec3 sum = vec3(0.0);
-
-  vec2 offsets[8] = vec2[](
-    vec2(-1, -1),
-    vec2(-1,  0),
-    vec2(-1,  1),
-    vec2( 0, -1),
-    vec2( 0,  1),
-    vec2( 1, -1),
-    vec2( 1,  0),
-    vec2( 1,  1)
-  );
-
-  for (int i = 0; i < 8; ++i) {
-    vec3 color = getColor(offsets[i], u_image, v_texCoords);
-    float luminance = dot(color, vec3(1.0/3.0));
-    if (luminance >= u_luminance) {
-      sum += color;
-    }
-  }
-
-  vec3 result = texture(u_image, v_texCoords).rgb + sum / 8.0;
-  outColor = vec4(result, 1.0);
-}
-    `,
+    vertex: quadVertexShader,
+    fragment: bloomFragmentShader,
   },
 
   mix: {
-    vertex: vertexShaderForQuad,
-    fragment: `\
-#version 300 es
-precision highp float;
-
-in vec2 v_texCoords;
-uniform sampler2D u_image;
-uniform mat3 u_weights;
-
-out vec4 outColor;
-
-void main() {
-  outColor = vec4(u_weights * texture(u_image, v_texCoords).rgb, 1.0);
-}
-    `,
+    vertex: quadVertexShader,
+    fragment: mixFragmentShader,
   },
 
   vignette: {
-    vertex: vertexShaderForQuad,
-    fragment: `\
-#version 300 es
-precision highp float;
-
-in vec2 v_texCoords;
-uniform sampler2D u_image;
-uniform float u_inner;
-uniform float u_outer;
-
-out vec4 outColor;
-
-void main() {
-  float dist = length(v_texCoords - vec2(0.5, 0.5));
-  float factor = 1.0 - smoothstep(u_inner, u_outer, dist);
-  outColor = vec4(factor * texture(u_image, v_texCoords).rgb, 1.0);
-}
-    `,
+    vertex: quadVertexShader,
+    fragment: vignetteFragmentShader,
   },
 } as const;
 
@@ -453,10 +117,7 @@ export function setUniforms(
       );
     }
     const location = program.uniformLocations[name];
-    if (
-      ["u_image", "u_material.diffuse"].includes(name) &&
-      typeof value === "number"
-    ) {
+    if (["u_image"].includes(name) && typeof value === "number") {
       gl.uniform1i(location, value);
     } else if (Array.isArray(value)) {
       if (value.length === 2) {

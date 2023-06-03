@@ -15,20 +15,6 @@ export const defaultOptions = {
     delayMs: 40,
     totalFrames: 15,
   },
-  camera: {
-    position: [0, 0, 3],
-    lookAt: [0, 0, -1],
-    up: [0, 1, 0],
-  },
-  projection: {
-    perspective: true,
-    left: -0.03,
-    right: 0.03,
-    bottom: -0.03,
-    top: 0.03,
-    near: 0.1,
-    far: 6,
-  },
 } as const;
 
 export const editOptions = [
@@ -53,7 +39,7 @@ export function createSprites(
   geometryFactory: GeometryFactory,
   options: MappedOptions<typeof editOptions>,
 ): Sprite[] {
-  const program = programFactory.createProgram("default");
+  const program = programFactory.createProgram("default3d");
   const geometry = geometryFactory.createGeometry("full");
 
   const { angle, startOffset, endOffset } = options;
@@ -66,13 +52,42 @@ export function createSprites(
     const currentAngle =
       t < 0.5 ? utils.interpolate(0, 180, p2) : utils.interpolate(180, 360, p2);
     const offset = utils.interpolate(startOffset, endOffset, p3);
-    const mat = transform.identity();
-    transform.rotate2d(mat, angle);
-    transform.translate2d(mat, 0, offset);
-    transform.rotate3d(mat, currentAngle, [0, 1, 0]);
+    const u_model = transform.identity();
+    transform.rotate2d(u_model, angle);
+    transform.translate2d(u_model, 0, offset);
+    transform.rotate3d(u_model, currentAngle, [0, 1, 0]);
+
+    const u_view = transform.identity();
+    transform.view(u_view, [0, 0, 3], [0, 0, -1], [0, 1, 0]);
+
+    const u_projection = transform.identity();
+    transform.perspective(u_projection, -0.03, 0.03, -0.03, 0.03, 0.1, 6);
 
     return {
-      u_model: mat,
+      u_model,
+      u_view,
+      u_projection,
+      "u_material.specular": [0, 0, 0],
+      "u_material.shininess": 32,
+      "u_directionalLight.ambient": [1, 1, 1],
+      "u_directionalLight.diffuse": [0, 0, 0],
+      "u_directionalLight.specular": [0, 0, 0],
+      "u_directionalLight.direction": [0, -1, -1],
+      "u_pointLight.ambient": [0, 0, 0],
+      "u_pointLight.diffuse": [0, 0, 0],
+      "u_pointLight.specular": [0, 0, 0],
+      "u_pointLight.position": [0, 0, 0],
+      "u_pointLight.attenuation1": 0.2,
+      "u_pointLight.attenuation2": 0.1,
+      "u_spotLight.ambient": [0, 0, 0],
+      "u_spotLight.diffuse": [0, 0, 0],
+      "u_spotLight.specular": [0, 0, 0],
+      "u_spotLight.position": [0, 0, 0],
+      "u_spotLight.direction": [0, 0, -1],
+      "u_spotLight.innerCos": Math.cos(utils.toRadian(5)),
+      "u_spotLight.outerCos": Math.cos(utils.toRadian(15)),
+      "u_spotLight.attenuation1": 0.2,
+      "u_spotLight.attenuation2": 0.1,
     };
   };
 

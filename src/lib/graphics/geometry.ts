@@ -1,4 +1,8 @@
-import { ATTRIB_LOCATIONS } from "./program";
+const ATTRIB_LOCATIONS = {
+  a_position: 0,
+  a_texCoords: 1,
+  a_normal: 2,
+} as const;
 
 export interface Geometry {
   readonly vao: WebGLVertexArrayObject;
