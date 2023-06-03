@@ -144,12 +144,14 @@ function createStore<
 }
 
 export const image = createStore("image");
+export const additionalImages = createStore("additionalImages");
 export const output = createStore("output");
 
 export const animationRequest = derived(
-  [image, output, animations, effects],
-  ([image, output, animations, effects]) => ({
+  [image, additionalImages, output, animations, effects],
+  ([image, additionalImages, output, animations, effects]) => ({
     image,
+    additionalImages,
     output,
     animation: animations.current,
     effects,

@@ -8,10 +8,11 @@ import wigglingFragmentShader from "$lib/shaders/wiggling.fragment.glsl?raw";
 import mixFragmentShader from "$lib/shaders/mix.fragment.glsl?raw";
 import vignetteFragmentShader from "$lib/shaders/vignette.fragment.glsl?raw";
 import contrastFragmentShader from "$lib/shaders/contrast.fragment.glsl?raw";
-import kernalFragmentShader from "$lib/shaders/kernal.fragment.glsl?raw";
+import kernelFragmentShader from "$lib/shaders/kernel.fragment.glsl?raw";
 import gradient2FragmentShader from "$lib/shaders/gradient2.fragment.glsl?raw";
 import gradient8FragmentShader from "$lib/shaders/gradient8.fragment.glsl?raw";
 import bloomFragmentShader from "$lib/shaders/bloom.fragment.glsl?raw";
+import petrifiedFragmentShader from "$lib/shaders/petrified.fragment.glsl?raw";
 
 export interface Program {
   readonly program: WebGLProgram;
@@ -34,6 +35,11 @@ const PROGRAMS = {
     fragment: wigglingFragmentShader,
   },
 
+  petrified: {
+    vertex: defaultVertexShader,
+    fragment: petrifiedFragmentShader,
+  },
+
   invert: {
     vertex: quadVertexShader,
     fragment: invertFragmentShader,
@@ -41,7 +47,7 @@ const PROGRAMS = {
 
   kernel: {
     vertex: quadVertexShader,
-    fragment: kernalFragmentShader,
+    fragment: kernelFragmentShader,
   },
 
   gradient2: {
@@ -117,7 +123,7 @@ export function setUniforms(
       );
     }
     const location = program.uniformLocations[name];
-    if (["u_image"].includes(name) && typeof value === "number") {
+    if (name.includes("image") && typeof value === "number") {
       gl.uniform1i(location, value);
     } else if (Array.isArray(value)) {
       if (value.length === 2) {

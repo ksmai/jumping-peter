@@ -2,9 +2,11 @@ export class SingleTexture {
   private loadingUrl: string | null = null;
   private url: string | null = null;
   texture: WebGLTexture | null = null;
-  readonly unit = 0;
 
-  constructor(private readonly gl: WebGL2RenderingContext) {}
+  constructor(
+    private readonly gl: WebGL2RenderingContext,
+    public readonly unit: number,
+  ) {}
 
   async loadImage(url: string): Promise<void> {
     if (url === this.url) {

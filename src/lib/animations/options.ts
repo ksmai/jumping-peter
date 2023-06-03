@@ -190,6 +190,9 @@ export const defaults = {
   image: {
     url: `${base}/favicon.png`,
   } as { url: string },
+  additionalImages: {
+    urls: [],
+  } as { urls: string[] },
   output: {
     width: 64,
     height: 64,

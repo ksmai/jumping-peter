@@ -15,6 +15,10 @@ export interface ImageOptions {
   readonly url: string;
 }
 
+export interface AdditionalImagesOptions {
+  readonly urls: string[];
+}
+
 export interface OutputOptions {
   readonly width: number;
   readonly height: number;
@@ -30,6 +34,7 @@ export interface EffectOption {
 
 export interface AnimationRequest {
   readonly image: ImageOptions;
+  readonly additionalImages: AdditionalImagesOptions;
   readonly output: OutputOptions;
   readonly effects: EffectOption[];
   readonly animation: (typeof ANIMATIONS)[number];
@@ -69,6 +74,7 @@ export class Animator {
   private readonly programFactory: ProgramFactory;
   private readonly geometryFactory: GeometryFactory;
   private readonly texture: SingleTexture;
+  private readonly additionalTextures: [SingleTexture, SingleTexture];
   private readonly renderTextures: [RenderTexture, RenderTexture];
   private readonly quad: Geometry;
   private current: Item | null = null;
@@ -82,7 +88,11 @@ export class Animator {
     this.gl = context;
     this.programFactory = new ProgramFactory(this.gl);
     this.geometryFactory = new GeometryFactory(this.gl);
-    this.texture = new SingleTexture(this.gl);
+    this.texture = new SingleTexture(this.gl, 0);
+    this.additionalTextures = [
+      new SingleTexture(this.gl, 3),
+      new SingleTexture(this.gl, 4),
+    ];
     this.renderTextures = [
       new RenderTexture(this.gl, 1),
       new RenderTexture(this.gl, 2),
@@ -228,7 +238,7 @@ export class Animator {
     const current = this.current;
 
     const { type, request, resolve, sprites, effects, frame } = current;
-    const { image, output } = request;
+    const { image, additionalImages, output } = request;
 
     if (frame >= output.totalFrames) {
       return;
@@ -240,7 +250,14 @@ export class Animator {
     }
 
     if (type === "frame" || (type === "gif" && current.frame === 0)) {
-      await this.texture.loadImage(image.url);
+      await Promise.all([
+        this.texture.loadImage(image.url),
+        ...this.additionalTextures.map((texture, i) =>
+          additionalImages.urls[i]
+            ? texture.loadImage(additionalImages.urls[i])
+            : Promise.resolve(),
+        ),
+      ]);
       if (current !== this.current) {
         return;
       }
@@ -254,10 +271,18 @@ export class Animator {
       this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
       this.gl.activeTexture(this.gl.TEXTURE0 + this.texture.unit);
       this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture.texture);
+      this.additionalTextures.forEach((texture) => {
+        this.gl.activeTexture(this.gl.TEXTURE0 + texture.unit);
+        this.gl.bindTexture(this.gl.TEXTURE_2D, texture.texture);
+      });
 
       for (const program of uniq(sprites.map((s) => s.program))) {
         this.gl.useProgram(program.program);
         setUniforms(this.gl, program, { u_image: this.texture.unit });
+        this.additionalTextures.forEach((texture, i) => {
+          const key = `u_additional_images[${i}]`;
+          setUniforms(this.gl, program, { [key]: texture.unit });
+        });
       }
     }
 
@@ -309,6 +334,7 @@ export class Animator {
     this.programFactory.destroy();
     this.geometryFactory.destroy();
     this.texture.destroy();
+    this.additionalTextures.forEach((t) => t.destroy());
     this.renderTextures.forEach((t) => t.destroy());
     this.reject("Destroyed");
     if (this.animationFrame !== null) {

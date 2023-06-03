@@ -16,8 +16,11 @@ import * as Rotating from "./rotating";
 import * as Party from "./party";
 import * as Parrot from "./parrot";
 import * as Wiggling from "./wiggling";
+import * as Petrified from "./petrified";
 
 export const ANIMATIONS = [
+  // FIXME: move to bottom after debug
+  Petrified,
   Jumping,
   ExtremeSpeed,
   Spinning,
@@ -70,6 +73,8 @@ export function createSprites(
       return Parrot.createSprites(programFactory, geometryFactory, options);
     case "wiggling":
       return Wiggling.createSprites(programFactory, geometryFactory, options);
+    case "petrified":
+      return Petrified.createSprites(programFactory, geometryFactory, options);
     default:
       ((animation: never) => {
         throw new Error(`Unknown animation: ${JSON.stringify(animation)}`);
