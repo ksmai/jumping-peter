@@ -226,7 +226,7 @@ const EffectConfig: Record<
     program: "mix",
     uniforms: {
       // prettier-ignore
-      u_kernel: [
+      u_weights: [
         0.5,   0,   0,
           0, 0.5,   0,
           0,   0, 0.5,
@@ -234,10 +234,10 @@ const EffectConfig: Record<
     },
   },
   lighten: {
-    program: "kernel",
+    program: "mix",
     uniforms: {
       // prettier-ignore
-      u_kernel: [
+      u_weights: [
         2, 0, 0,
         0, 2, 0,
         0, 0, 2,
