@@ -8,6 +8,6 @@ uniform float u_contrast;
 out vec4 outColor;
 
 void main() {
-  outColor = vec4(texture(u_image, v_texCoords).rgb, 1.0);
+  outColor = texture(u_image, v_texCoords);
   outColor.rgb = (outColor.rgb - 0.5) * u_contrast + 0.5;
 }

@@ -31,5 +31,6 @@ vec3 kernelMultiply(mat3 kernel, sampler2D image, vec2 texCoords) {
 
 void main() {
   vec3 color = kernelMultiply(u_kernel, u_image, v_texCoords);
-  outColor = vec4(color, 1.0);
+  float alpha = texture(u_image, v_texCoords).a;
+  outColor = vec4(color, alpha);
 }

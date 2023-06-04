@@ -34,5 +34,6 @@ void main() {
   for (int i = 0; i < 8; ++i) {
     result = max(result, kernelMultiply(u_kernel[i], u_image, v_texCoords));
   }
-  outColor = vec4(result, 1.0);
+  float alpha = texture(u_image, v_texCoords).a;
+  outColor = vec4(result, alpha);
 }

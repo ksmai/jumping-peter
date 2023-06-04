@@ -35,6 +35,6 @@ void main() {
     }
   }
 
-  vec3 result = texture(u_image, v_texCoords).rgb + sum / 8.0;
-  outColor = vec4(result, 1.0);
+  outColor = texture(u_image, v_texCoords);
+  outColor.rgb += sum / 8.0;
 }

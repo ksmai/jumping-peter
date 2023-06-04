@@ -8,5 +8,6 @@ uniform mat3 u_weights;
 out vec4 outColor;
 
 void main() {
-  outColor = vec4(u_weights * texture(u_image, v_texCoords).rgb, 1.0);
+  vec4 texel = texture(u_image, v_texCoords);
+  outColor = vec4(u_weights * texel.rgb, texel.a);
 }
