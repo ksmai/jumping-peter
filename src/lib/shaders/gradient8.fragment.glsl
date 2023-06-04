@@ -13,7 +13,7 @@ vec3 getColor(vec2 offset, sampler2D image, vec2 texCoords) {
   return texture(image, coords).rgb * inRange;
 }
 
-vec3 kernalMultiply(mat3 kernel, sampler2D image, vec2 texCoords) {
+vec3 kernelMultiply(mat3 kernel, sampler2D image, vec2 texCoords) {
   vec3 result = vec3(0.0, 0.0, 0.0);
 
   result += kernel[0][0] * getColor(vec2(-1.0,  1.0), image, texCoords);
@@ -32,7 +32,7 @@ vec3 kernalMultiply(mat3 kernel, sampler2D image, vec2 texCoords) {
 void main() {
   vec3 result = vec3(0.0);
   for (int i = 0; i < 8; ++i) {
-    result = max(result, kernalMultiply(u_kernel[i], u_image, v_texCoords));
+    result = max(result, kernelMultiply(u_kernel[i], u_image, v_texCoords));
   }
   outColor = vec4(result, 1.0);
 }
