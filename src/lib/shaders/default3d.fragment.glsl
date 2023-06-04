@@ -94,15 +94,15 @@ vec3 computePointLight(PointLight pointLight, vec3 normal, vec3 fragToCamera, ve
 out vec4 outColor;
 
 void main() {
-  vec3 texel = texture(u_image, v_texCoords).xyz;
+  vec4 texel = texture(u_image, v_texCoords);
   // front facing is actually the back face since we flipped y-axis in the vertex shader
   vec3 normal = normalize(v_normal) * (1.0 - 2.0 * float(gl_FrontFacing));
   vec3 fragToCamera = normalize(-v_position);
 
   vec3 color = vec3(0.0);
-  color += computeDirectionalLight(u_directionalLight, normal, fragToCamera, texel);
-  color += computePointLight(u_pointLight, normal, fragToCamera, texel);
-  color += computeSpotLight(u_spotLight, normal, fragToCamera, texel);
+  color += computeDirectionalLight(u_directionalLight, normal, fragToCamera, texel.rgb);
+  color += computePointLight(u_pointLight, normal, fragToCamera, texel.rgb);
+  color += computeSpotLight(u_spotLight, normal, fragToCamera, texel.rgb);
 
-  outColor = vec4(color, 1.0);
+  outColor = vec4(color, texel.a);
 }

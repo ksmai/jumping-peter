@@ -89,14 +89,14 @@ void main() {
   float petrifiedPercent = u_time / u_timeBeforeShatter;
   float alpha = getAlpha();
   if ((1.0 - v_texCoords.y) < petrifiedPercent) {
-    vec4 texel = texture(u_additionalImages[0], v_texCoords);
-    vec3 color = texel.rgb;
+    outColor = texture(u_additionalImages[0], v_texCoords);
     if (isEdge()) {
-      color = color * (1.0 - u_edgeDarkness);
+      outColor.rgb *= 1.0 - u_edgeDarkness;
     }
-    outColor = vec4(color, texel.a * alpha);
-  } else {
     vec4 texel = texture(u_image, v_texCoords);
-    outColor = vec4(texel.rgb, texel.a * alpha);
+    outColor.a = texel.a * alpha;
+  } else {
+    outColor = texture(u_image, v_texCoords);
+    outColor.a *= alpha;
   }
 }
