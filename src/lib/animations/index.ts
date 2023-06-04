@@ -19,8 +19,6 @@ import * as Wiggling from "./wiggling";
 import * as Petrified from "./petrified";
 
 export const ANIMATIONS = [
-  // FIXME: move to bottom after debug
-  Petrified,
   Jumping,
   ExtremeSpeed,
   Spinning,
@@ -34,6 +32,7 @@ export const ANIMATIONS = [
   Party,
   Parrot,
   Wiggling,
+  Petrified,
 ];
 
 export function createSprites(

@@ -15,6 +15,7 @@ const animationNames = [
   "spinning",
   "extreme-speed",
   "jumping",
+  "petrified",
 ];
 
 for (const animationName of animationNames) {

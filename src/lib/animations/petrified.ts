@@ -32,11 +32,6 @@ export const editOptions = [
     value: 0.3,
   }),
 
-  createPositiveInteger({
-    name: "shatterPieces",
-    value: 10,
-  }),
-
   createPercentage({
     name: "timeBeforeShatter",
     value: 0.5,
@@ -44,7 +39,7 @@ export const editOptions = [
 
   createPositiveInteger({
     name: "seed",
-    value: 0,
+    value: 26,
   }),
 
   createPercentage({
@@ -59,12 +54,22 @@ export const editOptions = [
 
   createPercentage({
     name: "maxAngularVelocity",
-    value: 0.5,
+    value: 1,
   }),
 
   createPercentage({
     name: "maxAcceleration",
     value: 1,
+  }),
+
+  createPositiveInteger({
+    name: "shatterColumns",
+    value: 4,
+  }),
+
+  createPositiveInteger({
+    name: "shatterRows",
+    value: 4,
   }),
 ];
 
@@ -79,16 +84,17 @@ export function createSprites(
   const {
     edgeThreshold,
     edgeDarkness,
-    shatterPieces,
     timeBeforeShatter,
     seed,
     maxHorizontalVelocity,
     maxVerticalVelocity,
     maxAngularVelocity,
     maxAcceleration,
+    shatterColumns,
+    shatterRows,
   } = options;
 
-  return Array(shatterPieces)
+  return Array(shatterColumns * shatterRows)
     .fill(null)
     .map((_, i) => ({
       program,
@@ -100,14 +106,17 @@ export function createSprites(
           const t2 = (t - timeBeforeShatter) / (1 - timeBeforeShatter);
           let [h, v, g] = utils.noise3D(i + seed * 0.761 + 1);
           let r = utils.noise1D(g);
-          h = h * maxHorizontalVelocity;
-          v = v * maxVerticalVelocity;
-          r = r * 360 * maxAngularVelocity;
-          g = g * maxAcceleration;
+          h = h * maxHorizontalVelocity * 1;
+          v = v * maxVerticalVelocity * 3;
+          r = r * 360 * maxAngularVelocity * 0.2;
+          g = -Math.abs(g * maxAcceleration * 30);
 
           transform.rotate2d(model, r * t2);
           transform.translate2d(model, h * t2, v * t2 + 0.5 * g * t2 * t2);
         }
+
+        const column = i % shatterColumns;
+        const row = Math.floor(i / shatterColumns);
 
         return {
           u_model: model,
@@ -115,6 +124,10 @@ export function createSprites(
           u_edgeDarkness: edgeDarkness,
           u_time: t,
           u_timeBeforeShatter: timeBeforeShatter,
+          u_shatterColumns: shatterColumns,
+          u_shatterRows: shatterRows,
+          u_column: column,
+          u_row: row,
         };
       },
     }));
