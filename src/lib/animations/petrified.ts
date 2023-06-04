@@ -15,8 +15,8 @@ export const defaultOptions = {
   },
   output: {
     ...defaults.output,
-    delayMs: 50,
-    totalFrames: 15,
+    delayMs: 150,
+    totalFrames: 20,
   },
 };
 
@@ -28,7 +28,7 @@ export const editOptions = [
 
   createPercentage({
     name: "edgeDarkness",
-    value: 0.25,
+    value: 0.3,
   }),
 
   createPositiveInteger({
@@ -57,11 +57,11 @@ export function createSprites(
     const mat = transform.identity();
     return {
       u_model: mat,
-      u_edge_threshold: edgeThreshold,
-      u_edge_darkness: edgeDarkness,
+      u_edgeThreshold: edgeThreshold,
+      u_edgeDarkness: edgeDarkness,
       u_time: t,
+      u_timeBeforeShatter: timeBeforeShatter,
       u_shatter_pieces: shatterPieces,
-      u_time_before_shatter: timeBeforeShatter,
       u_kernel: [-1, -1, -1, -1, 8, -1, -1, -1, -1],
     };
   };

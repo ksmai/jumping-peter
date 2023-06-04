@@ -123,7 +123,7 @@ export function setUniforms(
       );
     }
     const location = program.uniformLocations[name];
-    if (name.includes("image") && typeof value === "number") {
+    if (/image/i.test(name) && typeof value === "number") {
       gl.uniform1i(location, value);
     } else if (Array.isArray(value)) {
       if (value.length === 2) {

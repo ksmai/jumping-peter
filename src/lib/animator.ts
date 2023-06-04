@@ -280,7 +280,7 @@ export class Animator {
         this.gl.useProgram(program.program);
         setUniforms(this.gl, program, { u_image: this.texture.unit });
         this.additionalTextures.forEach((texture, i) => {
-          const key = `u_additional_images[${i}]`;
+          const key = `u_additionalImages[${i}]`;
           setUniforms(this.gl, program, { [key]: texture.unit });
         });
       }

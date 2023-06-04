@@ -3,9 +3,11 @@ precision highp float;
 
 in vec2 v_texCoords;
 uniform sampler2D u_image;
-uniform sampler2D u_additional_images[2];
-uniform float u_edge_threshold;
-uniform float u_edge_darkness;
+uniform sampler2D u_additionalImages[2];
+uniform float u_edgeThreshold;
+uniform float u_edgeDarkness;
+uniform float u_time;
+uniform float u_timeBeforeShatter;
 
 out vec4 outColor;
 
@@ -17,7 +19,7 @@ float getColor(vec2 offset) {
   return average * inRange;
 }
 
-void main() {
+bool isEdge() {
   vec2 offsets[8] = vec2[](
     vec2(-1.0, -1.0),
     vec2(-1.0,  0.0),
@@ -39,8 +41,19 @@ void main() {
   float color2 = colors[0] + 2.0 * colors[3] + colors[5] - colors[2] - 2.0 * colors[4] - colors[7];
   float result = length(vec2(color1, color2));
 
-  outColor = texture(u_additional_images[0], v_texCoords);
-  if (result > u_edge_threshold) {
-    outColor = outColor * (1.0 - u_edge_darkness);
+  return result > u_edgeThreshold;
+}
+
+void main() {
+  float petrifiedPercent = u_time / u_timeBeforeShatter;
+  if ((1.0 - v_texCoords.y) < petrifiedPercent) {
+    vec4 texel = texture(u_additionalImages[0], v_texCoords);
+    vec3 color = texel.rgb;
+    if (isEdge()) {
+      color = color * (1.0 - u_edgeDarkness);
+    }
+    outColor = vec4(color, texel.a);
+  } else {
+    outColor = texture(u_image, v_texCoords);
   }
 }
