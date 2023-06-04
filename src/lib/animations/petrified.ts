@@ -21,6 +21,16 @@ export const defaultOptions = {
 };
 
 export const editOptions = [
+  createPercentage({
+    name: "edgeThreshold",
+    value: 0.2,
+  }),
+
+  createPercentage({
+    name: "edgeDarkness",
+    value: 0.25,
+  }),
+
   createPositiveInteger({
     name: "shatterPieces",
     value: 10,
@@ -40,12 +50,15 @@ export function createSprites(
   const program = programFactory.createProgram("petrified");
   const geometry = geometryFactory.createGeometry("full");
 
-  const { shatterPieces, timeBeforeShatter } = options;
+  const { edgeThreshold, edgeDarkness, shatterPieces, timeBeforeShatter } =
+    options;
 
   const getUniforms: Sprite["getUniforms"] = (t) => {
     const mat = transform.identity();
     return {
       u_model: mat,
+      u_edge_threshold: edgeThreshold,
+      u_edge_darkness: edgeDarkness,
       u_time: t,
       u_shatter_pieces: shatterPieces,
       u_time_before_shatter: timeBeforeShatter,

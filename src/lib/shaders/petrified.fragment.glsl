@@ -4,6 +4,8 @@ precision highp float;
 in vec2 v_texCoords;
 uniform sampler2D u_image;
 uniform sampler2D u_additional_images[2];
+uniform float u_edge_threshold;
+uniform float u_edge_darkness;
 
 out vec4 outColor;
 
@@ -38,7 +40,7 @@ void main() {
   float result = length(vec2(color1, color2));
 
   outColor = texture(u_additional_images[0], v_texCoords);
-  if (result > 0.2) {
-    outColor = outColor * 0.75;
+  if (result > u_edge_threshold) {
+    outColor = outColor * (1.0 - u_edge_darkness);
   }
 }
