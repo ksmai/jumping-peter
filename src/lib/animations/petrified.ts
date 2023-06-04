@@ -1,5 +1,6 @@
 import { base } from "$app/paths";
 import * as transform from "../graphics/transform";
+import * as utils from "../graphics/utils";
 import { defaults, createPositiveInteger, createPercentage } from "./options";
 import type { MappedOptions } from "./options";
 import type { Sprite } from "../graphics/renderer";
@@ -40,6 +41,31 @@ export const editOptions = [
     name: "timeBeforeShatter",
     value: 0.5,
   }),
+
+  createPositiveInteger({
+    name: "seed",
+    value: 0,
+  }),
+
+  createPercentage({
+    name: "maxHorizontalVelocity",
+    value: 1,
+  }),
+
+  createPercentage({
+    name: "maxVerticalVelocity",
+    value: 1,
+  }),
+
+  createPercentage({
+    name: "maxAngularVelocity",
+    value: 0.5,
+  }),
+
+  createPercentage({
+    name: "maxAcceleration",
+    value: 1,
+  }),
 ];
 
 export function createSprites(
@@ -50,27 +76,46 @@ export function createSprites(
   const program = programFactory.createProgram("petrified");
   const geometry = geometryFactory.createGeometry("full");
 
-  const { edgeThreshold, edgeDarkness, shatterPieces, timeBeforeShatter } =
-    options;
+  const {
+    edgeThreshold,
+    edgeDarkness,
+    shatterPieces,
+    timeBeforeShatter,
+    seed,
+    maxHorizontalVelocity,
+    maxVerticalVelocity,
+    maxAngularVelocity,
+    maxAcceleration,
+  } = options;
 
-  const getUniforms: Sprite["getUniforms"] = (t) => {
-    const mat = transform.identity();
-    return {
-      u_model: mat,
-      u_edgeThreshold: edgeThreshold,
-      u_edgeDarkness: edgeDarkness,
-      u_time: t,
-      u_timeBeforeShatter: timeBeforeShatter,
-      u_shatter_pieces: shatterPieces,
-      u_kernel: [-1, -1, -1, -1, 8, -1, -1, -1, -1],
-    };
-  };
-
-  return [
-    {
+  return Array(shatterPieces)
+    .fill(null)
+    .map((_, i) => ({
       program,
       geometry,
-      getUniforms,
-    },
-  ];
+      getUniforms(t) {
+        const model = transform.identity();
+
+        if (t > timeBeforeShatter) {
+          const t2 = (t - timeBeforeShatter) / (1 - timeBeforeShatter);
+          let [h, v, g] = utils.noise3D(i + seed * 0.761 + 1);
+          let r = utils.noise1D(g);
+          h = h * maxHorizontalVelocity;
+          v = v * maxVerticalVelocity;
+          r = r * 360 * maxAngularVelocity;
+          g = g * maxAcceleration;
+
+          transform.rotate2d(model, r * t2);
+          transform.translate2d(model, h * t2, v * t2 + 0.5 * g * t2 * t2);
+        }
+
+        return {
+          u_model: model,
+          u_edgeThreshold: edgeThreshold,
+          u_edgeDarkness: edgeDarkness,
+          u_time: t,
+          u_timeBeforeShatter: timeBeforeShatter,
+        };
+      },
+    }));
 }

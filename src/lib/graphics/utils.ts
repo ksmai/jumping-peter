@@ -21,6 +21,22 @@ export function random(t: number): number {
   return x / (Math.pow(2, 31) - 1);
 }
 
+function noise(x: number, c: number): number {
+  return (Math.sin(x * c) * 43758.5453) % 1;
+}
+
+export function noise1D(x: number): number {
+  return noise(x, 127.1);
+}
+
+export function noise2D(x: number): [number, number] {
+  return [noise(x, 127.1), noise(x, 269.5)];
+}
+
+export function noise3D(x: number): [number, number, number] {
+  return [noise(x, 127.1), noise(x, 269.5), noise(x, 631.2)];
+}
+
 // Reference for easing functions
 // https://easings.net/
 //
