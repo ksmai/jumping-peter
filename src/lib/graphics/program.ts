@@ -13,6 +13,7 @@ import gradient2FragmentShader from "$lib/shaders/gradient2.fragment.glsl?raw";
 import gradient8FragmentShader from "$lib/shaders/gradient8.fragment.glsl?raw";
 import bloomFragmentShader from "$lib/shaders/bloom.fragment.glsl?raw";
 import petrifiedFragmentShader from "$lib/shaders/petrified.fragment.glsl?raw";
+import petrified2FragmentShader from "$lib/shaders/petrified2.fragment.glsl?raw";
 
 export interface Program {
   readonly program: WebGLProgram;
@@ -38,6 +39,11 @@ const PROGRAMS = {
   petrified: {
     vertex: defaultVertexShader,
     fragment: petrifiedFragmentShader,
+  },
+
+  petrified2: {
+    vertex: defaultVertexShader,
+    fragment: petrified2FragmentShader,
   },
 
   invert: {
