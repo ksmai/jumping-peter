@@ -80,9 +80,9 @@ Although `OffscreenCanvas` is useful to generate the GIF in a worker thread, it 
 
 ![wiggling](/static/demo-wiggling.gif)
 
-### petrified
+### petrified-shattered
 
-![petrified](/static/demo-petrified.gif)
+![petrified-shattered](/static/demo-petrified-shattered.gif)
 
 ### petrified-broken
 

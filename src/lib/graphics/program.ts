@@ -12,7 +12,7 @@ import kernelFragmentShader from "$lib/shaders/kernel.fragment.glsl?raw";
 import gradient2FragmentShader from "$lib/shaders/gradient2.fragment.glsl?raw";
 import gradient8FragmentShader from "$lib/shaders/gradient8.fragment.glsl?raw";
 import bloomFragmentShader from "$lib/shaders/bloom.fragment.glsl?raw";
-import petrifiedFragmentShader from "$lib/shaders/petrified.fragment.glsl?raw";
+import petrifiedShatteredFragmentShader from "$lib/shaders/petrified-shattered.fragment.glsl?raw";
 import petrifiedBrokenFragmentShader from "$lib/shaders/petrified-broken.fragment.glsl?raw";
 
 export interface Program {
@@ -36,9 +36,9 @@ const PROGRAMS = {
     fragment: wigglingFragmentShader,
   },
 
-  petrified: {
+  petrifiedShattered: {
     vertex: defaultVertexShader,
-    fragment: petrifiedFragmentShader,
+    fragment: petrifiedShatteredFragmentShader,
   },
 
   petrifiedBroken: {

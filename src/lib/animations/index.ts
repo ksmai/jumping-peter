@@ -16,7 +16,7 @@ import * as Rotating from "./rotating";
 import * as Party from "./party";
 import * as Parrot from "./parrot";
 import * as Wiggling from "./wiggling";
-import * as Petrified from "./petrified";
+import * as PetrifiedShattered from "./petrified-shattered";
 import * as PetrifiedBroken from "./petrified-broken";
 
 export const ANIMATIONS = [
@@ -33,7 +33,7 @@ export const ANIMATIONS = [
   Party,
   Parrot,
   Wiggling,
-  Petrified,
+  PetrifiedShattered,
   PetrifiedBroken,
 ];
 
@@ -74,8 +74,12 @@ export function createSprites(
       return Parrot.createSprites(programFactory, geometryFactory, options);
     case "wiggling":
       return Wiggling.createSprites(programFactory, geometryFactory, options);
-    case "petrified":
-      return Petrified.createSprites(programFactory, geometryFactory, options);
+    case "petrified-shattered":
+      return PetrifiedShattered.createSprites(
+        programFactory,
+        geometryFactory,
+        options,
+      );
     case "petrified-broken":
       return PetrifiedBroken.createSprites(
         programFactory,
