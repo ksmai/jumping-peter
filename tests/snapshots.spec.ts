@@ -15,7 +15,7 @@ const animationNames = [
   "spinning",
   "extreme-speed",
   "jumping",
-  // "petrified",
+  "petrified-shattered",
   "petrified-broken",
 ];
 

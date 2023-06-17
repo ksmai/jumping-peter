@@ -10,6 +10,7 @@ uniform float u_time;
 uniform float u_seed;
 uniform float u_timeBeforeCrack;
 uniform float u_timeBeforeShatter;
+uniform float u_crackWidth;
 uniform float u_shatterColumns;
 uniform float u_shatterRows;
 uniform float u_column;
@@ -61,13 +62,10 @@ float worleyDist(vec2 neighbor) {
   vec2 uvInt = floor(uv);
   vec2 uvFract = fract(uv);
   vec2 neighborInt = uvInt + neighbor;
-  if (neighborInt.x < 0.0 || neighborInt.x >= u_shatterColumns || neighborInt.y < 0.0 || neighborInt.y >= u_shatterRows) {
-    return 20.0;
-  }
+  float outOfRange = float(neighborInt.x < 0.0 || neighborInt.x >= u_shatterColumns || neighborInt.y < 0.0 || neighborInt.y >= u_shatterRows) * (u_shatterColumns + u_shatterRows);
   vec2 point = random2(neighborInt + u_seed);
   vec2 diff = neighbor + point - uvFract;
-  return length(diff);
-
+  return length(diff) + outOfRange;
 }
 
 float getAlpha() {
@@ -76,42 +74,27 @@ float getAlpha() {
 
   float currentDist = worleyDist(vec2(u_column, u_row) - uvInt);
   float minDist = u_shatterColumns + u_shatterRows;
+  float isDisplayed = 1.0;
   for (int c = -1; c <= 1; ++c) {
     for (int r = -1; r <= 1; ++r) {
       vec2 neighbor = vec2(float(c), float(r));
-      if (uvInt + neighbor == vec2(u_column, u_row)) {
-        continue;
-      }
-      float dist = worleyDist(neighbor);
-      if (dist < currentDist) {
-        return 0.0;
-      }
+      float isCurrent = float(uvInt + neighbor == vec2(u_column, u_row));
+      float dist = isCurrent * minDist + (1.0 - isCurrent) * worleyDist(neighbor);
+      isDisplayed *= 1.0 - float(dist < currentDist);
       minDist = min(minDist, dist);
     }
   }
 
-  if (minDist - currentDist < 0.07) {
-    if (u_time > u_timeBeforeCrack) {
-      return 1.0 - smoothstep(u_timeBeforeCrack, u_timeBeforeCrack + u_timeBeforeShatter, u_time);
-    }
-  }
-
-  return 1.0;
+  return isDisplayed * (1.0 - smoothstep(u_timeBeforeCrack, u_timeBeforeShatter, u_time) * float(minDist - currentDist < u_crackWidth) * float(u_time > u_timeBeforeCrack));
 }
 
 
 void main() {
   float petrifiedPercent = u_time / u_timeBeforeCrack;
   float alpha = getAlpha();
-  if ((1.0 - v_texCoords.y) < petrifiedPercent) {
-    outColor = texture(u_additionalImages[0], v_texCoords);
-    if (isEdge()) {
-      outColor.rgb *= 1.0 - u_edgeDarkness;
-    }
-    vec4 texel = texture(u_image, v_texCoords);
-    outColor.a = texel.a * alpha;
-  } else {
-    outColor = texture(u_image, v_texCoords);
-    outColor.a *= alpha;
-  }
+  float isPetrified = float(1.0 - v_texCoords.y < petrifiedPercent);
+  vec4 texel = texture(u_image, v_texCoords);
+  outColor = isPetrified * texture(u_additionalImages[0], v_texCoords) + (1.0 - isPetrified) * texel;
+  outColor.rgb *= 1.0 - u_edgeDarkness * isPetrified * float(isEdge());
+  outColor.a = texel.a * getAlpha();
 }
