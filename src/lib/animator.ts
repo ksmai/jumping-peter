@@ -276,13 +276,19 @@ export class Animator {
         this.gl.bindTexture(this.gl.TEXTURE_2D, texture.texture);
       });
 
+      const uniforms: Record<string, unknown> = {
+        u_image: this.texture.unit,
+        u_screenSize: [width, height],
+      };
+
+      this.additionalTextures.forEach((texture, i) => {
+        const key = `u_additionalImages[${i}]`;
+        uniforms[key] = texture.unit;
+      });
+
       for (const program of uniq(sprites.map((s) => s.program))) {
         this.gl.useProgram(program.program);
-        setUniforms(this.gl, program, { u_image: this.texture.unit });
-        this.additionalTextures.forEach((texture, i) => {
-          const key = `u_additionalImages[${i}]`;
-          setUniforms(this.gl, program, { [key]: texture.unit });
-        });
+        setUniforms(this.gl, program, uniforms);
       }
     }
 
