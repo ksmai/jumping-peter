@@ -33,8 +33,13 @@ export const editOptions = [
   }),
 
   createPercentage({
+    name: "timeBeforeCrack",
+    value: 0.4,
+  }),
+
+  createPercentage({
     name: "timeBeforeShatter",
-    value: 0.5,
+    value: 0.1,
   }),
 
   createPositiveInteger({
@@ -84,6 +89,7 @@ export function createSprites(
   const {
     edgeThreshold,
     edgeDarkness,
+    timeBeforeCrack,
     timeBeforeShatter,
     seed,
     maxHorizontalVelocity,
@@ -102,8 +108,10 @@ export function createSprites(
       getUniforms(t) {
         const model = transform.identity();
 
-        if (t > timeBeforeShatter) {
-          const t2 = (t - timeBeforeShatter) / (1 - timeBeforeShatter);
+        if (t > timeBeforeCrack + timeBeforeShatter) {
+          const t2 =
+            (t - timeBeforeCrack - timeBeforeShatter) /
+            (1 - timeBeforeCrack - timeBeforeShatter);
           let [h, v, g] = utils.noise3D(i + seed * 0.761 + 1);
           let r = utils.noise1D(g);
           h = h * maxHorizontalVelocity * 1;
@@ -123,6 +131,8 @@ export function createSprites(
           u_edgeThreshold: edgeThreshold,
           u_edgeDarkness: edgeDarkness,
           u_time: t,
+          u_seed: seed,
+          u_timeBeforeCrack: timeBeforeCrack,
           u_timeBeforeShatter: timeBeforeShatter,
           u_shatterColumns: shatterColumns,
           u_shatterRows: shatterRows,
