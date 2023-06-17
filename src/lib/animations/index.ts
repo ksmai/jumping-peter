@@ -20,7 +20,6 @@ import * as Petrified from "./petrified";
 import * as PetrifiedBroken from "./petrified-broken";
 
 export const ANIMATIONS = [
-  PetrifiedBroken,
   Jumping,
   ExtremeSpeed,
   Spinning,
@@ -35,6 +34,7 @@ export const ANIMATIONS = [
   Parrot,
   Wiggling,
   Petrified,
+  PetrifiedBroken,
 ];
 
 export function createSprites(

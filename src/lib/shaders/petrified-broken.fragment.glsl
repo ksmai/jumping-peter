@@ -8,9 +8,11 @@ uniform float u_edgeThreshold;
 uniform float u_edgeDarkness;
 uniform float u_seed;
 uniform float u_time;
+uniform float u_timeBeforeCrack;
 uniform float u_timeBeforeBreak;
-uniform float u_timeBeforeFall;
-uniform float u_numTurns;
+uniform float u_crackSegments;
+uniform float u_maxCrackMovement;
+uniform float u_crackWidth;
 uniform float u_i;
 
 out vec4 outColor;
@@ -55,54 +57,31 @@ vec2 random2(vec2 p) {
 }
 
 float getAlpha() {
-  float fy = fract(v_texCoords.y * (u_numTurns + 1.0));
-  float iy = floor(v_texCoords.y * (u_numTurns + 1.0));
-  float prev, next;
-  if (iy == 0.0) {
-    prev = 0.0;
-  } else {
-    prev = random2(vec2(iy, u_seed)).x * 0.1;
-  }
-  if (iy == u_numTurns) {
-    next = 0.0;
-  } else {
-    next = random2(vec2(iy + 1.0, u_seed)).x * 0.1;
-  }
-  if (mod(iy, 2.0) == 0.0) {
-    prev *= -1.0;
-  } else {
-    next *= -1.0;
-  }
-  float curr = mix(prev, next, fy) + 0.5;
+  float fy = fract(v_texCoords.y * u_crackSegments);
+  float iy = floor(v_texCoords.y * u_crackSegments);
+  float m = mod(iy, 2.0);
+  float prev = random2(vec2(iy, u_seed)).x * (m * 2.0 - 1.0);
+  float next = random2(vec2(iy + 1.0, u_seed)).x * (1.0 - m * 2.0);
+  float curr = mix(prev, next, fy) * u_maxCrackMovement * 0.5 + 0.5;
 
-  if (u_time > u_timeBeforeBreak) {
-    float t = (u_time - u_timeBeforeBreak) / u_timeBeforeFall;
-    if (v_texCoords.y < t && abs(v_texCoords.x - curr) < 0.03) {
-      return 0.0;
-    }
-  }
+  float t = (u_time - u_timeBeforeCrack) / (u_timeBeforeBreak - u_timeBeforeCrack);
+  float isCrack = float(
+    u_time > u_timeBeforeCrack &&
+    v_texCoords.y < t &&
+    abs(v_texCoords.x - curr) < u_crackWidth * 0.25
+  );
 
-  if (v_texCoords.x <= curr && u_i < 0.5) {
-    return 1.0;
-  }
-  if (v_texCoords.x > curr && u_i > 0.5) {
-    return 1.0;
-  }
-  return 0.0;
+  return (1.0 - isCrack) * float(
+    (v_texCoords.x <= curr && u_i < 0.5) ||
+    (v_texCoords.x > curr && u_i > 0.5)
+  );
 }
 
 void main() {
-  float petrifiedPercent = u_time / u_timeBeforeBreak;
-  float alpha = getAlpha();
-  if ((1.0 - v_texCoords.y) < petrifiedPercent) {
-    outColor = texture(u_additionalImages[0], v_texCoords);
-    if (isEdge()) {
-      outColor.rgb *= 1.0 - u_edgeDarkness;
-    }
-    vec4 texel = texture(u_image, v_texCoords);
-    outColor.a = texel.a * alpha;
-  } else {
-    outColor = texture(u_image, v_texCoords);
-    outColor.a *= alpha;
-  }
+  float petrifiedPercent = u_time / u_timeBeforeCrack;
+  vec4 texel = texture(u_image, v_texCoords);
+  float isPetrified = float((1.0 - v_texCoords.y) < petrifiedPercent);
+  outColor = isPetrified * texture(u_additionalImages[0], v_texCoords) + (1.0 - isPetrified) * texel;
+  outColor.rgb *= 1.0 - u_edgeDarkness * isPetrified * float(isEdge());
+  outColor.a = texel.a * getAlpha();
 }

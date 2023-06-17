@@ -1,7 +1,12 @@
 import { base } from "$app/paths";
 import * as transform from "../graphics/transform";
 import * as utils from "../graphics/utils";
-import { defaults, createPositiveInteger, createPercentage } from "./options";
+import {
+  defaults,
+  createPositiveInteger,
+  createPercentage,
+  createTwoWayPercentage,
+} from "./options";
 import type { MappedOptions } from "./options";
 import type { Sprite } from "../graphics/renderer";
 import type { ProgramFactory } from "../graphics/program";
@@ -33,13 +38,28 @@ export const editOptions = [
   }),
 
   createPercentage({
-    name: "timeBeforeBreak",
+    name: "timeBeforeCrack",
     value: 0.4,
   }),
 
   createPercentage({
-    name: "timeBeforeFall",
+    name: "timeBeforeBreak",
+    value: 0.6,
+  }),
+
+  createPositiveInteger({
+    name: "crackSegments",
+    value: 4,
+  }),
+
+  createTwoWayPercentage({
+    name: "maxCrackMovement",
     value: 0.2,
+  }),
+
+  createPercentage({
+    name: "crackWidth",
+    value: 0.1,
   }),
 
   createPositiveInteger({
@@ -56,8 +76,16 @@ export function createSprites(
   const program = programFactory.createProgram("petrifiedBroken");
   const geometry = geometryFactory.createGeometry("full");
 
-  const { edgeThreshold, edgeDarkness, timeBeforeBreak, timeBeforeFall, seed } =
-    options;
+  const {
+    edgeThreshold,
+    edgeDarkness,
+    timeBeforeCrack,
+    timeBeforeBreak,
+    crackSegments,
+    maxCrackMovement,
+    crackWidth,
+    seed,
+  } = options;
 
   return Array(2)
     .fill(null)
@@ -67,10 +95,9 @@ export function createSprites(
       getUniforms(t) {
         const model = transform.identity();
 
-        const timeForFall = 1 - timeBeforeBreak - timeBeforeFall;
-        if (t > 1 - timeForFall) {
+        if (t > timeBeforeBreak) {
           const finalAngle = utils.noise1D(i + seed * 0.761 + 1) * 10 + 80;
-          const t2 = (t - 1 + timeForFall) / timeForFall;
+          const t2 = (t - timeBeforeBreak) / (1 - timeBeforeBreak);
           transform.translate2d(model, 0, 1);
           transform.rotate2d(
             model,
@@ -85,9 +112,11 @@ export function createSprites(
           u_edgeDarkness: edgeDarkness,
           u_seed: seed,
           u_time: t,
+          u_timeBeforeCrack: timeBeforeCrack,
           u_timeBeforeBreak: timeBeforeBreak,
-          u_timeBeforeFall: timeBeforeFall,
-          u_numTurns: 3,
+          u_crackSegments: crackSegments,
+          u_maxCrackMovement: maxCrackMovement,
+          u_crackWidth: crackWidth,
           u_i: i,
         };
       },
