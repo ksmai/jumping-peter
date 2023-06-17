@@ -80,8 +80,8 @@ float getAlpha() {
 void main() {
   float petrifiedPercent = u_time / u_timeBeforeCrack;
   vec4 texel = texture(u_image, v_texCoords);
-  float isPetrified = float((1.0 - v_texCoords.y) < petrifiedPercent);
-  outColor = isPetrified * texture(u_additionalImages[0], v_texCoords) + (1.0 - isPetrified) * texel;
+  float isPetrified = float(1.0 - v_texCoords.y < petrifiedPercent);
+  outColor = mix(texel, texture(u_additionalImages[0], v_texCoords), isPetrified);
   outColor.rgb *= 1.0 - u_edgeDarkness * isPetrified * float(isEdge());
   outColor.a = texel.a * getAlpha();
 }
