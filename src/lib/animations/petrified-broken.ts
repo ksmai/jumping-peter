@@ -7,7 +7,7 @@ import type { Sprite } from "../graphics/renderer";
 import type { ProgramFactory } from "../graphics/program";
 import type { GeometryFactory } from "../graphics/geometry";
 
-export const name = "petrified2" as const;
+export const name = "petrified-broken" as const;
 
 export const defaultOptions = {
   ...defaults,
@@ -53,7 +53,7 @@ export function createSprites(
   geometryFactory: GeometryFactory,
   options: MappedOptions<typeof editOptions>,
 ): Sprite[] {
-  const program = programFactory.createProgram("petrified2");
+  const program = programFactory.createProgram("petrifiedBroken");
   const geometry = geometryFactory.createGeometry("full");
 
   const { edgeThreshold, edgeDarkness, timeBeforeBreak, timeBeforeFall, seed } =
