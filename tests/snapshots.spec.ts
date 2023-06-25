@@ -17,6 +17,7 @@ const animationNames = [
   "jumping",
   "petrified-shattered",
   "petrified-broken",
+  "firework",
 ];
 
 for (const animationName of animationNames) {

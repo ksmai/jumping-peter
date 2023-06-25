@@ -88,6 +88,10 @@ Although `OffscreenCanvas` is useful to generate the GIF in a worker thread, it 
 
 ![petrified-broken](/static/demo-petrified-broken.gif)
 
+### firework
+
+![firework](/static/demo-firework.gif)
+
 ## Development
 
 ```bash

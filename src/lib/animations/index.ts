@@ -18,6 +18,7 @@ import * as Parrot from "./parrot";
 import * as Wiggling from "./wiggling";
 import * as PetrifiedShattered from "./petrified-shattered";
 import * as PetrifiedBroken from "./petrified-broken";
+import * as Firework from "./firework";
 
 export const ANIMATIONS = [
   Jumping,
@@ -35,6 +36,7 @@ export const ANIMATIONS = [
   Wiggling,
   PetrifiedShattered,
   PetrifiedBroken,
+  Firework,
 ];
 
 export function createSprites(
@@ -86,6 +88,8 @@ export function createSprites(
         geometryFactory,
         options,
       );
+    case "firework":
+      return Firework.createSprites(programFactory, geometryFactory, options);
     default:
       ((animation: never) => {
         throw new Error(`Unknown animation: ${JSON.stringify(animation)}`);
