@@ -19,6 +19,7 @@ import * as Wiggling from "./wiggling";
 import * as PetrifiedShattered from "./petrified-shattered";
 import * as PetrifiedBroken from "./petrified-broken";
 import * as Firework from "./firework";
+import * as Bravo from "./bravo";
 
 export const ANIMATIONS = [
   Jumping,
@@ -37,6 +38,7 @@ export const ANIMATIONS = [
   PetrifiedShattered,
   PetrifiedBroken,
   Firework,
+  Bravo,
 ];
 
 export function createSprites(
@@ -90,6 +92,8 @@ export function createSprites(
       );
     case "firework":
       return Firework.createSprites(programFactory, geometryFactory, options);
+    case "bravo":
+      return Bravo.createSprites(programFactory, geometryFactory, options);
     default:
       ((animation: never) => {
         throw new Error(`Unknown animation: ${JSON.stringify(animation)}`);

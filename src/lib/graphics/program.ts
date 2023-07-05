@@ -15,6 +15,7 @@ import bloomFragmentShader from "$lib/shaders/bloom.fragment.glsl?raw";
 import petrifiedShatteredFragmentShader from "$lib/shaders/petrified-shattered.fragment.glsl?raw";
 import petrifiedBrokenFragmentShader from "$lib/shaders/petrified-broken.fragment.glsl?raw";
 import fireworkFragmentShader from "$lib/shaders/firework.fragment.glsl?raw";
+import bravoFragmentShader from "$lib/shaders/bravo.fragment.glsl?raw";
 
 export interface Program {
   readonly program: WebGLProgram;
@@ -50,6 +51,11 @@ const PROGRAMS = {
   firework: {
     vertex: defaultVertexShader,
     fragment: fireworkFragmentShader,
+  },
+
+  bravo: {
+    vertex: defaultVertexShader,
+    fragment: bravoFragmentShader,
   },
 
   invert: {

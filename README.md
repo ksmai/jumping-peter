@@ -92,6 +92,10 @@ Although `OffscreenCanvas` is useful to generate the GIF in a worker thread, it 
 
 ![firework](/static/demo-firework.gif)
 
+### bravo
+
+![bravo](/static/demo-bravo.gif)
+
 ## Development
 
 ```bash
